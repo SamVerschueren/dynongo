@@ -25,6 +25,7 @@
   "dependencies": {
     "aws-sdk": "^2.1.39",
     "dynamodb-doc": "^1.0.0",
-    "lodash": "^3.10.0"
+    "lodash": "^3.10.0",
+    "q": "^1.4.1"
   }
 }

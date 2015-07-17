@@ -1,0 +1,25 @@
+{
+  "name": "dynongo",
+  "version": "0.0.1",
+  "description": "MongoDB like syntax for DynamoDB",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SamVerschueren/dynongo.git"
+  },
+  "keywords": [
+    "dynamodb",
+    "mongodb",
+    "mongo",
+    "mongoose"
+  ],
+  "author": "Sam Verschueren",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SamVerschueren/dynongo/issues"
+  },
+  "homepage": "https://github.com/SamVerschueren/dynongo"
+}

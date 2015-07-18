@@ -11,7 +11,7 @@ of the index as second argument.
 
 ```javascript
 Q.fcall(function() {
-    // Retrieve all the users from Amazon
+    // Retrieve all the employees from Amazon
     return Employee.find({organisation: 'Amazon'}).exec();
 }).then(function(employees) {
     // Do something

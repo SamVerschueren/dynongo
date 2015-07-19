@@ -28,7 +28,7 @@ If you only want the `FirstName` and `Name` of the employees, you can use the `s
 Employee.find({organisation: 'Amazon'}).select('FirstName, Name').exec();
 ```
 
-Or if you want to filter on more fine grained on other fields, for example if you want to retrieve all the employees
+Or if you want to filter more fine grained on other fields, for example if you want to retrieve all the employees
 with a salary greater then $3000.
 
 ```javascript

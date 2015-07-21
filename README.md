@@ -1,6 +1,9 @@
-# dynongo
+# dynongo (alpha)
 
 > MongoDB like syntax for DynamoDB
+
+Please note that this is an alpha version of the library. There are some bugs to fix and extras to implement before
+it can be used as daily driver for DynamoDB.
 
 ## Installation
 

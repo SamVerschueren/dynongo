@@ -2,37 +2,65 @@
 
 > MongoDB like syntax for DynamoDB
 
-## Methods
+## Installation
 
-### Find
+```bash
+npm install --save dynongo
+```
 
-The find method expects the key condition. If you want to find records with a Global Secondary Index, you can pass the name
-of the index as second argument.
+## Usage
+
+### Connect
+
+First of all, we have to connect with the database.
 
 ```javascript
-Q.fcall(function() {
-    // Retrieve all the employees from Amazon
-    return Employee.find({organisation: 'Amazon'}).exec();
-}).then(function(employees) {
-    // Do something
-    console.log(employees);
-}).catch(function(err) {
-    // handle the error
-    console.error(err, err.message);
+var db = require('dynongo');
+
+// Connect with dynamodb in the us-west-1 region
+db.connect({
+    region: 'us-west-1'
 });
 ```
 
-If you only want the `FirstName` and `Name` of the employees, you can use the `select` method.
+Please use IAM roles or environment variables to connect with the dynamodb database. This way, no keys have to
+be embedded in your code.
+
+If you still want to use embedded keys, you can by providing an `accessKeyId` and `secretAccessKey` property.
 
 ```javascript
-Employee.find({organisation: 'Amazon'}).select('FirstName, Name').exec();
+db.connect({
+    accessKeyId: 'accessKeyId',
+    secretAccessKey: 'secretAccessKey',
+    region: 'us-west-1'
+});
 ```
 
-Or if you want to filter more fine grained on other fields, for example if you want to retrieve all the employees
-with a salary greater then $3000.
+#### DynamoDB Local
+
+It is possible to connect to a local DynamoDB database by setting the `local` property to `true`. It will use port
+8000 by default, but if you want to change that port, you can provide a `localPort` property.
 
 ```javascript
-Employee.find({organisation: 'Amazon'}).where({salary: {$gt: 3000}}).select('FirstName, Name').exec();
+db.connect({
+    region: 'us-west-1',
+    local: true,
+    localPort: 4444             // 8000 if not provided
+});
+```
+
+#### Prefixing tables
+
+It's a good thing to prefix the tables with the name of the project and maybe the environment like production or staging. Instead
+of always repeating those names every time you want to query the table, you can provide the prefix and prefix delimiter once. The
+default delimiter is the `.`.
+
+```javascript
+db.connect({
+    region: 'us-west-1',
+    prefix: 'myapp-development',
+    prefixDelimiter: '-'             // . if not provided
+});
 ```
 
 ## Contributors

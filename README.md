@@ -38,8 +38,8 @@ db.connect({
 
 #### DynamoDB Local
 
-It is possible to connect to a local DynamoDB database by setting the `local` property to `true`. It will use port
-8000 by default, but if you want to change that port, you can provide a `localPort` property.
+It is possible to connect to a [local DynamoDB](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.DynamoDBLocal.html) database 
+by setting the `local` property to `true`. It will use port 8000 by default, but if you want to change that port, you can provide a `localPort` property.
 
 ```javascript
 db.connect({

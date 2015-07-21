@@ -45,7 +45,7 @@ It is possible to connect to a local DynamoDB database by setting the `local` pr
 db.connect({
     region: 'us-west-1',
     local: true,
-    localPort: 4444             // 8000 if not provided
+    localPort: 4444                 // 8000 if not provided
 });
 ```
 
@@ -59,9 +59,19 @@ default delimiter is the `.`.
 db.connect({
     region: 'us-west-1',
     prefix: 'myapp-development',
-    prefixDelimiter: '-'             // . if not provided
+    prefixDelimiter: '-'            // . if not provided
 });
 ```
+
+### Tables
+
+In order for the developer to execute methods on a table, you have to retrieve the table object from the database.
+
+```javascript
+var Employee = db.table('Employee');
+```
+
+The table name will be automatically prefixed by the `prefix` provided in the connection object.
 
 ## Contributors
 

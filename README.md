@@ -73,6 +73,39 @@ var Employee = db.table('Employee');
 
 The table name will be automatically prefixed by the `prefix` provided in the connection object.
 
+### Methods
+
+#### find
+
+```javascript
+Q.fcall(function() {
+    // Retrieve the first name and name from Amazon employees with a salary greater then $3000.
+    return Employee.find({organisation: 'Amazon'}).where({Salary: {$gt: 3000}}).select('FirstName Name').exec();
+}).then(function(employees) {
+    // Do something
+    console.log(employees);
+}).catch(function(err) {
+    // handle the error
+    console.error(err, err.message);
+});
+```
+
+#### remove
+
+The remove method expects the primary key (hash + range) of the record to be removed.
+
+```javascript
+Q.fcall(function() {
+    // Remove the employee with email john.doe@amazon.com that is an employee of Amazon
+    return Employee.remove({organisation: 'Amazon', email: 'john.doe@amazon.com'}).exec();
+}).then(function() {
+    console.log('removed successfully');
+}).catch(function(err) {
+    // handle the error
+    console.error(err, err.message);
+});
+```
+
 ## Contributors
 
 - Sam Verschueren [<sam.verschueren@gmail.com>]

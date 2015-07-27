@@ -20,16 +20,14 @@ First of all, we have to connect with the database.
 ```javascript
 var db = require('dynongo');
 
-// Connect with dynamodb in the us-west-1 region
-db.connect({
-    region: 'us-west-1'
-});
+db.connect();
 ```
 
 Please use IAM roles or environment variables to connect with the dynamodb database. This way, no keys have to
-be embedded in your code.
+be embedded in your code. You can find more information on the [SDK](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html)
+page.
 
-If you still want to use embedded keys, you can by providing an `accessKeyId` and `secretAccessKey` property.
+If you still want to use embedded credentials, you can by providing an `accessKeyId`, `secretAccessKey` and an optional `region` property.
 
 ```javascript
 db.connect({
@@ -46,7 +44,6 @@ by setting the `local` property to `true`. It will use port 8000 by default, but
 
 ```javascript
 db.connect({
-    region: 'us-west-1',
     local: true,
     localPort: 4444                 // 8000 if not provided
 });
@@ -60,7 +57,6 @@ default delimiter is the `.`.
 
 ```javascript
 db.connect({
-    region: 'us-west-1',
     prefix: 'myapp-development',
     prefixDelimiter: '-'            // . if not provided
 });

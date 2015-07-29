@@ -1,7 +1,10 @@
 'use strict';
 
 // Export DynamoDB
-module.exports = require('./lib/DynamoDB.js');
+module.exports = require('./lib/DynamoDB');
+
+// Export the table
+module.exports.Table = require('./lib/Table');
 
 // Export the methods. Should only be used for testing purposes
 module.exports.methods = {

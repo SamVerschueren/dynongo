@@ -140,6 +140,80 @@ Q.fcall(function() {
 });
 ```
 
+### Create a table
+
+A table can be created by either calling `create()` on a table instance or by calling `createTable` on the database instance.
+
+The first way is by calling the `create()` method.
+
+```javascript
+// Retrieve the table instance
+var Employee = db.table('Employee');
+
+// Define the schema
+var schema = {
+    TableName: 'Employee',
+    AttributeDefinitions: [
+        { AttributeName: "id", AttributeType: "S" }
+    ],
+    KeySchema: [
+        { AttributeName: "id", KeyType: "HASH" }
+    ],
+    ProvisionedThroughput: {
+        ReadCapacityUnits: 1,
+        WriteCapacityUnits: 1
+    }
+};
+
+// Drop the table
+Employee.create(schema).exec()
+    .then(function() {
+        // The table is successfully created
+    })
+    .catch(function(err) {
+        // Something went wrong when creating the table
+    });
+```
+
+The second way is by calling the `createTable()` method.
+
+```javascript
+db.createTable(schema).exec()
+    .then(function() {
+        // The table is successfully created
+    })
+    .catch(function(err) {
+        // Something went wrong when creating the table
+    });
+```
+
+This is shorthand for the first method.
+
+#### Awaiting the result
+
+Creating a table can take a while. The previous examples do not wait for the action to be completed. But there
+might be use cases where you have to wait untill the table is created entirely before continuing.
+This can be done with the `await()` method.
+
+```javascript
+db.createTable(schema).await().exec()
+    .then(function() {
+        // The table is successfully created
+    })
+    .catch(function(err) {
+        // Something went wrong when creating the table
+    });
+```
+
+This will make sure the table is polled every 1000 milliseconds untill the status of the table is `active`. If you want to poll
+at another speed, you can by providing the number of milliseconds in the `await` method.
+
+```javascript
+db.createTable(schema).await(5000).exec();
+```
+
+This will poll the status of the table every 5 seconds instead of every second.
+
 ### Drop a table
 
 A table can be dropped by either calling `drop()` on a table instance or by calling `dropTable()` on the database instance.
@@ -196,7 +270,7 @@ the number of milliseconds in the `await` method.
 db.dropTable('Employee').await(5000).exec();
 ```
 
-This will poll the status of the table very 5 seconds instead of every second.
+This will poll the status of the table every 5 seconds instead of every second.
 
 ## Contributors
 

@@ -39,7 +39,7 @@ db.connect({
 
 #### DynamoDB Local
 
-It is possible to connect to a [local DynamoDB](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.DynamoDBLocal.html) database 
+It is possible to connect to a [local DynamoDB](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.DynamoDBLocal.html) database
 by setting the `local` property to `true`. It will use port 8000 by default, but if you want to change that port, you can provide a `localPort` property.
 
 ```javascript
@@ -139,6 +139,64 @@ Q.fcall(function() {
     console.error(err, err.message);
 });
 ```
+
+### Drop a table
+
+A table can be dropped by either calling `drop()` on a table instance or by calling `dropTable()` on the database instance.
+
+The first way is by calling the `drop()` method.
+
+```javascript
+// Retrieve the table instance
+var Employee = db.table('Employee');
+
+// Drop the table
+Employee.drop().exec()
+    .then(function() {
+        // The table is successfully dropped
+    })
+    .catch(function(err) {
+        // Something went wrong when dropping the table
+    });
+```
+
+The second way is by calling the `dropTable()` method.
+
+```javascript
+db.dropTable('Employee').exec()
+    .then(function() {
+        // The table is successfully dropped
+    })
+    .catch(function(err) {
+        // Something went wrong when dropping the table
+    });
+```
+
+This method is just a shorthand method for the first example.
+
+#### Awaiting the result
+
+Dropping a table can take a while, especially when the table has a lot of data. The previous examples do not wait for the action to be completed. But there
+might be use cases where you have to wait untill the table is removed entirely before continuing. This can be done with the `await()` method.
+
+```javascript
+db.dropTable('Employee').await().exec()
+    .then(function() {
+        // The table is successfully dropped entirely
+    })
+    .catch(function(err) {
+        // Something went wrong when dropping the table
+    });
+```
+
+This will make sure the table is polled every 1000 milliseconds untill the table does not exist anymore. If you want to poll at another speed, you can by providing
+the number of milliseconds in the `await` method.
+
+```javascript
+db.dropTable('Employee').await(5000).exec();
+```
+
+This will poll the status of the table very 5 seconds instead of every second.
 
 ## Contributors
 

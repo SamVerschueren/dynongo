@@ -11,5 +11,7 @@ module.exports.methods = {
     Query: require('./lib/methods/Query'),
     Scan: require('./lib/methods/Scan'),
     UpdateItem: require('./lib/methods/UpdateItem'),
-    DeleteItem: require('./lib/methods/DeleteItem')
+    DeleteItem: require('./lib/methods/DeleteItem'),
+    DeleteTable: require('./lib/methods/DeleteTable'),
+    CreateTable: require('./lib/methods/CreateTable')
 };

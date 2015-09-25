@@ -1,5 +1,8 @@
 # dynongo (alpha)
 
+[![Build Status](https://travis-ci.org/SamVerschueren/dynongo.svg)](https://travis-ci.org/SamVerschueren/dynongo)
+[![Coverage Status](https://coveralls.io/repos/SamVerschueren/dynongo/badge.svg?branch=master&service=github)](https://coveralls.io/github/SamVerschueren/dynongo?branch=master)
+
 > MongoDB like syntax for DynamoDB
 
 Please note that this is an alpha version of the library. There are some bugs to fix and extras to implement before

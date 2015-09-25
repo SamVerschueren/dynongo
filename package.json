@@ -4,7 +4,8 @@
   "description": "MongoDB like syntax for DynamoDB",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "ava test/**/*.js",
+    "coveralls": "node_modules/.bin/istanbul cover _mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | node_modules/.bin/coveralls && rm -rf ./coverage"
   },
   "repository": {
     "type": "git",
@@ -16,6 +17,10 @@
     "mongo",
     "mongoose"
   ],
+  "files": [
+    "index.js",
+    "lib"
+  ],
   "author": "Sam Verschueren",
   "license": "MIT",
   "bugs": {
@@ -26,5 +31,10 @@
     "aws-sdk": "^2.2.0",
     "lodash": "^3.10.0",
     "q": "^1.4.1"
+  },
+  "devDependencies": {
+    "ava": "^0.2.0",
+    "coveralls": "^2.11.4",
+    "istanbul": "^0.3.21"
   }
 }

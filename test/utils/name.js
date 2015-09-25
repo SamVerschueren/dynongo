@@ -2,7 +2,7 @@
 
 // module dependencies
 var test = require('ava'),
-    name = require('../../lib/utils/name.js');
+    name = require('../../lib/utils/name');
 
 // #generateKeyName
 test('Simple name should generate correct result', function (t) {

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "ava test/**/*.js",
-    "coveralls": "node_modules/.bin/istanbul cover _mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | node_modules/.bin/coveralls && rm -rf ./coverage"
+    "coveralls": "nyc npm test --all --reporter=text-lcov | coveralls && rm -rf ./.nyc_output"
   },
   "repository": {
     "type": "git",
@@ -35,6 +35,6 @@
   "devDependencies": {
     "ava": "^0.2.0",
     "coveralls": "^2.11.4",
-    "istanbul": "^0.3.21"
+    "nyc": "^3.2.2"
   }
 }

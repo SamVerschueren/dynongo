@@ -79,6 +79,42 @@ test('$lte', function (t) {
     t.end();
 });
 
+test('$in should throw an error if it is not an array', function (t) {
+    t.throws(query.parse.bind(query, { id: { $in: 1 } }), 'Please provide an array of elements for the $in operator.');
+
+    t.end();
+});
+
+test('$nin should throw an error if it is not an array', function (t) {
+    t.throws(query.parse.bind(query, { id: { $nin: 1 } }), 'Please provide an array of elements for the $nin operator.');
+
+    t.end();
+});
+
+test('$in', function (t) {
+    var result = query.parse({ id: { $in: [1, 2, 3] } });
+
+    console.log(result);
+
+    t.is(result.ConditionExpression, '#k_id IN (:v_id_0,:v_id_1,:v_id_2)');
+    t.same(result.ExpressionAttributeNames, { '#k_id': 'id' });
+    t.same(result.ExpressionAttributeValues, { ':v_id_0': 1, ':v_id_1': 2, ':v_id_2': 3 });
+
+    t.end();
+});
+
+test('$nin', function (t) {
+    var result = query.parse({ id: { $nin: [1, 2, 3] } });
+
+    console.log(result);
+
+    t.is(result.ConditionExpression, 'NOT #k_id IN (:v_id_0,:v_id_1,:v_id_2)');
+    t.same(result.ExpressionAttributeNames, { '#k_id': 'id' });
+    t.same(result.ExpressionAttributeValues, { ':v_id_0': 1, ':v_id_1': 2, ':v_id_2': 3 });
+
+    t.end();
+});
+
 test('$contains', function (t) {
     var result = query.parse({ array: { $contains: 5 } });
 

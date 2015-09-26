@@ -2,8 +2,10 @@
 
 // module dependencies
 var test = require('ava'),
-    assert = require('assert'),
+    chai = require('chai'),
     query = require('../../lib/utils/query');
+
+chai.should();
 
 test('Should parse an object with one object', function (t) {
     var result = query.parse({ id: 5 });
@@ -75,6 +77,67 @@ test('$contains', function (t) {
     t.end();
 });
 
+test('$exists is set to 1', function (t) {
+    var result = query.parse({ foo: { $exists: 1 } });
+
+    t.is(result.ConditionExpression, 'attribute_exists(#k_foo)');
+    t.same(result.ExpressionAttributeNames, { '#k_foo': 'foo' });
+    t.same(result.ExpressionAttributeValues, { });
+
+    t.end();
+});
+
+test('$exists is set to true', function (t) {
+    var result = query.parse({ foo: { $exists: true } });
+
+    t.is(result.ConditionExpression, 'attribute_exists(#k_foo)');
+    t.same(result.ExpressionAttributeNames, { '#k_foo': 'foo' });
+    t.same(result.ExpressionAttributeValues, { });
+
+    t.end();
+});
+
+test('$exists is set to 0', function (t) {
+    var result = query.parse({ foo: { $exists: 0 } });
+
+    t.is(result.ConditionExpression, 'attribute_not_exists(#k_foo)');
+    t.same(result.ExpressionAttributeNames, { '#k_foo': 'foo' });
+    t.same(result.ExpressionAttributeValues, { });
+
+    t.end();
+});
+
+test('$exists is set to false', function (t) {
+    var result = query.parse({ foo: { $exists: false } });
+
+    t.is(result.ConditionExpression, 'attribute_not_exists(#k_foo)');
+    t.same(result.ExpressionAttributeNames, { '#k_foo': 'foo' });
+    t.same(result.ExpressionAttributeValues, { });
+
+    t.end();
+});
+
+test('$exists is set to -1 should check for not exists', function (t) {
+    var result = query.parse({ foo: { $exists: -1 } });
+
+    t.is(result.ConditionExpression, 'attribute_not_exists(#k_foo)');
+    t.same(result.ExpressionAttributeNames, { '#k_foo': 'foo' });
+    t.same(result.ExpressionAttributeValues, { });
+
+    t.end();
+});
+
+test('$exists is set to 2 should check for not exists', function (t) {
+    var result = query.parse({ foo: { $exists: 2 } });
+
+    t.is(result.ConditionExpression, 'attribute_not_exists(#k_foo)');
+    t.same(result.ExpressionAttributeNames, { '#k_foo': 'foo' });
+    t.same(result.ExpressionAttributeValues, { });
+
+    t.end();
+});
+
+
 test('$beginsWith', function (t) {
     var result = query.parse({ foo: { $beginsWith: 'bar' } });
 
@@ -88,11 +151,9 @@ test('$beginsWith', function (t) {
 test('$beginsWith should parse a number to a string', function (t) {
     var result = query.parse({ foo: { $beginsWith: 5 } });
 
-    console.log(result);
-
     t.is(result.ConditionExpression, 'begins_with(#k_foo, :v_foo)');
     t.same(result.ExpressionAttributeNames, { '#k_foo': 'foo' });
-    assert.deepStrictEqual(result.ExpressionAttributeValues, { ':v_foo': '5' });
+    result.ExpressionAttributeValues.should.be.eql({ ':v_foo': '5' });
 
     t.end();
 });

@@ -7,6 +7,18 @@ var test = require('ava'),
 
 chai.should();
 
+test('Should throw an error if the value is undefined', function (t) {
+    t.throws(query.parse.bind(query, { id: undefined }), 'Value for key \'id\' is undefined. Please provide a valid value.');
+
+    t.end();
+});
+
+test('Should throw an error if the value of a sub property is undefined', function (t) {
+    t.throws(query.parse.bind(query, { foo: { $gt: undefined } }), 'Value for key \'foo\' is undefined. Please provide a valid value.');
+
+    t.end();
+});
+
 test('Should parse an object with one object', function (t) {
     var result = query.parse({ id: 5 });
 

@@ -1,4 +1,4 @@
-# dynongo (alpha)
+# dynongo
 
 [![Build Status](https://travis-ci.org/SamVerschueren/dynongo.svg)](https://travis-ci.org/SamVerschueren/dynongo)
 

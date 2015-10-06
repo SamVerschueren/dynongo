@@ -1,12 +1,9 @@
-'use strict';
-
-// module dependencies
-var test = require('ava'),
-    name = require('../../lib/utils/name');
+import test from 'ava';
+import name from '../../lib/utils/name';
 
 // #generateKeyName
-test('Simple name should generate correct result', function (t) {
-    var result = name.generateKeyName('foo');
+test('Simple name should generate correct result', t => {
+    const result = name.generateKeyName('foo');
 
     t.is(result.Expression, '#k_foo');
     t.same(result.ExpressionAttributeNames, { '#k_foo': 'foo' });
@@ -14,8 +11,8 @@ test('Simple name should generate correct result', function (t) {
     t.end();
 });
 
-test('foo.bar should generate two expression attribute names', function (t) {
-    var result = name.generateKeyName('foo.bar');
+test('foo.bar should generate two expression attribute names', t => {
+    const result = name.generateKeyName('foo.bar');
 
     t.is(result.Expression, '#k_foo.#k_bar');
     t.same(result.ExpressionAttributeNames, { '#k_foo': 'foo', '#k_bar': 'bar' });
@@ -23,8 +20,8 @@ test('foo.bar should generate two expression attribute names', function (t) {
     t.end();
 });
 
-test('foo.bar.baz should generate three expression attribute names', function (t) {
-    var result = name.generateKeyName('foo.bar.baz');
+test('foo.bar.baz should generate three expression attribute names', t => {
+    const result = name.generateKeyName('foo.bar.baz');
 
     t.is(result.Expression, '#k_foo.#k_bar.#k_baz');
     t.same(result.ExpressionAttributeNames, { '#k_foo': 'foo', '#k_bar': 'bar', '#k_baz': 'baz' });
@@ -32,8 +29,8 @@ test('foo.bar.baz should generate three expression attribute names', function (t
     t.end();
 });
 
-test('Array name should generate correct result', function (t) {
-    var result = name.generateKeyName('foo[0]');
+test('Array name should generate correct result', t => {
+    const result = name.generateKeyName('foo[0]');
 
     t.is(result.Expression, '#k_foo[0]');
     t.same(result.ExpressionAttributeNames, { '#k_foo': 'foo' });
@@ -42,8 +39,8 @@ test('Array name should generate correct result', function (t) {
 });
 
 // #generateValueName
-test('Should generate a correct result name of it does not yet exist', function (t) {
-    var result = name.generateValueName('foo', 'bar');
+test('Should generate a correct result name of it does not yet exist', t => {
+    const result = name.generateValueName('foo', 'bar');
 
     t.is(result.Expression, ':v_foo');
     t.same(result.ExpressionAttributeValues, { ':v_foo': 'bar' });
@@ -51,8 +48,8 @@ test('Should generate a correct result name of it does not yet exist', function 
     t.end();
 });
 
-test('Should generate a correct result name of it already exists, and the value is not the same', function (t) {
-    var result = name.generateValueName('foo', 'bar', { ':v_foo': 'baz' });
+test('Should generate a correct result name of it already exists, and the value is not the same', t => {
+    const result = name.generateValueName('foo', 'bar', { ':v_foo': 'baz' });
 
     t.is(result.Expression, ':v_foo_1');
     t.same(result.ExpressionAttributeValues, { ':v_foo_1': 'bar' });
@@ -60,8 +57,8 @@ test('Should generate a correct result name of it already exists, and the value 
     t.end();
 });
 
-test('Should generate a correct result if the key refers to an array element', function (t) {
-    var result = name.generateValueName('foo[0]', 'bar');
+test('Should generate a correct result if the key refers to an array element', t => {
+    const result = name.generateValueName('foo[0]', 'bar');
 
     t.is(result.Expression, ':v_foo_0_');
     t.same(result.ExpressionAttributeValues, { ':v_foo_0_': 'bar' });
@@ -69,8 +66,8 @@ test('Should generate a correct result if the key refers to an array element', f
     t.end();
 });
 
-test('Should generate a correct result if the value is an array', function (t) {
-    var result = name.generateValueName('foo', ['bar', 'baz']);
+test('Should generate a correct result if the value is an array', t => {
+    const result = name.generateValueName('foo', ['bar', 'baz']);
 
     t.same(result.Expression, [':v_foo_0', ':v_foo_1']);
     t.same(result.ExpressionAttributeValues, { ':v_foo_0': 'bar', ':v_foo_1': 'baz' });
@@ -78,8 +75,8 @@ test('Should generate a correct result if the value is an array', function (t) {
     t.end();
 });
 
-test('Should generate a correct result if the key refers to an array element and the value is an array', function (t) {
-    var result = name.generateValueName('foo[0]', ['bar', 'baz']);
+test('Should generate a correct result if the key refers to an array element and the value is an array', t => {
+    const result = name.generateValueName('foo[0]', ['bar', 'baz']);
 
     t.same(result.Expression, [':v_foo_0__0', ':v_foo_0__1']);
     t.same(result.ExpressionAttributeValues, { ':v_foo_0__0': 'bar', ':v_foo_0__1': 'baz' });

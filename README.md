@@ -1,12 +1,8 @@
 # dynongo (alpha)
 
 [![Build Status](https://travis-ci.org/SamVerschueren/dynongo.svg)](https://travis-ci.org/SamVerschueren/dynongo)
-[![Coverage Status](https://coveralls.io/repos/SamVerschueren/dynongo/badge.svg?branch=master&service=github)](https://coveralls.io/github/SamVerschueren/dynongo?branch=master)
 
 > MongoDB like syntax for DynamoDB
-
-Please note that this is an alpha version of the library. There are some bugs to fix and extras to implement before
-it can be used as daily driver for DynamoDB.
 
 ## Installation
 
@@ -48,6 +44,7 @@ by setting the `local` property to `true`. It will use port 8000 by default, but
 ```javascript
 db.connect({
     local: true,
+    host: '192.168.5.5',            // localhost if not provided
     localPort: 4444                 // 8000 if not provided
 });
 ```

@@ -4,7 +4,7 @@
   "description": "MongoDB like syntax for DynamoDB",
   "main": "index.js",
   "scripts": {
-    "test": "ava test/**/*.js",
+    "test": "xo && ava test/**/*.js",
     "coveralls": "nyc npm test --all --reporter=text-lcov | coveralls && rm -rf ./.nyc_output"
   },
   "repository": {
@@ -29,8 +29,11 @@
   "homepage": "https://github.com/SamVerschueren/dynongo",
   "dependencies": {
     "aws-sdk": "^2.2.0",
-    "lodash": "^3.10.0",
-    "q": "^1.4.1"
+    "is-object": "^1.0.1",
+    "object-assign": "^4.0.1",
+    "object-pick": "^0.1.1",
+    "pify": "^2.2.0",
+    "pinkie-promise": "^1.0.0"
   },
   "devDependencies": {
     "ava": "*",

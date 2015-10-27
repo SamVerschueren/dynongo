@@ -4,8 +4,8 @@
   "description": "MongoDB like syntax for DynamoDB",
   "main": "index.js",
   "scripts": {
-    "test": "xo && ava test/**/*.js",
-    "coveralls": "nyc npm test --all --reporter=text-lcov | coveralls && rm -rf ./.nyc_output"
+    "test": "xo && nyc ava test/**/*.js --all",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",

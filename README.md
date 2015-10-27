@@ -1,6 +1,4 @@
-# dynongo
-
-[![Build Status](https://travis-ci.org/SamVerschueren/dynongo.svg)](https://travis-ci.org/SamVerschueren/dynongo)
+# dynongo [![Build Status](https://travis-ci.org/SamVerschueren/dynongo.svg)](https://travis-ci.org/SamVerschueren/dynongo)
 
 > MongoDB like syntax for DynamoDB
 
@@ -17,7 +15,7 @@ npm install --save dynongo
 First of all, we have to connect with the database.
 
 ```javascript
-var db = require('dynongo');
+const db = require('dynongo');
 
 db.connect();
 ```
@@ -77,31 +75,19 @@ The table name will be automatically prefixed by the `prefix` provided in the co
 #### find
 
 ```javascript
-Q.fcall(function() {
-    // Retrieve the first name and name from Amazon employees with a salary greater then $3000.
-    return Employee.find({Organisation: 'Amazon'}).where({Salary: {$gt: 3000}}).select('FirstName Name').exec();
-}).then(function(employees) {
-    // Do something
-    console.log(employees);
-}).catch(function(err) {
-    // handle the error
-    console.error(err, err.message);
-});
+Employee.find({Organisation: 'Amazon'}).where({Salary: {$gt: 3000}}).select('FirstName Name').exec()
+    .then(employees => {
+        // => [{FirstName: 'Foo', Name: 'Bar'}]
+    });
 ```
 
 #### insert
 
 ```javascript
-Q.fcall(function() {
-    // Insert a new Amazon employee
-    return Employee.insert({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {Title: 'CFO', FirstName: 'Foo', Name: 'Bar', Salary: 4500}).exec();
-}).then(function(employee) {
-    // Do something
-    console.log(employee);
-}).catch(function(err) {
-    // handle the error
-    console.error(err, err.message);
-});
+ Employee.insert({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {Title: 'CFO', FirstName: 'Foo', Name: 'Bar', Salary: 4500}).exec()
+    .then(employee => {
+        // => {FirstName: 'Foo', Name: 'Bar', Salary: 4500, Title: 'CFO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}
+    });
 ```
 
 #### update
@@ -110,34 +96,23 @@ The first parameter in the `update` method is the primary key (hash + range) and
 defines the updates of the fields.
 
 ```javascript
-Q.fcall(function() {
-    // Increment the salary with $150 and set the job title to CTO.
-    return Employee.update({Organisation: 'Amazon', Email: 'john.doe@amazon.com'}, {$set: {Title: 'CTO'}, $inc: {Salary: 150}}).exec();
-}).then(function(employee) {
-    // Do something
-    console.log(employee);
-}).catch(function(err) {
-    // handle the error
-    console.error(err, err.message);
-});
+Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$set: {Title: 'CTO'}, $inc: {Salary: 150}}).exec()
+    .then(employee => {
+        // => { {FirstName: 'Foo', Name: 'Bar', Salary: 4650, Title: 'CTO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}
+    });
 ```
 
 If no Amazon employee exists with that email address exists, the method will fail.
 
 #### remove
 
-The remove method expects the primary key (hash + range) of the record to be removed.
+The remove method expects the primary key (hash + range).
 
 ```javascript
-Q.fcall(function() {
-    // Remove the employee with email john.doe@amazon.com that is an employee of Amazon
-    return Employee.remove({Organisation: 'Amazon', Email: 'john.doe@amazon.com'}).exec();
-}).then(function() {
-    console.log('removed successfully');
-}).catch(function(err) {
-    // handle the error
-    console.error(err, err.message);
-});
+Employee.remove({Organisation: 'Amazon', Email: 'john.doe@amazon.com'}).exec()
+    .then(() => {
+        // => removed
+    });
 ```
 
 ### Create a table
@@ -147,17 +122,15 @@ A table can be created by either calling `create()` on a table instance or by ca
 The first way is by calling the `create()` method.
 
 ```javascript
-// Retrieve the table instance
-var Employee = db.table('Employee');
+const Employee = db.table('Employee');
 
-// Define the schema
-var schema = {
+const schema = {
     TableName: 'Employee',
     AttributeDefinitions: [
-        { AttributeName: "id", AttributeType: "S" }
+        { AttributeName: 'id', AttributeType: 'S' }
     ],
     KeySchema: [
-        { AttributeName: "id", KeyType: "HASH" }
+        { AttributeName: 'id', KeyType: 'HASH' }
     ],
     ProvisionedThroughput: {
         ReadCapacityUnits: 1,
@@ -165,13 +138,9 @@ var schema = {
     }
 };
 
-// Drop the table
 Employee.create(schema).exec()
-    .then(function() {
-        // The table is successfully created
-    })
-    .catch(function(err) {
-        // Something went wrong when creating the table
+    .then(() => {
+        // => Table is being created
     });
 ```
 
@@ -179,11 +148,8 @@ The second way is by calling the `createTable()` method.
 
 ```javascript
 db.createTable(schema).exec()
-    .then(function() {
-        // The table is successfully created
-    })
-    .catch(function(err) {
-        // Something went wrong when creating the table
+    .then(() => {
+        // Table is being created
     });
 ```
 
@@ -197,11 +163,8 @@ This can be done with the `await()` method.
 
 ```javascript
 db.createTable(schema).await().exec()
-    .then(function() {
-        // The table is successfully created
-    })
-    .catch(function(err) {
-        // Something went wrong when creating the table
+    .then(() => {
+        // Table is created
     });
 ```
 
@@ -221,16 +184,11 @@ A table can be dropped by either calling `drop()` on a table instance or by call
 The first way is by calling the `drop()` method.
 
 ```javascript
-// Retrieve the table instance
-var Employee = db.table('Employee');
+const Employee = db.table('Employee');
 
-// Drop the table
 Employee.drop().exec()
-    .then(function() {
-        // The table is successfully dropped
-    })
-    .catch(function(err) {
-        // Something went wrong when dropping the table
+    .then(() => {
+        // => Table is being dropped
     });
 ```
 
@@ -238,12 +196,9 @@ The second way is by calling the `dropTable()` method.
 
 ```javascript
 db.dropTable('Employee').exec()
-    .then(function() {
-        // The table is successfully dropped
+    .then(() => {
+        // => Table is being dropped
     })
-    .catch(function(err) {
-        // Something went wrong when dropping the table
-    });
 ```
 
 This method is just a shorthand method for the first example.
@@ -255,12 +210,9 @@ might be use cases where you have to wait untill the table is removed entirely b
 
 ```javascript
 db.dropTable('Employee').await().exec()
-    .then(function() {
-        // The table is successfully dropped entirely
+    .then(() => {
+        // => Table is dropped
     })
-    .catch(function(err) {
-        // Something went wrong when dropping the table
-    });
 ```
 
 This will make sure the table is polled every 1000 milliseconds untill the table does not exist anymore. If you want to poll at another speed, you can by providing

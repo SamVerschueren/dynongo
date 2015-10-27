@@ -39,6 +39,11 @@ test('Array name should generate correct result', t => {
 });
 
 // #generateValueName
+test('throw error', t => {
+	t.throws(name.generateValueName.bind(name, ['key']), Error);
+	t.end();
+});
+
 test('Should generate a correct result name of it does not yet exist', t => {
 	const result = name.generateValueName('foo', 'bar');
 
@@ -80,6 +85,15 @@ test('Should generate a correct result if the key refers to an array element and
 
 	t.same(result.Expression, [':v_foo_0__0', ':v_foo_0__1']);
 	t.same(result.ExpressionAttributeValues, {':v_foo_0__0': 'bar', ':v_foo_0__1': 'baz'});
+
+	t.end();
+});
+
+test('indexify', t => {
+	const result = name.generateValueName('foo', 'bar', {':v_foo': 'baz', ':v_foo_1': 'baz_1'});
+
+	t.same(result.Expression, ':v_foo_2');
+	t.same(result.ExpressionAttributeValues, {':v_foo_2': 'bar'});
 
 	t.end();
 });

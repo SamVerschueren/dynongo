@@ -242,3 +242,12 @@ test('$and throws error', t => {
 		t.end();
 	}
 });
+
+test('throw error if operator is not supported', t => {
+	try {
+		query.parse({id: {$g: 5}});
+	} catch (err) {
+		t.is(err.message, 'Unknown operator $g');
+		t.end();
+	}
+});

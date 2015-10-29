@@ -84,6 +84,15 @@ Employee.find({Organisation: 'Amazon'}).where({Salary: {$gt: 3000}}).select('Fir
     });
 ```
 
+#### count
+
+```javascript
+Employee.find({Organisation: 'Amazon'}).where({Salary: {$gt: 3000}}).count().exec()
+    .then(count => {
+        // => 8
+    });
+```
+
 #### insert
 
 ```javascript

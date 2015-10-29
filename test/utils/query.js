@@ -205,7 +205,26 @@ test('Should parse an object with two properties', t => {
 	t.end();
 });
 
-test('Should parse an $and expression', t => {
+test('$or', t => {
+	const result = query.parse({$or: [{id: 5}, {id: 8}]});
+
+	t.is(result.ConditionExpression, '(#k_id=:v_id OR #k_id=:v_id_1)');
+	t.same(result.ExpressionAttributeNames, {'#k_id': 'id'});
+	t.same(result.ExpressionAttributeValues, {':v_id': 5, ':v_id_1': 8});
+
+	t.end();
+});
+
+test('$or throws error', t => {
+	try {
+		query.parse({$or: {id: 5}});
+	} catch (err) {
+		t.is(err.message, 'Invalid expression $or. Value should be an array.');
+		t.end();
+	}
+});
+
+test('$and', t => {
 	const result = query.parse({$and: [{id: 5}, {id: 8}]});
 
 	t.is(result.ConditionExpression, '(#k_id=:v_id AND #k_id=:v_id_1)');
@@ -213,4 +232,13 @@ test('Should parse an $and expression', t => {
 	t.same(result.ExpressionAttributeValues, {':v_id': 5, ':v_id_1': 8});
 
 	t.end();
+});
+
+test('$and throws error', t => {
+	try {
+		query.parse({$and: {id: 5}});
+	} catch (err) {
+		t.is(err.message, 'Invalid expression $and. Value should be an array.');
+		t.end();
+	}
 });

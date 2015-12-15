@@ -28,17 +28,17 @@
   },
   "homepage": "https://github.com/SamVerschueren/dynongo",
   "dependencies": {
-    "aws-sdk": "^2.2.0",
+    "aws-sdk": "^2.2.22",
     "is-object": "^1.0.1",
     "object-assign": "^4.0.1",
     "object-pick": "^0.1.1",
-    "pify": "^2.2.0",
-    "pinkie-promise": "^1.0.0"
+    "pify": "^2.3.0",
+    "pinkie-promise": "^2.0.0"
   },
   "devDependencies": {
     "ava": "*",
-    "coveralls": "^2.11.4",
-    "nyc": "^3.2.2",
+    "coveralls": "^2.11.6",
+    "nyc": "^5.0.0",
     "xo": "*"
   }
 }

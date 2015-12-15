@@ -3,14 +3,10 @@ import query from '../../lib/utils/query';
 
 test('Should throw an error if the value is undefined', t => {
 	t.throws(query.parse.bind(query, {id: undefined}), 'Value for key \'id\' is undefined. Please provide a valid value.');
-
-	t.end();
 });
 
 test('Should throw an error if the value of a sub property is undefined', t => {
 	t.throws(query.parse.bind(query, {foo: {$gt: undefined}}), 'Value for key \'foo\' is undefined. Please provide a valid value.');
-
-	t.end();
 });
 
 test('Should parse an object with one object', t => {
@@ -19,8 +15,6 @@ test('Should parse an object with one object', t => {
 	t.is(result.ConditionExpression, '#k_id=:v_id');
 	t.same(result.ExpressionAttributeNames, {'#k_id': 'id'});
 	t.same(result.ExpressionAttributeValues, {':v_id': 5});
-
-	t.end();
 });
 
 test('$eq', t => {
@@ -29,8 +23,6 @@ test('$eq', t => {
 	t.is(result.ConditionExpression, '#k_id=:v_id');
 	t.same(result.ExpressionAttributeNames, {'#k_id': 'id'});
 	t.same(result.ExpressionAttributeValues, {':v_id': 5});
-
-	t.end();
 });
 
 test('$gt', t => {
@@ -39,8 +31,6 @@ test('$gt', t => {
 	t.is(result.ConditionExpression, '#k_id>:v_id');
 	t.same(result.ExpressionAttributeNames, {'#k_id': 'id'});
 	t.same(result.ExpressionAttributeValues, {':v_id': 5});
-
-	t.end();
 });
 
 test('$gte', t => {
@@ -49,8 +39,6 @@ test('$gte', t => {
 	t.is(result.ConditionExpression, '#k_id>=:v_id');
 	t.same(result.ExpressionAttributeNames, {'#k_id': 'id'});
 	t.same(result.ExpressionAttributeValues, {':v_id': 5});
-
-	t.end();
 });
 
 test('$lt', t => {
@@ -59,8 +47,6 @@ test('$lt', t => {
 	t.is(result.ConditionExpression, '#k_id<:v_id');
 	t.same(result.ExpressionAttributeNames, {'#k_id': 'id'});
 	t.same(result.ExpressionAttributeValues, {':v_id': 5});
-
-	t.end();
 });
 
 test('$lte', t => {
@@ -69,20 +55,14 @@ test('$lte', t => {
 	t.is(result.ConditionExpression, '#k_id<=:v_id');
 	t.same(result.ExpressionAttributeNames, {'#k_id': 'id'});
 	t.same(result.ExpressionAttributeValues, {':v_id': 5});
-
-	t.end();
 });
 
 test('$in should throw an error if it is not an array', t => {
 	t.throws(query.parse.bind(query, {id: {$in: 1}}), 'Please provide an array of elements for the $in operator.');
-
-	t.end();
 });
 
 test('$nin should throw an error if it is not an array', t => {
 	t.throws(query.parse.bind(query, {id: {$nin: 1}}), 'Please provide an array of elements for the $nin operator.');
-
-	t.end();
 });
 
 test('$in', t => {
@@ -91,8 +71,6 @@ test('$in', t => {
 	t.is(result.ConditionExpression, '#k_id IN (:v_id_0,:v_id_1,:v_id_2)');
 	t.same(result.ExpressionAttributeNames, {'#k_id': 'id'});
 	t.same(result.ExpressionAttributeValues, {':v_id_0': 1, ':v_id_1': 2, ':v_id_2': 3});
-
-	t.end();
 });
 
 test('$nin', t => {
@@ -101,8 +79,6 @@ test('$nin', t => {
 	t.is(result.ConditionExpression, 'NOT #k_id IN (:v_id_0,:v_id_1,:v_id_2)');
 	t.same(result.ExpressionAttributeNames, {'#k_id': 'id'});
 	t.same(result.ExpressionAttributeValues, {':v_id_0': 1, ':v_id_1': 2, ':v_id_2': 3});
-
-	t.end();
 });
 
 test('$contains', t => {
@@ -111,8 +87,6 @@ test('$contains', t => {
 	t.is(result.ConditionExpression, 'contains(#k_array, :v_array)');
 	t.same(result.ExpressionAttributeNames, {'#k_array': 'array'});
 	t.same(result.ExpressionAttributeValues, {':v_array': 5});
-
-	t.end();
 });
 
 test('$exists is set to 1', t => {
@@ -121,8 +95,6 @@ test('$exists is set to 1', t => {
 	t.is(result.ConditionExpression, 'attribute_exists(#k_foo)');
 	t.same(result.ExpressionAttributeNames, {'#k_foo': 'foo'});
 	t.same(result.ExpressionAttributeValues, {});
-
-	t.end();
 });
 
 test('$exists is set to true', t => {
@@ -131,8 +103,6 @@ test('$exists is set to true', t => {
 	t.is(result.ConditionExpression, 'attribute_exists(#k_foo)');
 	t.same(result.ExpressionAttributeNames, {'#k_foo': 'foo'});
 	t.same(result.ExpressionAttributeValues, {});
-
-	t.end();
 });
 
 test('$exists is set to 0', t => {
@@ -141,8 +111,6 @@ test('$exists is set to 0', t => {
 	t.is(result.ConditionExpression, 'attribute_not_exists(#k_foo)');
 	t.same(result.ExpressionAttributeNames, {'#k_foo': 'foo'});
 	t.same(result.ExpressionAttributeValues, {});
-
-	t.end();
 });
 
 test('$exists is set to false', t => {
@@ -151,8 +119,6 @@ test('$exists is set to false', t => {
 	t.is(result.ConditionExpression, 'attribute_not_exists(#k_foo)');
 	t.same(result.ExpressionAttributeNames, {'#k_foo': 'foo'});
 	t.same(result.ExpressionAttributeValues, {});
-
-	t.end();
 });
 
 test('$exists is set to -1 should check for not exists', t => {
@@ -161,8 +127,6 @@ test('$exists is set to -1 should check for not exists', t => {
 	t.is(result.ConditionExpression, 'attribute_not_exists(#k_foo)');
 	t.same(result.ExpressionAttributeNames, {'#k_foo': 'foo'});
 	t.same(result.ExpressionAttributeValues, {});
-
-	t.end();
 });
 
 test('$exists is set to 2 should check for not exists', t => {
@@ -171,8 +135,6 @@ test('$exists is set to 2 should check for not exists', t => {
 	t.is(result.ConditionExpression, 'attribute_not_exists(#k_foo)');
 	t.same(result.ExpressionAttributeNames, {'#k_foo': 'foo'});
 	t.same(result.ExpressionAttributeValues, {});
-
-	t.end();
 });
 
 test('$beginsWith', t => {
@@ -181,8 +143,6 @@ test('$beginsWith', t => {
 	t.is(result.ConditionExpression, 'begins_with(#k_foo, :v_foo)');
 	t.same(result.ExpressionAttributeNames, {'#k_foo': 'foo'});
 	t.same(result.ExpressionAttributeValues, {':v_foo': 'bar'});
-
-	t.end();
 });
 
 test('$beginsWith should parse a number to a string', t => {
@@ -191,8 +151,6 @@ test('$beginsWith should parse a number to a string', t => {
 	t.is(result.ConditionExpression, 'begins_with(#k_foo, :v_foo)');
 	t.same(result.ExpressionAttributeNames, {'#k_foo': 'foo'});
 	t.same(result.ExpressionAttributeValues, {':v_foo': '5'});
-
-	t.end();
 });
 
 test('Should parse an object with two properties', t => {
@@ -201,8 +159,6 @@ test('Should parse an object with two properties', t => {
 	t.is(result.ConditionExpression, '#k_id=:v_id AND #k_foo=:v_foo');
 	t.same(result.ExpressionAttributeNames, {'#k_id': 'id', '#k_foo': 'foo'});
 	t.same(result.ExpressionAttributeValues, {':v_id': 5, ':v_foo': 'bar'});
-
-	t.end();
 });
 
 test('$or', t => {
@@ -211,17 +167,10 @@ test('$or', t => {
 	t.is(result.ConditionExpression, '(#k_id=:v_id OR #k_id=:v_id_1)');
 	t.same(result.ExpressionAttributeNames, {'#k_id': 'id'});
 	t.same(result.ExpressionAttributeValues, {':v_id': 5, ':v_id_1': 8});
-
-	t.end();
 });
 
 test('$or throws error', t => {
-	try {
-		query.parse({$or: {id: 5}});
-	} catch (err) {
-		t.is(err.message, 'Invalid expression $or. Value should be an array.');
-		t.end();
-	}
+	t.throws(query.parse.bind(query, {$or: {id: 5}}), 'Invalid expression $or. Value should be an array.');
 });
 
 test('$and', t => {
@@ -230,24 +179,12 @@ test('$and', t => {
 	t.is(result.ConditionExpression, '(#k_id=:v_id AND #k_id=:v_id_1)');
 	t.same(result.ExpressionAttributeNames, {'#k_id': 'id'});
 	t.same(result.ExpressionAttributeValues, {':v_id': 5, ':v_id_1': 8});
-
-	t.end();
 });
 
 test('$and throws error', t => {
-	try {
-		query.parse({$and: {id: 5}});
-	} catch (err) {
-		t.is(err.message, 'Invalid expression $and. Value should be an array.');
-		t.end();
-	}
+	t.throws(query.parse.bind(query, {$and: {id: 5}}), 'Invalid expression $and. Value should be an array.');
 });
 
 test('throw error if operator is not supported', t => {
-	try {
-		query.parse({id: {$g: 5}});
-	} catch (err) {
-		t.is(err.message, 'Unknown operator $g');
-		t.end();
-	}
+	t.throws(query.parse.bind(query, {id: {$g: 5}}), 'Unknown operator $g');
 });

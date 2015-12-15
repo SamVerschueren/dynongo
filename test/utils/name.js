@@ -7,8 +7,6 @@ test('Simple name should generate correct result', t => {
 
 	t.is(result.Expression, '#k_foo');
 	t.same(result.ExpressionAttributeNames, {'#k_foo': 'foo'});
-
-	t.end();
 });
 
 test('foo.bar should generate two expression attribute names', t => {
@@ -16,8 +14,6 @@ test('foo.bar should generate two expression attribute names', t => {
 
 	t.is(result.Expression, '#k_foo.#k_bar');
 	t.same(result.ExpressionAttributeNames, {'#k_foo': 'foo', '#k_bar': 'bar'});
-
-	t.end();
 });
 
 test('foo.bar.baz should generate three expression attribute names', t => {
@@ -25,8 +21,6 @@ test('foo.bar.baz should generate three expression attribute names', t => {
 
 	t.is(result.Expression, '#k_foo.#k_bar.#k_baz');
 	t.same(result.ExpressionAttributeNames, {'#k_foo': 'foo', '#k_bar': 'bar', '#k_baz': 'baz'});
-
-	t.end();
 });
 
 test('Array name should generate correct result', t => {
@@ -34,14 +28,11 @@ test('Array name should generate correct result', t => {
 
 	t.is(result.Expression, '#k_foo[0]');
 	t.same(result.ExpressionAttributeNames, {'#k_foo': 'foo'});
-
-	t.end();
 });
 
 // #generateValueName
 test('throw error', t => {
 	t.throws(name.generateValueName.bind(name, ['key']), Error);
-	t.end();
 });
 
 test('Should generate a correct result name of it does not yet exist', t => {
@@ -49,8 +40,6 @@ test('Should generate a correct result name of it does not yet exist', t => {
 
 	t.is(result.Expression, ':v_foo');
 	t.same(result.ExpressionAttributeValues, {':v_foo': 'bar'});
-
-	t.end();
 });
 
 test('Should generate a correct result name of it already exists, and the value is not the same', t => {
@@ -58,8 +47,6 @@ test('Should generate a correct result name of it already exists, and the value 
 
 	t.is(result.Expression, ':v_foo_1');
 	t.same(result.ExpressionAttributeValues, {':v_foo_1': 'bar'});
-
-	t.end();
 });
 
 test('Should generate a correct result if the key refers to an array element', t => {
@@ -67,8 +54,6 @@ test('Should generate a correct result if the key refers to an array element', t
 
 	t.is(result.Expression, ':v_foo_0_');
 	t.same(result.ExpressionAttributeValues, {':v_foo_0_': 'bar'});
-
-	t.end();
 });
 
 test('Should generate a correct result if the value is an array', t => {
@@ -76,8 +61,6 @@ test('Should generate a correct result if the value is an array', t => {
 
 	t.same(result.Expression, [':v_foo_0', ':v_foo_1']);
 	t.same(result.ExpressionAttributeValues, {':v_foo_0': 'bar', ':v_foo_1': 'baz'});
-
-	t.end();
 });
 
 test('Should generate a correct result if the key refers to an array element and the value is an array', t => {
@@ -85,8 +68,6 @@ test('Should generate a correct result if the key refers to an array element and
 
 	t.same(result.Expression, [':v_foo_0__0', ':v_foo_0__1']);
 	t.same(result.ExpressionAttributeValues, {':v_foo_0__0': 'bar', ':v_foo_0__1': 'baz'});
-
-	t.end();
 });
 
 test('indexify', t => {
@@ -94,6 +75,4 @@ test('indexify', t => {
 
 	t.same(result.Expression, ':v_foo_2');
 	t.same(result.ExpressionAttributeValues, {':v_foo_2': 'bar'});
-
-	t.end();
 });

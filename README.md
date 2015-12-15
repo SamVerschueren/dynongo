@@ -5,11 +5,13 @@
 
 > MongoDB like syntax for DynamoDB
 
+
 ## Installation
 
 ```bash
 npm install --save dynongo
 ```
+
 
 ## Usage
 
@@ -236,9 +238,6 @@ db.dropTable('Employee').await(5000).exec();
 
 This will poll the status of the table every 5 seconds instead of every second.
 
-## Contributors
-
-- Sam Verschueren [<sam.verschueren@gmail.com>]
 
 ## License
 

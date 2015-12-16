@@ -164,7 +164,7 @@ test('Should parse an object with two properties', t => {
 test('$or', t => {
 	const result = query.parse({$or: [{id: 5}, {id: 8}]});
 
-	t.is(result.ConditionExpression, '(#k_id=:v_id OR #k_id=:v_id_1)');
+	t.is(result.ConditionExpression, '#k_id=:v_id OR #k_id=:v_id_1');
 	t.same(result.ExpressionAttributeNames, {'#k_id': 'id'});
 	t.same(result.ExpressionAttributeValues, {':v_id': 5, ':v_id_1': 8});
 });
@@ -176,7 +176,7 @@ test('$or throws error', t => {
 test('$and', t => {
 	const result = query.parse({$and: [{id: 5}, {id: 8}]});
 
-	t.is(result.ConditionExpression, '(#k_id=:v_id AND #k_id=:v_id_1)');
+	t.is(result.ConditionExpression, '#k_id=:v_id AND #k_id=:v_id_1');
 	t.same(result.ExpressionAttributeNames, {'#k_id': 'id'});
 	t.same(result.ExpressionAttributeValues, {':v_id': 5, ':v_id_1': 8});
 });
@@ -187,4 +187,12 @@ test('$and throws error', t => {
 
 test('throw error if operator is not supported', t => {
 	t.throws(query.parse.bind(query, {id: {$g: 5}}), 'Unknown operator $g');
+});
+
+test('$and and $or', t => {
+	const result = query.parse({$and: [{id: 5}, {id: 8}], $or: [{name: 'foo'}, {name: 'bar'}]});
+
+	t.is(result.ConditionExpression, '(#k_id=:v_id AND #k_id=:v_id_1) AND (#k_name=:v_name OR #k_name=:v_name_1)');
+	t.same(result.ExpressionAttributeNames, {'#k_id': 'id', '#k_name': 'name'});
+	t.same(result.ExpressionAttributeValues, {':v_id': 5, ':v_id_1': 8, ':v_name': 'foo', ':v_name_1': 'bar'});
 });

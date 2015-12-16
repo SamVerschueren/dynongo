@@ -111,6 +111,31 @@ test.serial('where with $or', async t => {
 	});
 });
 
+test.serial('where with $or and comparison', async t => {
+	await Table.update({id: '5'}, {$set: {foo: 'bar'}}).where({foo: 'baz', $or: [{email: {$exists: false}}, {email: 'foo@bar.com'}]}).exec();
+
+	t.same(db._dynamodb.update.lastCall.args[0], {
+		TableName: 'Table',
+		ReturnValues: 'ALL_NEW',
+		Key: {
+			id: '5'
+		},
+		UpdateExpression: 'SET #k_foo=:v_foo',
+		ExpressionAttributeNames: {
+			'#k_foo': 'foo',
+			'#k_id': 'id',
+			'#k_email': 'email'
+		},
+		ExpressionAttributeValues: {
+			':v_foo': 'bar',
+			':v_foo_1': 'baz',
+			':v_id': '5',
+			':v_email': 'foo@bar.com'
+		},
+		ConditionExpression: '(#k_id=:v_id) AND (#k_foo=:v_foo_1 AND (attribute_not_exists(#k_email) OR #k_email=:v_email))'
+	});
+});
+
 test.serial('result', async t => {
 	t.is(await Table.update({id: '5'}, {$set: {foo: 'bar'}}).where({email: 'foo@bar.com'}).exec(), 'foo');
 });

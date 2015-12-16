@@ -8,7 +8,7 @@
 
 ## Installation
 
-```bash
+```
 npm install --save dynongo
 ```
 
@@ -19,7 +19,7 @@ npm install --save dynongo
 
 First of all, we have to connect with the database.
 
-```javascript
+```js
 const db = require('dynongo');
 
 db.connect();
@@ -31,7 +31,7 @@ page.
 
 If you still want to use embedded credentials, you can by providing an `accessKeyId`, `secretAccessKey` and an optional `region` property.
 
-```javascript
+```js
 db.connect({
     accessKeyId: 'accessKeyId',
     secretAccessKey: 'secretAccessKey',
@@ -44,7 +44,7 @@ db.connect({
 It is possible to connect to a [local DynamoDB](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.DynamoDBLocal.html) database
 by setting the `local` property to `true`. It will use port 8000 by default, but if you want to change that port, you can provide a `localPort` property.
 
-```javascript
+```js
 db.connect({
     local: true,
     host: '192.168.5.5',            // localhost if not provided
@@ -58,7 +58,7 @@ It's a good thing to prefix the tables with the name of the project and maybe th
 of always repeating those names every time you want to query the table, you can provide the prefix and prefix delimiter once. The
 default delimiter is the `.`.
 
-```javascript
+```js
 db.connect({
     prefix: 'myapp-development',
     prefixDelimiter: '-'            // . if not provided
@@ -69,7 +69,7 @@ db.connect({
 
 In order for the developer to execute methods on a table, you have to retrieve the table object from the database.
 
-```javascript
+```js
 var Employee = db.table('Employee');
 ```
 
@@ -79,7 +79,7 @@ The table name will be automatically prefixed by the `prefix` provided in the co
 
 #### find
 
-```javascript
+```js
 Employee.find({Organisation: 'Amazon'}).where({Salary: {$gt: 3000}}).select('FirstName Name').exec()
     .then(employees => {
         // => [{FirstName: 'Foo', Name: 'Bar'}]
@@ -88,7 +88,7 @@ Employee.find({Organisation: 'Amazon'}).where({Salary: {$gt: 3000}}).select('Fir
 
 #### count
 
-```javascript
+```js
 Employee.find({Organisation: 'Amazon'}).where({Salary: {$gt: 3000}}).count().exec()
     .then(count => {
         // => 8
@@ -97,7 +97,7 @@ Employee.find({Organisation: 'Amazon'}).where({Salary: {$gt: 3000}}).count().exe
 
 #### insert
 
-```javascript
+```js
  Employee.insert({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {Title: 'CFO', FirstName: 'Foo', Name: 'Bar', Salary: 4500}).exec()
     .then(employee => {
         // => {FirstName: 'Foo', Name: 'Bar', Salary: 4500, Title: 'CFO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}
@@ -109,20 +109,29 @@ Employee.find({Organisation: 'Amazon'}).where({Salary: {$gt: 3000}}).count().exe
 The first parameter in the `update` method is the primary key (hash + range) and the second method is a query that
 defines the updates of the fields.
 
-```javascript
-Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$set: {Title: 'CTO'}, $inc: {Salary: 150}}).exec()
+```js
+Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$set: {Title: 'CTO'}, $inc: {Salary: 150}, $push: {Hobby: {$each: ['swimming', 'walking']}).exec()
     .then(employee => {
-        // => { {FirstName: 'Foo', Name: 'Bar', Salary: 4650, Title: 'CTO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}
+        // => {FirstName: 'Foo', Name: 'Bar', Salary: 4650, Title: 'CTO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com', Hobby: ['cycling', 'swimming', 'walking']}
     });
 ```
 
 If no Amazon employee exists with that email address exists, the method will fail.
 
+You can also add extra conditions, for instance if we want to increase the salary by $150 only if the current salary is less then $4500.
+
+```js
+Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$inc: {Salary: 150}}).where({Salary: {$lt: 4500}}).exec()
+    .catch(err => {
+        // ConditionalCheckFailedException: The conditional request failed
+    });
+```
+
 #### remove
 
 The remove method expects the primary key (hash + range).
 
-```javascript
+```js
 Employee.remove({Organisation: 'Amazon', Email: 'john.doe@amazon.com'}).exec()
     .then(() => {
         // => removed
@@ -135,7 +144,7 @@ A table can be created by either calling `create()` on a table instance or by ca
 
 The first way is by calling the `create()` method.
 
-```javascript
+```js
 const Employee = db.table('Employee');
 
 const schema = {
@@ -160,7 +169,7 @@ Employee.create(schema).exec()
 
 The second way is by calling the `createTable()` method.
 
-```javascript
+```js
 db.createTable(schema).exec()
     .then(() => {
         // Table is being created
@@ -175,7 +184,7 @@ Creating a table can take a while. The previous examples do not wait for the act
 might be use cases where you have to wait untill the table is created entirely before continuing.
 This can be done with the `await()` method.
 
-```javascript
+```js
 db.createTable(schema).await().exec()
     .then(() => {
         // Table is created
@@ -185,7 +194,7 @@ db.createTable(schema).await().exec()
 This will make sure the table is polled every 1000 milliseconds untill the status of the table is `active`. If you want to poll
 at another speed, you can by providing the number of milliseconds in the `await` method.
 
-```javascript
+```js
 db.createTable(schema).await(5000).exec();
 ```
 
@@ -197,7 +206,7 @@ A table can be dropped by either calling `drop()` on a table instance or by call
 
 The first way is by calling the `drop()` method.
 
-```javascript
+```js
 const Employee = db.table('Employee');
 
 Employee.drop().exec()
@@ -208,7 +217,7 @@ Employee.drop().exec()
 
 The second way is by calling the `dropTable()` method.
 
-```javascript
+```js
 db.dropTable('Employee').exec()
     .then(() => {
         // => Table is being dropped
@@ -222,7 +231,7 @@ This method is just a shorthand method for the first example.
 Dropping a table can take a while, especially when the table has a lot of data. The previous examples do not wait for the action to be completed. But there
 might be use cases where you have to wait untill the table is removed entirely before continuing. This can be done with the `await()` method.
 
-```javascript
+```js
 db.dropTable('Employee').await().exec()
     .then(() => {
         // => Table is dropped
@@ -232,7 +241,7 @@ db.dropTable('Employee').await().exec()
 This will make sure the table is polled every 1000 milliseconds untill the table does not exist anymore. If you want to poll at another speed, you can by providing
 the number of milliseconds in the `await` method.
 
-```javascript
+```js
 db.dropTable('Employee').await(5000).exec();
 ```
 

@@ -139,3 +139,12 @@ test.serial('where with $or and comparison', async t => {
 test.serial('result', async t => {
 	t.is(await Table.update({id: '5'}, {$set: {foo: 'bar'}}).where({email: 'foo@bar.com'}).exec(), 'foo');
 });
+
+test.serial('error if not connected', async t => {
+	const original = db._dynamodb;
+	db._dynamodb = undefined;
+
+	await t.throws(Table.update({id: '5'}, {$set: {foo: 'bar'}}).exec(), 'Call .connect() before executing queries.');
+
+	db._dynamodb = original;
+});

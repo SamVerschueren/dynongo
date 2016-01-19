@@ -169,6 +169,15 @@ test('sort throws error', async t => {
 	await t.throws(Table.find({id: '5'}).sort(true).exec(), 'Provided sort argument is incorrect. Use 1 for ascending and -1 for descending order.');
 });
 
+test.serial('error if not connected', async t => {
+	const original = db._dynamodb;
+	db._dynamodb = undefined;
+
+	await t.throws(Table.find({id: '5'}).exec(), 'Call .connect() before executing queries.');
+
+	db._dynamodb = original;
+});
+
 /* SCAN */
 test.serial('find all', async t => {
 	await Table.find().exec();
@@ -197,4 +206,13 @@ test.serial('count all', async t => {
 
 test.serial('count all with no result', async t => {
 	t.is(await Table2.find().count().exec(), 0);
+});
+
+test.serial('error if not connected', async t => {
+	const original = db._dynamodb;
+	db._dynamodb = undefined;
+
+	await t.throws(Table.find().count().exec(), 'Call .connect() before executing queries.');
+
+	db._dynamodb = original;
 });

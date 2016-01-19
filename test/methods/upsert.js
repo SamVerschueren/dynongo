@@ -51,3 +51,12 @@ test.serial('upsert', async t => {
 		}
 	});
 });
+
+test.serial('error if not connected', async t => {
+	const original = db._dynamodb;
+	db._dynamodb = undefined;
+
+	await t.throws(Table.upsert({id: '5'}, {foo: 'bar'}).exec(), 'Call .connect() before executing queries.');
+
+	db._dynamodb = original;
+});

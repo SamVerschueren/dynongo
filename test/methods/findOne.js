@@ -40,3 +40,12 @@ test.serial('find all but one', async t => {
 		Limit: 1
 	});
 });
+
+test.serial('error if not connected', async t => {
+	const original = db._dynamodb;
+	db._dynamodb = undefined;
+
+	await t.throws(Table.findOne().exec(), 'Call .connect() before executing queries.');
+
+	db._dynamodb = original;
+});

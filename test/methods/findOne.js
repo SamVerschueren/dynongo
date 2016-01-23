@@ -16,7 +16,7 @@ test.after(() => {
 	db._dynamodb.scan.restore();
 });
 
-test.serial('result', async t => {
+test.serial('find one', async t => {
 	t.is(await Table.findOne({id: '5'}).exec(), 'foo');
 
 	t.same(db._dynamodb.query.lastCall.args[0], {
@@ -32,12 +32,45 @@ test.serial('result', async t => {
 	});
 });
 
+test.serial('find one where', async t => {
+	t.is(await Table.findOne({id: '5'}).where({foo: 'bar'}).exec(), 'foo');
+
+	t.same(db._dynamodb.query.lastCall.args[0], {
+		TableName: 'Table',
+		KeyConditionExpression: '#k_id=:v_id',
+		FilterExpression: '#k_foo=:v_foo',
+		ExpressionAttributeNames: {
+			'#k_id': 'id',
+			'#k_foo': 'foo'
+		},
+		ExpressionAttributeValues: {
+			':v_id': '5',
+			':v_foo': 'bar'
+		}
+	});
+});
+
 test.serial('find all but one', async t => {
 	t.is(await Table.findOne().exec(), 'baz');
 
 	t.same(db._dynamodb.scan.lastCall.args[0], {
 		TableName: 'Table',
 		Limit: 1
+	});
+});
+
+test.serial('find all but one where', async t => {
+	t.is(await Table.findOne().where({foo: 'bar'}).exec(), 'baz');
+
+	t.same(db._dynamodb.scan.lastCall.args[0], {
+		TableName: 'Table',
+		FilterExpression: '#k_foo=:v_foo',
+		ExpressionAttributeNames: {
+			'#k_foo': 'foo'
+		},
+		ExpressionAttributeValues: {
+			':v_foo': 'bar'
+		}
 	});
 });
 

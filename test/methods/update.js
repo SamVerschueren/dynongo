@@ -140,6 +140,10 @@ test.serial('result', async t => {
 	t.is(await Table.update({id: '5'}, {$set: {foo: 'bar'}}).where({email: 'foo@bar.com'}).exec(), 'foo');
 });
 
+test.serial('raw result', async t => {
+	t.same(await Table.update({id: '5'}, {$set: {foo: 'bar'}}).where({email: 'foo@bar.com'}).raw().exec(), {Attributes: 'foo'});
+});
+
 test.serial('error if not connected', async t => {
 	const original = db._dynamodb;
 	db._dynamodb = undefined;

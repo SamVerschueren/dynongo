@@ -52,6 +52,14 @@ test.serial('upsert', async t => {
 	});
 });
 
+test.serial('result', async t => {
+	t.is(await Table.upsert({id: '5'}, {foo: 'bar'}).where({email: 'foo@bar.com'}).exec(), 'foo');
+});
+
+test.serial('raw result', async t => {
+	t.same(await Table.upsert({id: '5'}, {foo: 'bar'}).where({email: 'foo@bar.com'}).raw().exec(), {Attributes: 'foo'});
+});
+
 test.serial('error if not connected', async t => {
 	const original = db._dynamodb;
 	db._dynamodb = undefined;

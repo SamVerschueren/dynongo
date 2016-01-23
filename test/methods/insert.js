@@ -50,6 +50,10 @@ test.serial('result', async t => {
 	t.is(await Table.insert({id: '5'}, {$set: {foo: 'bar'}}).exec(), 'foo');
 });
 
+test.serial('raw result', async t => {
+	t.same(await Table.insert({id: '5'}, {$set: {foo: 'bar'}}).raw().exec(), {Attributes: 'foo'});
+});
+
 test.serial('error if not connected', async t => {
 	const original = db._dynamodb;
 	db._dynamodb = undefined;

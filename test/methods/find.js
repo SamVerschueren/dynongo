@@ -164,6 +164,14 @@ test.serial('result', async t => {
 	t.same(await Table.find({id: '5'}).exec(), ['foo', 'bar']);
 });
 
+test.serial('raw result', async t => {
+	t.same(await Table.find({id: '5'}).raw().exec(), {Count: 2, Items: ['foo', 'bar']});
+});
+
+test.serial('raw result limit', async t => {
+	t.same(await Table.find({id: '5'}).limit(1).raw().exec(), {Count: 2, Items: ['foo']});
+});
+
 test('sort throws error', async t => {
 	await t.throws(Table.find({id: '5'}).sort().exec(), 'Provided sort argument is incorrect. Use 1 for ascending and -1 for descending order.');
 	await t.throws(Table.find({id: '5'}).sort(true).exec(), 'Provided sort argument is incorrect. Use 1 for ascending and -1 for descending order.');
@@ -198,6 +206,18 @@ test.serial('find all where', async t => {
 			':v_name': 'foo'
 		}
 	});
+});
+
+test.serial('result', async t => {
+	t.same(await Table.find().exec(), ['foo', 'bar', 'baz']);
+});
+
+test.serial('raw result', async t => {
+	t.same(await Table.find().raw().exec(), {Count: 3, Items: ['foo', 'bar', 'baz']});
+});
+
+test.serial('raw result limit', async t => {
+	t.same(await Table.find().limit(1).raw().exec(), {Count: 3, Items: ['foo']});
 });
 
 test.serial('count all', async t => {

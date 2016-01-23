@@ -28,25 +28,25 @@ test('$inc', t => {
 test('$push', t => {
 	const result = update.parse({$push: {scores: 85}});
 
-	t.is(result.UpdateExpression, 'SET #k_scores=list_append(#k_scores, :v_scores)');
+	t.is(result.UpdateExpression, 'SET #k_scores=list_append(if_not_exists(#k_scores, :_v_empty_list), :v_scores)');
 	t.same(result.ExpressionAttributeNames, {'#k_scores': 'scores'});
-	t.same(result.ExpressionAttributeValues, {':v_scores': [85]});
+	t.same(result.ExpressionAttributeValues, {':v_scores': [85], ':_v_empty_list': []});
 });
 
 test('$push array', t => {
 	const result = update.parse({$push: {scores: [85, 94]}});
 
-	t.is(result.UpdateExpression, 'SET #k_scores=list_append(#k_scores, :v_scores)');
+	t.is(result.UpdateExpression, 'SET #k_scores=list_append(if_not_exists(#k_scores, :_v_empty_list), :v_scores)');
 	t.same(result.ExpressionAttributeNames, {'#k_scores': 'scores'});
-	t.same(result.ExpressionAttributeValues, {':v_scores': [[85, 94]]});
+	t.same(result.ExpressionAttributeValues, {':v_scores': [[85, 94]], ':_v_empty_list': []});
 });
 
 test('$push $each in array', t => {
 	const result = update.parse({$push: {scores: {$each: [85, 94]}}});
 
-	t.is(result.UpdateExpression, 'SET #k_scores=list_append(#k_scores, :v_scores)');
+	t.is(result.UpdateExpression, 'SET #k_scores=list_append(if_not_exists(#k_scores, :_v_empty_list), :v_scores)');
 	t.same(result.ExpressionAttributeNames, {'#k_scores': 'scores'});
-	t.same(result.ExpressionAttributeValues, {':v_scores': [85, 94]});
+	t.same(result.ExpressionAttributeValues, {':v_scores': [85, 94], ':_v_empty_list': []});
 });
 
 test('$push throws error if $each is not an array', t => {

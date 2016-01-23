@@ -58,11 +58,19 @@ test('$lte', t => {
 });
 
 test('$in should throw an error if it is not an array', t => {
-	t.throws(query.parse.bind(query, {id: {$in: 1}}), 'Please provide an array of elements for the $in operator.');
+	t.throws(query.parse.bind(query, {id: {$in: 1}}), 'Please provide an array of elements for key `id`.');
 });
 
 test('$nin should throw an error if it is not an array', t => {
-	t.throws(query.parse.bind(query, {id: {$nin: 1}}), 'Please provide an array of elements for the $nin operator.');
+	t.throws(query.parse.bind(query, {id: {$nin: 1}}), 'Please provide an array of elements for key `id`.');
+});
+
+test('$in should throw an error if it is an empty array', t => {
+	t.throws(query.parse.bind(query, {id: {$in: []}}), 'Do not provide an empty list of elements for key `id`.');
+});
+
+test('$nin should throw an error if it is an empty array', t => {
+	t.throws(query.parse.bind(query, {id: {$nin: []}}), 'Do not provide an empty list of elements for key `id`.');
 });
 
 test('$in', t => {

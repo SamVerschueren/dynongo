@@ -23,6 +23,13 @@ test.serial('insert key', async t => {
 		ReturnValues: 'ALL_NEW',
 		Key: {
 			id: '5'
+		},
+		ConditionExpression: 'NOT (#k_id=:v_id)',
+		ExpressionAttributeNames: {
+			'#k_id': 'id'
+		},
+		ExpressionAttributeValues: {
+			':v_id': '5'
 		}
 	});
 });
@@ -37,11 +44,14 @@ test.serial('insert', async t => {
 			id: '5'
 		},
 		UpdateExpression: 'SET #k_email=:v_email',
+		ConditionExpression: 'NOT (#k_id=:v_id)',
 		ExpressionAttributeNames: {
-			'#k_email': 'email'
+			'#k_email': 'email',
+			'#k_id': 'id'
 		},
 		ExpressionAttributeValues: {
-			':v_email': 'foo@bar.com'
+			':v_email': 'foo@bar.com',
+			':v_id': '5'
 		}
 	});
 });

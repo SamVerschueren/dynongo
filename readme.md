@@ -158,6 +158,20 @@ Employee.findOneAndRemove({Organisation: 'Amazon', Email: 'john.doe@amazon.com'}
     });
 ```
 
+### List all the tables
+
+You can retrieve a list of all the tables.
+
+```js
+db.listTables().exec().then(tables => {
+	console.log(tables);
+	//=> ['foo', 'bar', 'baz']
+});
+```
+
+If you passed in a `prefix` property in the connection object, only the tables with that prefix will
+be returned.
+
 ### Create a table
 
 A table can be created by either calling `create()` on a table instance or by calling `createTable` on the database instance.

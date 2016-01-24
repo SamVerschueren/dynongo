@@ -86,6 +86,15 @@ Employee.find({Organisation: 'Amazon'}).where({Salary: {$gt: 3000}}).select('Fir
     });
 ```
 
+#### findOne
+
+```js
+Employee.findOne({Organisation: 'Amazon'}).where({Salary: {$gt: 3000}}).select('FirstName Name').exec()
+    .then(employees => {
+        // => {FirstName: 'Foo', Name: 'Bar'}
+    });
+```
+
 #### count
 
 ```js
@@ -135,6 +144,17 @@ The remove method expects the primary key (hash + range).
 Employee.remove({Organisation: 'Amazon', Email: 'john.doe@amazon.com'}).exec()
     .then(() => {
         // => removed
+    });
+```
+
+#### findOneAndRemove
+
+This method is the same as the `remove` method, except that it will return the removed record..
+
+```js
+Employee.findOneAndRemove({Organisation: 'Amazon', Email: 'john.doe@amazon.com'}).exec()
+    .then(result => {
+        // => {Organisation: 'Amazon', Email: 'john.doe@amazon.com'}
     });
 ```
 

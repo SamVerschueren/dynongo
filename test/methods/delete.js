@@ -7,7 +7,7 @@ db.connect({prefix: 'delete'});
 const Table = db.table('Table');
 
 test.before(() => {
-	sinon.stub(db._dynamodb, 'delete').yields(undefined, undefined);
+	sinon.stub(db._dynamodb, 'delete').yields(undefined, {Attributes: {id: '5', foo: 'bar'}});
 });
 
 test.after(() => {
@@ -23,6 +23,10 @@ test.serial('delete', async t => {
 			id: '5'
 		}
 	});
+});
+
+test.serial('result', async t => {
+	t.notOk(await Table.remove({id: '5'}).exec());
 });
 
 test.serial('where', async t => {
@@ -41,6 +45,26 @@ test.serial('where', async t => {
 			':v_foo': 'bar'
 		}
 	});
+});
+
+test.serial('find one and remove', async t => {
+	await Table.findOneAndRemove({id: '5'}).exec();
+
+	t.same(db._dynamodb.delete.lastCall.args[0], {
+		TableName: 'delete.Table',
+		Key: {
+			id: '5'
+		},
+		ReturnValues: 'ALL_OLD'
+	});
+});
+
+test('find one and remove result', async t => {
+	t.same(await Table.findOneAndRemove({id: '5'}).exec(), {id: '5', foo: 'bar'});
+});
+
+test('find one and remove raw result', async t => {
+	t.same(await Table.findOneAndRemove({id: '5'}).raw().exec(), {Attributes: {id: '5', foo: 'bar'}});
 });
 
 test.serial('error if not connected', async t => {

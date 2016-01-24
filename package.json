@@ -1,6 +1,6 @@
 {
   "name": "dynongo",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "MongoDB like syntax for DynamoDB",
   "main": "index.js",
   "scripts": {

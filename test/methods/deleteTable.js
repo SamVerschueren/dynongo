@@ -3,16 +3,20 @@ import sinon from 'sinon';
 import DeleteTable from '../../lib/methods/DeleteTable';
 import db from '../../';
 
-db.connect();
+db.connect({prefix: 'foo'});
 
 const Table = db.table('Table');
 
 test.before(() => {
 	sinon.stub(db._dynamodb.service, 'deleteTable').yields(undefined, undefined);
+	const describe = sinon.stub(db._dynamodb.service, 'describeTable');
+	describe.onFirstCall().yields(undefined, {Table: {TableStatus: 'ACTIVE'}});
+	describe.yields({name: 'ResourceNotFoundException'});
 });
 
 test.after(() => {
 	db._dynamodb.service.deleteTable.restore();
+	db._dynamodb.service.describeTable.restore();
 });
 
 test('drop method returns DeleteTable object', t => {
@@ -25,9 +29,13 @@ test('drop method returns DeleteTable object', t => {
 test.serial('drop', async t => {
 	await Table.drop().exec();
 
-	t.same(db._dynamodb.service.deleteTable.lastCall.args[0], {
-		TableName: 'Table'
-	});
+	t.same(db._dynamodb.service.deleteTable.lastCall.args[0], {TableName: 'foo.Table'});
+});
+
+test.serial('await', async t => {
+	await db.dropTable('Table').await().exec();
+
+	t.same(db._dynamodb.service.describeTable.lastCall.args[0], {TableName: 'foo.Table'});
 });
 
 test.serial('error if not connected', async t => {

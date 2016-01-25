@@ -10,10 +10,14 @@ const Table = db.table('Bar');
 
 test.before(() => {
 	sinon.stub(db._dynamodb.service, 'createTable').yields(undefined, undefined);
+	const describe = sinon.stub(db._dynamodb.service, 'describeTable');
+	describe.onFirstCall().yields(undefined, {Table: {TableStatus: 'CREATING'}});
+	describe.yields(undefined, {Table: {TableStatus: 'ACTIVE'}});
 });
 
 test.after(() => {
 	db._dynamodb.service.createTable.restore();
+	db._dynamodb.service.describeTable.restore();
 });
 
 test('create method returns CreateTable object', t => {
@@ -36,13 +40,31 @@ test('throws error if no table name is provided', t => {
 });
 
 test.serial('create table', async t => {
-	await db.createTable(schema).exec();
+	await db.createTable(Object.assign({}, schema)).exec();
 
-	t.same(db._dynamodb.service.createTable.lastCall.args[0], schema);
+	t.same(db._dynamodb.service.createTable.lastCall.args[0], {
+		TableName: 'foo.Table',
+		AttributeDefinitions: [
+			{
+				AttributeName: 'id',
+				AttributeType: 'S'
+			}
+		],
+		KeySchema: [
+			{
+				AttributeName: 'id',
+				KeyType: 'HASH'
+			}
+		],
+		ProvisionedThroughput: {
+			ReadCapacityUnits: 1,
+			WriteCapacityUnits: 1
+		}
+	});
 });
 
-test.serial('create table updates table name', async t => {
-	await Table.create(schema).exec();
+test.serial('create table adjusts the table name', async t => {
+	await Table.create(Object.assign({}, schema)).exec();
 
 	t.same(db._dynamodb.service.createTable.lastCall.args[0], {
 		TableName: 'foo.Bar',
@@ -65,11 +87,17 @@ test.serial('create table updates table name', async t => {
 	});
 });
 
+test.serial('await', async t => {
+	await db.createTable(Object.create(schema)).await().exec();
+
+	t.same(db._dynamodb.service.describeTable.lastCall.args[0], {TableName: 'foo.Table'});
+});
+
 test.serial('error if not connected', async t => {
 	const original = db._dynamodb;
 	db._dynamodb = undefined;
 
-	await t.throws(db.createTable(schema).exec(), 'Call .connect() before executing queries.');
+	await t.throws(db.createTable(Object.create(schema)).exec(), 'Call .connect() before executing queries.');
 
 	db._dynamodb = original;
 });

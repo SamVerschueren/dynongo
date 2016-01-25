@@ -57,6 +57,26 @@ test('$lte', t => {
 	t.same(result.ExpressionAttributeValues, {':v_id': 5});
 });
 
+test('$not value', t => {
+	const result = query.parse({id: {$not: 5}});
+
+	t.is(result.ConditionExpression, 'NOT #k_id=:v_id');
+	t.same(result.ExpressionAttributeNames, {'#k_id': 'id'});
+	t.same(result.ExpressionAttributeValues, {':v_id': 5});
+});
+
+test('$not expression', t => {
+	const result = query.parse({id: {$not: {$lt: 5}}});
+
+	t.is(result.ConditionExpression, 'NOT #k_id<:v_id');
+	t.same(result.ExpressionAttributeNames, {'#k_id': 'id'});
+	t.same(result.ExpressionAttributeValues, {':v_id': 5});
+});
+
+test('$not throws error if operator is unknown', t => {
+	t.throws(query.parse.bind(query, {id: {$not: {a: 5}}}), 'Unknown operator a');
+});
+
 test('$in should throw an error if it is not an array', t => {
 	t.throws(query.parse.bind(query, {id: {$in: 1}}), 'Please provide an array of elements for key `id`.');
 });

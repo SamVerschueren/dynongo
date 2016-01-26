@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/SamVerschueren/dynongo.svg)](https://travis-ci.org/SamVerschueren/dynongo)
 [![Coverage Status](https://coveralls.io/repos/SamVerschueren/dynongo/badge.svg?branch=master&service=github)](https://coveralls.io/github/SamVerschueren/dynongo?branch=master)
 
-> MongoDB like syntax for DynamoDB
+> MongoDB like syntax for [DynamoDB](https://aws.amazon.com/dynamodb/)
 
 
 ## Installation
@@ -284,4 +284,4 @@ This will poll the status of the table every 5 seconds instead of every second.
 
 ## License
 
-MIT © Sam Verschueren
+MIT © [Sam Verschueren](https://github.com/SamVerschueren)

@@ -7,12 +7,40 @@ const Table = db.table('Table');
 // Connect after defining the table
 db.connect({prefix: 'insert', prefixDelimiter: '-'});
 
+const fixture1 = {TableName: 'insert-Table', Key: {id: '10'}, ReturnValues: 'ALL_NEW', UpdateExpression: sinon.match.any, ExpressionAttributeNames: sinon.match.any, ExpressionAttributeValues: sinon.match.any, ConditionExpression: sinon.match.any};
+const fixture2 = {TableName: 'insert-Table', Key: {id: '20'}, ReturnValues: 'ALL_NEW', UpdateExpression: sinon.match.any, ExpressionAttributeNames: sinon.match.any, ExpressionAttributeValues: sinon.match.any, ConditionExpression: sinon.match.any};
+
+const conditionalCheckException = new Error('The conditional request failed');
+conditionalCheckException.code = 'ConditionalCheckFailedException';
+conditionalCheckException.time = new Date();
+conditionalCheckException.requestId = '6959aacc-a958-4c71-b8e5-00ad4f158423';
+conditionalCheckException.statusCode = 400;
+conditionalCheckException.retryable = false;
+conditionalCheckException.retryDelay = 0;
+
 test.before(() => {
-	sinon.stub(db._dynamodb, 'update').yields(undefined, {Attributes: 'foo'});
+	const stub = sinon.stub(db._dynamodb, 'update');
+	stub.withArgs(fixture1).yields(conditionalCheckException);
+	stub.withArgs(fixture2).yields(new Error('foo'));
+	stub.yields(undefined, {Attributes: 'foo'});
 });
 
 test.after(() => {
 	db._dynamodb.update.restore();
+});
+
+test('error if a duplicate key was inserted', async t => {
+	try {
+		await Table.insert({id: '10'}, {$set: {foo: 'bar'}}).raw().exec();
+		t.fail();
+	} catch (err) {
+		t.is(err.message, 'Duplicate key! A record with key `{"id":"10"}` already exists.');
+		t.is(err.code, 'ConditionalCheckFailedException');
+	}
+});
+
+test('error', async t => {
+	t.throws(Table.insert({id: '20'}, {$set: {foo: 'bar'}}).raw().exec(), 'foo');
 });
 
 test.serial('insert key', async t => {

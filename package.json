@@ -31,7 +31,7 @@
     "aws-sdk": "^2.2.30",
     "is-object": "^1.0.1",
     "object-assign": "^4.0.1",
-    "object-pick": "^0.1.1",
+    "object.pick": "^1.1.1",
     "pify": "^2.3.0",
     "pinkie-promise": "^2.0.0"
   },

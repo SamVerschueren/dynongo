@@ -107,6 +107,22 @@ test.serial('count with no result', async t => {
 	t.is(await Table.find({foo: 'bar'}).count().exec(), 0);
 });
 
+test.serial('select undefined', async t => {
+	await Table.find({foo: 'bar'}).select(undefined).count().exec();
+
+	t.same(db._dynamodb.query.lastCall.args[0], {
+		TableName: 'Table',
+		KeyConditionExpression: '#k_foo=:v_foo',
+		ExpressionAttributeNames: {
+			'#k_foo': 'foo'
+		},
+		ExpressionAttributeValues: {
+			':v_foo': 'bar'
+		},
+		Select: 'COUNT'
+	});
+});
+
 test.serial('select one', async t => {
 	await Table.find({foo: 'bar'}).select('foo').count().exec();
 

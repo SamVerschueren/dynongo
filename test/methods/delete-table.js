@@ -1,6 +1,6 @@
 import test from 'ava';
 import sinon from 'sinon';
-import DeleteTable from '../../lib/methods/DeleteTable';
+import DeleteTable from '../../lib/methods/delete-table';
 import db from '../../';
 
 db.connect({prefix: 'foo'});
@@ -22,20 +22,20 @@ test.after(() => {
 test('drop method returns DeleteTable object', t => {
 	const query = db.dropTable('Table');
 
-	t.ok(query instanceof DeleteTable);
+	t.truthy(query instanceof DeleteTable);
 	t.is(query._table, 'Table');
 });
 
 test.serial('drop', async t => {
 	await Table.drop().exec();
 
-	t.same(db._dynamodb.service.deleteTable.lastCall.args[0], {TableName: 'foo.Table'});
+	t.deepEqual(db._dynamodb.service.deleteTable.lastCall.args[0], {TableName: 'foo.Table'});
 });
 
 test.serial('await', async t => {
 	await db.dropTable('Table').await().exec();
 
-	t.same(db._dynamodb.service.describeTable.lastCall.args[0], {TableName: 'foo.Table'});
+	t.deepEqual(db._dynamodb.service.describeTable.lastCall.args[0], {TableName: 'foo.Table'});
 });
 
 test.serial('error if not connected', async t => {

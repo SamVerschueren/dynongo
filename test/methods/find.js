@@ -43,7 +43,7 @@ test.after(() => {
 test.serial('find', async t => {
 	await Table.find({id: '5'}).exec();
 
-	t.same(db._dynamodb.query.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.query.lastCall.args[0], {
 		TableName: 'Table',
 		KeyConditionExpression: '#k_id=:v_id',
 		ExpressionAttributeNames: {
@@ -58,7 +58,7 @@ test.serial('find', async t => {
 test.serial('find with index', async t => {
 	await Table.find({id: '5'}, 'IdIndex').exec();
 
-	t.same(db._dynamodb.query.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.query.lastCall.args[0], {
 		TableName: 'Table',
 		IndexName: 'IdIndex',
 		KeyConditionExpression: '#k_id=:v_id',
@@ -74,7 +74,7 @@ test.serial('find with index', async t => {
 test.serial('limit', async t => {
 	await Table.find({id: '5'}).limit(2).exec();
 
-	t.same(db._dynamodb.query.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.query.lastCall.args[0], {
 		TableName: 'Table',
 		KeyConditionExpression: '#k_id=:v_id',
 		Limit: 2,
@@ -110,7 +110,7 @@ test.serial('count with no result', async t => {
 test.serial('select undefined', async t => {
 	await Table.find({foo: 'bar'}).select(undefined).count().exec();
 
-	t.same(db._dynamodb.query.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.query.lastCall.args[0], {
 		TableName: 'Table',
 		KeyConditionExpression: '#k_foo=:v_foo',
 		ExpressionAttributeNames: {
@@ -126,7 +126,7 @@ test.serial('select undefined', async t => {
 test.serial('select one', async t => {
 	await Table.find({foo: 'bar'}).select('foo').count().exec();
 
-	t.same(db._dynamodb.query.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.query.lastCall.args[0], {
 		TableName: 'Table',
 		KeyConditionExpression: '#k_foo=:v_foo',
 		ExpressionAttributeNames: {
@@ -143,7 +143,7 @@ test.serial('select one', async t => {
 test.serial('select multiple (comma separated)', async t => {
 	await Table.find({foo: 'bar'}).select('foo, bar').count().exec();
 
-	t.same(db._dynamodb.query.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.query.lastCall.args[0], {
 		TableName: 'Table',
 		KeyConditionExpression: '#k_foo=:v_foo',
 		ExpressionAttributeNames: {
@@ -161,7 +161,7 @@ test.serial('select multiple (comma separated)', async t => {
 test.serial('select multiple (space separated)', async t => {
 	await Table.find({foo: 'bar'}).select('foo bar').count().exec();
 
-	t.same(db._dynamodb.query.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.query.lastCall.args[0], {
 		TableName: 'Table',
 		KeyConditionExpression: '#k_foo=:v_foo',
 		ExpressionAttributeNames: {
@@ -177,15 +177,15 @@ test.serial('select multiple (space separated)', async t => {
 });
 
 test.serial('result', async t => {
-	t.same(await Table.find({id: '5'}).exec(), ['foo', 'bar']);
+	t.deepEqual(await Table.find({id: '5'}).exec(), ['foo', 'bar']);
 });
 
 test.serial('raw result', async t => {
-	t.same(await Table.find({id: '5'}).raw().exec(), {Count: 2, Items: ['foo', 'bar']});
+	t.deepEqual(await Table.find({id: '5'}).raw().exec(), {Count: 2, Items: ['foo', 'bar']});
 });
 
 test.serial('raw result limit', async t => {
-	t.same(await Table.find({id: '5'}).limit(1).raw().exec(), {Count: 2, Items: ['foo']});
+	t.deepEqual(await Table.find({id: '5'}).limit(1).raw().exec(), {Count: 2, Items: ['foo']});
 });
 
 test('sort throws error', async t => {
@@ -206,13 +206,13 @@ test.serial('error if not connected', async t => {
 test.serial('find all', async t => {
 	await Table.find().exec();
 
-	t.same(db._dynamodb.scan.lastCall.args[0], {TableName: 'Table'});
+	t.deepEqual(db._dynamodb.scan.lastCall.args[0], {TableName: 'Table'});
 });
 
 test.serial('find all where', async t => {
 	await Table.find().where({name: 'foo'}).exec();
 
-	t.same(db._dynamodb.scan.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.scan.lastCall.args[0], {
 		TableName: 'Table',
 		FilterExpression: '#k_name=:v_name',
 		ExpressionAttributeNames: {
@@ -224,27 +224,27 @@ test.serial('find all where', async t => {
 	});
 });
 
-test.serial('result', async t => {
-	t.same(await Table.find().exec(), ['foo', 'bar', 'baz']);
+test.serial('scan::result', async t => {
+	t.deepEqual(await Table.find().exec(), ['foo', 'bar', 'baz']);
 });
 
-test.serial('raw result', async t => {
-	t.same(await Table.find().raw().exec(), {Count: 3, Items: ['foo', 'bar', 'baz']});
+test.serial('scan::raw result', async t => {
+	t.deepEqual(await Table.find().raw().exec(), {Count: 3, Items: ['foo', 'bar', 'baz']});
 });
 
-test.serial('raw result limit', async t => {
-	t.same(await Table.find().limit(1).raw().exec(), {Count: 3, Items: ['foo']});
+test.serial('scan::raw result limit', async t => {
+	t.deepEqual(await Table.find().limit(1).raw().exec(), {Count: 3, Items: ['foo']});
 });
 
-test.serial('count all', async t => {
+test.serial('scan::count all', async t => {
 	t.is(await Table.find().count().exec(), 3);
 });
 
-test.serial('count all with no result', async t => {
+test.serial('scan::count all with no result', async t => {
 	t.is(await Table2.find().count().exec(), 0);
 });
 
-test.serial('error if not connected', async t => {
+test.serial('scan::error if not connected', async t => {
 	const original = db._dynamodb;
 	db._dynamodb = undefined;
 

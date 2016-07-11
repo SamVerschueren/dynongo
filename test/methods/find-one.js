@@ -19,7 +19,7 @@ test.after(() => {
 test.serial('find one', async t => {
 	t.is(await Table.findOne({id: '5'}).exec(), 'foo');
 
-	t.same(db._dynamodb.query.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.query.lastCall.args[0], {
 		TableName: 'Table',
 		KeyConditionExpression: '#k_id=:v_id',
 		ExpressionAttributeNames: {
@@ -35,7 +35,7 @@ test.serial('find one', async t => {
 test.serial('find one where', async t => {
 	t.is(await Table.findOne({id: '5'}).where({foo: 'bar'}).exec(), 'foo');
 
-	t.same(db._dynamodb.query.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.query.lastCall.args[0], {
 		TableName: 'Table',
 		KeyConditionExpression: '#k_id=:v_id',
 		FilterExpression: '#k_foo=:v_foo',
@@ -53,7 +53,7 @@ test.serial('find one where', async t => {
 test.serial('find all but one', async t => {
 	t.is(await Table.findOne().exec(), 'baz');
 
-	t.same(db._dynamodb.scan.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.scan.lastCall.args[0], {
 		TableName: 'Table',
 		Limit: 1
 	});
@@ -62,7 +62,7 @@ test.serial('find all but one', async t => {
 test.serial('find all but one where', async t => {
 	t.is(await Table.findOne().where({foo: 'bar'}).exec(), 'baz');
 
-	t.same(db._dynamodb.scan.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.scan.lastCall.args[0], {
 		TableName: 'Table',
 		FilterExpression: '#k_foo=:v_foo',
 		ExpressionAttributeNames: {

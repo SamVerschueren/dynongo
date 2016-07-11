@@ -1,6 +1,6 @@
 import test from 'ava';
 import sinon from 'sinon';
-import CreateTable from '../../lib/methods/CreateTable';
+import CreateTable from '../../lib/methods/create-table';
 import db from '../../';
 import schema from '../fixtures/schema.json';
 
@@ -23,15 +23,12 @@ test.after(() => {
 test('create method returns CreateTable object', t => {
 	const query = db.createTable({TableName: 'Table'});
 
-	t.ok(query instanceof CreateTable);
+	t.truthy(query instanceof CreateTable);
 	t.is(query._table, 'Table');
 });
 
 test('throws error if no schema provided', t => {
 	t.throws(db.createTable.bind(db), 'Provide a schema object');
-});
-
-test('throws error if no schema provided', t => {
 	t.throws(Table.create.bind(Table), 'Provide a schema object');
 });
 
@@ -42,7 +39,7 @@ test('throws error if no table name is provided', t => {
 test.serial('create table', async t => {
 	await db.createTable(Object.assign({}, schema)).exec();
 
-	t.same(db._dynamodb.service.createTable.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.service.createTable.lastCall.args[0], {
 		TableName: 'foo.Table',
 		AttributeDefinitions: [
 			{
@@ -66,7 +63,7 @@ test.serial('create table', async t => {
 test.serial('create table adjusts the table name', async t => {
 	await Table.create(Object.assign({}, schema)).exec();
 
-	t.same(db._dynamodb.service.createTable.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.service.createTable.lastCall.args[0], {
 		TableName: 'foo.Bar',
 		AttributeDefinitions: [
 			{
@@ -90,7 +87,7 @@ test.serial('create table adjusts the table name', async t => {
 test.serial('await', async t => {
 	await db.createTable(Object.create(schema)).await().exec();
 
-	t.same(db._dynamodb.service.describeTable.lastCall.args[0], {TableName: 'foo.Table'});
+	t.deepEqual(db._dynamodb.service.describeTable.lastCall.args[0], {TableName: 'foo.Table'});
 });
 
 test.serial('error if not connected', async t => {

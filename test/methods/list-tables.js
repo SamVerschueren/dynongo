@@ -15,13 +15,13 @@ test.after(() => {
 });
 
 test.serial('result', async t => {
-	t.same(await db.listTables().exec(), ['test.baz', 'test.foo', 'test.bar', 'prod.foo']);
+	t.deepEqual(await db.listTables().exec(), ['test.baz', 'test.foo', 'test.bar', 'prod.foo']);
 });
 
 test.serial('filter result on prefix', async t => {
 	db._prefix = 'test';
 
-	t.same(await db.listTables().exec(), ['test.foo', 'test.bar']);
+	t.deepEqual(await db.listTables().exec(), ['test.foo', 'test.bar']);
 
 	db._prefix = undefined;
 });

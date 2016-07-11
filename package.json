@@ -3,30 +3,30 @@
   "version": "0.7.0",
   "description": "MongoDB like syntax for DynamoDB",
   "main": "index.js",
+  "license": "MIT",
+  "repository": "SamVerschueren/clinton",
+  "author": {
+    "name": "Sam Verschueren",
+    "email": "sam.verschueren@gmail.com",
+    "url": "github.com/SamVerschueren"
+  },
   "scripts": {
-    "test": "xo && nyc ava test/*.js test/**/*.js --all",
+    "test": "xo && nyc ava",
     "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/SamVerschueren/dynongo.git"
-  },
-  "keywords": [
-    "dynamodb",
-    "mongodb",
-    "mongo",
-    "mongoose"
-  ],
   "files": [
     "index.js",
     "lib"
   ],
-  "author": "Sam Verschueren",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/SamVerschueren/dynongo/issues"
-  },
-  "homepage": "https://github.com/SamVerschueren/dynongo",
+  "keywords": [
+    "dynamodb",
+    "mongodb",
+    "mongo",
+    "mongoose",
+    "aws",
+    "database",
+    "nosql"
+  ],
   "dependencies": {
     "aws-sdk": "^2.2.30",
     "is-object": "^1.0.1",

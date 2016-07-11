@@ -46,7 +46,7 @@ test('error', async t => {
 test.serial('insert key', async t => {
 	await Table.insert({id: '5'}).exec();
 
-	t.same(db._dynamodb.update.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.update.lastCall.args[0], {
 		TableName: 'insert-Table',
 		ReturnValues: 'ALL_NEW',
 		Key: {
@@ -65,7 +65,7 @@ test.serial('insert key', async t => {
 test.serial('insert', async t => {
 	await Table.insert({id: '5'}, {email: 'foo@bar.com'}).exec();
 
-	t.same(db._dynamodb.update.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.update.lastCall.args[0], {
 		TableName: 'insert-Table',
 		ReturnValues: 'ALL_NEW',
 		Key: {
@@ -89,7 +89,7 @@ test.serial('result', async t => {
 });
 
 test.serial('raw result', async t => {
-	t.same(await Table.insert({id: '5'}, {$set: {foo: 'bar'}}).raw().exec(), {Attributes: 'foo'});
+	t.deepEqual(await Table.insert({id: '5'}, {$set: {foo: 'bar'}}).raw().exec(), {Attributes: 'foo'});
 });
 
 test.serial('error if not connected', async t => {

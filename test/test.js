@@ -8,10 +8,10 @@ test.before(() => {
 test('connect', t => {
 	db.connect();
 
-	t.notOk(db._prefix);
+	t.falsy(db._prefix);
 	t.is(db._delimiter, '.');
-	t.ok(db._dynamodb);
-	t.ok(db.raw);
+	t.truthy(db._dynamodb);
+	t.truthy(db.raw);
 });
 
 test('connect options', t => {
@@ -19,8 +19,8 @@ test('connect options', t => {
 
 	t.is(db._prefix, 'dynongo');
 	t.is(db._delimiter, ':');
-	t.ok(db._dynamodb);
-	t.ok(db.raw);
+	t.truthy(db._dynamodb);
+	t.truthy(db.raw);
 });
 
 test('connect locally', t => {
@@ -35,5 +35,5 @@ test('table', t => {
 	const table = db.table('Table');
 
 	t.is(table._name, 'Table');
-	t.ok(table._dynamodb);
+	t.truthy(table._dynamodb);
 });

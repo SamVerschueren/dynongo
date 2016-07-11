@@ -17,7 +17,7 @@ test.after(() => {
 test.serial('single key update', async t => {
 	await Table.update({id: '5'}, {$set: {foo: 'bar'}}).exec();
 
-	t.same(db._dynamodb.update.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.update.lastCall.args[0], {
 		TableName: 'Table',
 		ReturnValues: 'ALL_NEW',
 		Key: {
@@ -39,7 +39,7 @@ test.serial('single key update', async t => {
 test.serial('multi key update', async t => {
 	await Table.update({id: '5', email: 'foo@bar.com'}, {$set: {foo: 'bar'}}).exec();
 
-	t.same(db._dynamodb.update.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.update.lastCall.args[0], {
 		TableName: 'Table',
 		ReturnValues: 'ALL_NEW',
 		Key: {
@@ -64,7 +64,7 @@ test.serial('multi key update', async t => {
 test.serial('where', async t => {
 	await Table.update({id: '5'}, {$set: {foo: 'bar'}, $inc: {salary: 1000}}).where({email: 'foo@bar.com'}).exec();
 
-	t.same(db._dynamodb.update.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.update.lastCall.args[0], {
 		TableName: 'Table',
 		ReturnValues: 'ALL_NEW',
 		Key: {
@@ -90,7 +90,7 @@ test.serial('where', async t => {
 test.serial('where with $or', async t => {
 	await Table.update({id: '5'}, {$set: {foo: 'bar'}}).where({$or: [{email: {$exists: false}}, {email: 'foo@bar.com'}]}).exec();
 
-	t.same(db._dynamodb.update.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.update.lastCall.args[0], {
 		TableName: 'Table',
 		ReturnValues: 'ALL_NEW',
 		Key: {
@@ -114,7 +114,7 @@ test.serial('where with $or', async t => {
 test.serial('where with $or and comparison', async t => {
 	await Table.update({id: '5'}, {$set: {foo: 'bar'}}).where({foo: 'baz', $or: [{email: {$exists: false}}, {email: 'foo@bar.com'}]}).exec();
 
-	t.same(db._dynamodb.update.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.update.lastCall.args[0], {
 		TableName: 'Table',
 		ReturnValues: 'ALL_NEW',
 		Key: {
@@ -141,7 +141,7 @@ test.serial('result', async t => {
 });
 
 test.serial('raw result', async t => {
-	t.same(await Table.update({id: '5'}, {$set: {foo: 'bar'}}).where({email: 'foo@bar.com'}).raw().exec(), {Attributes: 'foo'});
+	t.deepEqual(await Table.update({id: '5'}, {$set: {foo: 'bar'}}).where({email: 'foo@bar.com'}).raw().exec(), {Attributes: 'foo'});
 });
 
 test.serial('error if not connected', async t => {

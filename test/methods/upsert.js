@@ -17,7 +17,7 @@ test.after(() => {
 test.serial('upsert', async t => {
 	await Table.upsert({id: '5'}, {foo: 'bar'}).exec();
 
-	t.same(db._dynamodb.update.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.update.lastCall.args[0], {
 		TableName: 'Table',
 		ReturnValues: 'ALL_NEW',
 		Key: {
@@ -33,10 +33,10 @@ test.serial('upsert', async t => {
 	});
 });
 
-test.serial('upsert', async t => {
+test.serial('upsert by calling update', async t => {
 	await Table.update({id: '5'}, {foo: 'bar'}, {upsert: true}).exec();
 
-	t.same(db._dynamodb.update.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.update.lastCall.args[0], {
 		TableName: 'Table',
 		ReturnValues: 'ALL_NEW',
 		Key: {
@@ -57,7 +57,7 @@ test.serial('result', async t => {
 });
 
 test.serial('raw result', async t => {
-	t.same(await Table.upsert({id: '5'}, {foo: 'bar'}).where({email: 'foo@bar.com'}).raw().exec(), {Attributes: 'foo'});
+	t.deepEqual(await Table.upsert({id: '5'}, {foo: 'bar'}).where({email: 'foo@bar.com'}).raw().exec(), {Attributes: 'foo'});
 });
 
 test.serial('error if not connected', async t => {

@@ -17,7 +17,7 @@ test.after(() => {
 test.serial('delete', async t => {
 	await Table.remove({id: '5'}).exec();
 
-	t.same(db._dynamodb.delete.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.delete.lastCall.args[0], {
 		TableName: 'delete.Table',
 		Key: {
 			id: '5'
@@ -26,13 +26,13 @@ test.serial('delete', async t => {
 });
 
 test.serial('result', async t => {
-	t.notOk(await Table.remove({id: '5'}).exec());
+	t.falsy(await Table.remove({id: '5'}).exec());
 });
 
 test.serial('where', async t => {
 	await Table.remove({id: '5'}).where({foo: 'bar'}).exec();
 
-	t.same(db._dynamodb.delete.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.delete.lastCall.args[0], {
 		TableName: 'delete.Table',
 		Key: {
 			id: '5'
@@ -50,7 +50,7 @@ test.serial('where', async t => {
 test.serial('find one and remove', async t => {
 	await Table.findOneAndRemove({id: '5'}).exec();
 
-	t.same(db._dynamodb.delete.lastCall.args[0], {
+	t.deepEqual(db._dynamodb.delete.lastCall.args[0], {
 		TableName: 'delete.Table',
 		Key: {
 			id: '5'
@@ -60,11 +60,11 @@ test.serial('find one and remove', async t => {
 });
 
 test('find one and remove result', async t => {
-	t.same(await Table.findOneAndRemove({id: '5'}).exec(), {id: '5', foo: 'bar'});
+	t.deepEqual(await Table.findOneAndRemove({id: '5'}).exec(), {id: '5', foo: 'bar'});
 });
 
 test('find one and remove raw result', async t => {
-	t.same(await Table.findOneAndRemove({id: '5'}).raw().exec(), {Attributes: {id: '5', foo: 'bar'}});
+	t.deepEqual(await Table.findOneAndRemove({id: '5'}).raw().exec(), {Attributes: {id: '5', foo: 'bar'}});
 });
 
 test.serial('error if not connected', async t => {

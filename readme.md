@@ -70,7 +70,7 @@ db.connect({
 In order for the developer to execute methods on a table, you have to retrieve the table object from the database.
 
 ```js
-var Employee = db.table('Employee');
+const Employee = db.table('Employee');
 ```
 
 The table name will be automatically prefixed by the `prefix` provided in the connection object.

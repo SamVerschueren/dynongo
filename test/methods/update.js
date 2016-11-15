@@ -7,17 +7,17 @@ db.connect();
 const Table = db.table('Table');
 
 test.before(() => {
-	sinon.stub(db._dynamodb, 'update').yields(undefined, {Attributes: 'foo'});
+	sinon.stub(db.dynamodb, 'update').yields(undefined, {Attributes: 'foo'});
 });
 
 test.after(() => {
-	db._dynamodb.update.restore();
+	db.dynamodb.update.restore();
 });
 
 test.serial('single key update', async t => {
 	await Table.update({id: '5'}, {$set: {foo: 'bar'}}).exec();
 
-	t.deepEqual(db._dynamodb.update.lastCall.args[0], {
+	t.deepEqual(db.dynamodb.update.lastCall.args[0], {
 		TableName: 'Table',
 		ReturnValues: 'ALL_NEW',
 		Key: {
@@ -39,7 +39,7 @@ test.serial('single key update', async t => {
 test.serial('multi key update', async t => {
 	await Table.update({id: '5', email: 'foo@bar.com'}, {$set: {foo: 'bar'}}).exec();
 
-	t.deepEqual(db._dynamodb.update.lastCall.args[0], {
+	t.deepEqual(db.dynamodb.update.lastCall.args[0], {
 		TableName: 'Table',
 		ReturnValues: 'ALL_NEW',
 		Key: {
@@ -64,7 +64,7 @@ test.serial('multi key update', async t => {
 test.serial('where', async t => {
 	await Table.update({id: '5'}, {$set: {foo: 'bar'}, $inc: {salary: 1000}}).where({email: 'foo@bar.com'}).exec();
 
-	t.deepEqual(db._dynamodb.update.lastCall.args[0], {
+	t.deepEqual(db.dynamodb.update.lastCall.args[0], {
 		TableName: 'Table',
 		ReturnValues: 'ALL_NEW',
 		Key: {
@@ -90,7 +90,7 @@ test.serial('where', async t => {
 test.serial('where with $or', async t => {
 	await Table.update({id: '5'}, {$set: {foo: 'bar'}}).where({$or: [{email: {$exists: false}}, {email: 'foo@bar.com'}]}).exec();
 
-	t.deepEqual(db._dynamodb.update.lastCall.args[0], {
+	t.deepEqual(db.dynamodb.update.lastCall.args[0], {
 		TableName: 'Table',
 		ReturnValues: 'ALL_NEW',
 		Key: {
@@ -114,7 +114,7 @@ test.serial('where with $or', async t => {
 test.serial('where with $or and comparison', async t => {
 	await Table.update({id: '5'}, {$set: {foo: 'bar'}}).where({foo: 'baz', $or: [{email: {$exists: false}}, {email: 'foo@bar.com'}]}).exec();
 
-	t.deepEqual(db._dynamodb.update.lastCall.args[0], {
+	t.deepEqual(db.dynamodb.update.lastCall.args[0], {
 		TableName: 'Table',
 		ReturnValues: 'ALL_NEW',
 		Key: {
@@ -145,10 +145,10 @@ test.serial('raw result', async t => {
 });
 
 test.serial('error if not connected', async t => {
-	const original = db._dynamodb;
-	db._dynamodb = undefined;
+	const original = db.dynamodb;
+	db.dynamodb = undefined;
 
 	await t.throws(Table.update({id: '5'}, {$set: {foo: 'bar'}}).exec(), 'Call .connect() before executing queries.');
 
-	db._dynamodb = original;
+	db.dynamodb = original;
 });

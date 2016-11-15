@@ -7,17 +7,17 @@ db.connect({prefix: 'delete'});
 const Table = db.table('Table');
 
 test.before(() => {
-	sinon.stub(db._dynamodb, 'delete').yields(undefined, {Attributes: {id: '5', foo: 'bar'}});
+	sinon.stub(db.dynamodb, 'delete').yields(undefined, {Attributes: {id: '5', foo: 'bar'}});
 });
 
 test.after(() => {
-	db._dynamodb.delete.restore();
+	db.dynamodb.delete.restore();
 });
 
 test.serial('delete', async t => {
 	await Table.remove({id: '5'}).exec();
 
-	t.deepEqual(db._dynamodb.delete.lastCall.args[0], {
+	t.deepEqual(db.dynamodb.delete.lastCall.args[0], {
 		TableName: 'delete.Table',
 		Key: {
 			id: '5'
@@ -32,7 +32,7 @@ test.serial('result', async t => {
 test.serial('where', async t => {
 	await Table.remove({id: '5'}).where({foo: 'bar'}).exec();
 
-	t.deepEqual(db._dynamodb.delete.lastCall.args[0], {
+	t.deepEqual(db.dynamodb.delete.lastCall.args[0], {
 		TableName: 'delete.Table',
 		Key: {
 			id: '5'
@@ -50,7 +50,7 @@ test.serial('where', async t => {
 test.serial('find one and remove', async t => {
 	await Table.findOneAndRemove({id: '5'}).exec();
 
-	t.deepEqual(db._dynamodb.delete.lastCall.args[0], {
+	t.deepEqual(db.dynamodb.delete.lastCall.args[0], {
 		TableName: 'delete.Table',
 		Key: {
 			id: '5'
@@ -68,10 +68,10 @@ test('find one and remove raw result', async t => {
 });
 
 test.serial('error if not connected', async t => {
-	const original = db._dynamodb;
-	db._dynamodb = undefined;
+	const original = db.dynamodb;
+	db.dynamodb = undefined;
 
 	await t.throws(Table.remove({id: '5'}).exec(), 'Call .connect() before executing queries.');
 
-	db._dynamodb = original;
+	db.dynamodb = original;
 });

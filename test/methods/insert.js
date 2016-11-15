@@ -19,14 +19,14 @@ conditionalCheckException.retryable = false;
 conditionalCheckException.retryDelay = 0;
 
 test.before(() => {
-	const stub = sinon.stub(db._dynamodb, 'update');
+	const stub = sinon.stub(db.dynamodb, 'update');
 	stub.withArgs(fixture1).yields(conditionalCheckException);
 	stub.withArgs(fixture2).yields(new Error('foo'));
 	stub.yields(undefined, {Attributes: 'foo'});
 });
 
 test.after(() => {
-	db._dynamodb.update.restore();
+	db.dynamodb.update.restore();
 });
 
 test('error if a duplicate key was inserted', async t => {
@@ -46,7 +46,7 @@ test('error', async t => {
 test.serial('insert key', async t => {
 	await Table.insert({id: '5'}).exec();
 
-	t.deepEqual(db._dynamodb.update.lastCall.args[0], {
+	t.deepEqual(db.dynamodb.update.lastCall.args[0], {
 		TableName: 'insert-Table',
 		ReturnValues: 'ALL_NEW',
 		Key: {
@@ -65,7 +65,7 @@ test.serial('insert key', async t => {
 test.serial('insert', async t => {
 	await Table.insert({id: '5'}, {email: 'foo@bar.com'}).exec();
 
-	t.deepEqual(db._dynamodb.update.lastCall.args[0], {
+	t.deepEqual(db.dynamodb.update.lastCall.args[0], {
 		TableName: 'insert-Table',
 		ReturnValues: 'ALL_NEW',
 		Key: {
@@ -93,10 +93,10 @@ test.serial('raw result', async t => {
 });
 
 test.serial('error if not connected', async t => {
-	const original = db._dynamodb;
-	db._dynamodb = undefined;
+	const original = db.dynamodb;
+	db.dynamodb = undefined;
 
 	await t.throws(Table.insert({id: '5'}, {$set: {foo: 'bar'}}).exec(), 'Call .connect() before executing queries.');
 
-	db._dynamodb = original;
+	db.dynamodb = original;
 });

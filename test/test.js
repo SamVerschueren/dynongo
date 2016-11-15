@@ -8,18 +8,18 @@ test.before(() => {
 test('connect', t => {
 	db.connect();
 
-	t.falsy(db._prefix);
-	t.is(db._delimiter, '.');
-	t.truthy(db._dynamodb);
+	t.falsy(db.prefix);
+	t.is(db.delimiter, '.');
+	t.truthy(db.dynamodb);
 	t.truthy(db.raw);
 });
 
 test('connect options', t => {
 	db.connect({prefix: 'dynongo', prefixDelimiter: ':'});
 
-	t.is(db._prefix, 'dynongo');
-	t.is(db._delimiter, ':');
-	t.truthy(db._dynamodb);
+	t.is(db.prefix, 'dynongo');
+	t.is(db.delimiter, ':');
+	t.truthy(db.dynamodb);
 	t.truthy(db.raw);
 });
 
@@ -34,6 +34,6 @@ test('connect locally', t => {
 test('table', t => {
 	const table = db.table('Table');
 
-	t.is(table._name, 'Table');
+	t.is(table.name, 'Table');
 	t.truthy(table._dynamodb);
 });

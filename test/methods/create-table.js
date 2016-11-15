@@ -9,22 +9,22 @@ db.connect({prefix: 'foo'});
 const Table = db.table('Bar');
 
 test.before(() => {
-	sinon.stub(db._dynamodb.service, 'createTable').yields(undefined, undefined);
-	const describe = sinon.stub(db._dynamodb.service, 'describeTable');
+	sinon.stub(db.dynamodb.service, 'createTable').yields(undefined, undefined);
+	const describe = sinon.stub(db.dynamodb.service, 'describeTable');
 	describe.onFirstCall().yields(undefined, {Table: {TableStatus: 'CREATING'}});
 	describe.yields(undefined, {Table: {TableStatus: 'ACTIVE'}});
 });
 
 test.after(() => {
-	db._dynamodb.service.createTable.restore();
-	db._dynamodb.service.describeTable.restore();
+	db.dynamodb.service.createTable.restore();
+	db.dynamodb.service.describeTable.restore();
 });
 
 test('create method returns CreateTable object', t => {
 	const query = db.createTable({TableName: 'Table'});
 
 	t.truthy(query instanceof CreateTable);
-	t.is(query._table, 'Table');
+	t.is(query._table.name, 'Table');
 });
 
 test('throws error if no schema provided', t => {
@@ -39,7 +39,7 @@ test('throws error if no table name is provided', t => {
 test.serial('create table', async t => {
 	await db.createTable(Object.assign({}, schema)).exec();
 
-	t.deepEqual(db._dynamodb.service.createTable.lastCall.args[0], {
+	t.deepEqual(db.dynamodb.service.createTable.lastCall.args[0], {
 		TableName: 'foo.Table',
 		AttributeDefinitions: [
 			{
@@ -63,7 +63,7 @@ test.serial('create table', async t => {
 test.serial('create table adjusts the table name', async t => {
 	await Table.create(Object.assign({}, schema)).exec();
 
-	t.deepEqual(db._dynamodb.service.createTable.lastCall.args[0], {
+	t.deepEqual(db.dynamodb.service.createTable.lastCall.args[0], {
 		TableName: 'foo.Bar',
 		AttributeDefinitions: [
 			{
@@ -87,14 +87,14 @@ test.serial('create table adjusts the table name', async t => {
 test.serial('await', async t => {
 	await db.createTable(Object.create(schema)).await().exec();
 
-	t.deepEqual(db._dynamodb.service.describeTable.lastCall.args[0], {TableName: 'foo.Table'});
+	t.deepEqual(db.dynamodb.service.describeTable.lastCall.args[0], {TableName: 'foo.Table'});
 });
 
 test.serial('error if not connected', async t => {
-	const original = db._dynamodb;
-	db._dynamodb = undefined;
+	const original = db.dynamodb;
+	db.dynamodb = undefined;
 
 	await t.throws(db.createTable(Object.create(schema)).exec(), 'Call .connect() before executing queries.');
 
-	db._dynamodb = original;
+	db.dynamodb = original;
 });

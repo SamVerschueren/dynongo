@@ -5,13 +5,13 @@ import db from '../../';
 db.connect();
 
 test.before(() => {
-	const stub = sinon.stub(db._dynamodb.service, 'listTables');
+	const stub = sinon.stub(db.dynamodb.service, 'listTables');
 	stub.onFirstCall().yields(undefined, {LastEvaluatedTableName: 'test.baz', TableNames: ['test.baz']});
 	stub.yields(undefined, {TableNames: ['test.foo', 'test.bar', 'prod.foo']});
 });
 
 test.after(() => {
-	db._dynamodb.service.listTables.restore();
+	db.dynamodb.service.listTables.restore();
 });
 
 test.serial('result', async t => {
@@ -27,10 +27,10 @@ test.serial('filter result on prefix', async t => {
 });
 
 test.serial('error if not connected', async t => {
-	const original = db._dynamodb;
-	db._dynamodb = undefined;
+	const original = db.dynamodb;
+	db.dynamodb = undefined;
 
 	await t.throws(db.listTables().exec(), 'Call .connect() before executing queries.');
 
-	db._dynamodb = original;
+	db.dynamodb = original;
 });

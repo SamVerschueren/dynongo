@@ -119,7 +119,7 @@ The first parameter in the `update` method is the primary key (hash + range) and
 defines the updates of the fields.
 
 ```js
-Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$set: {Title: 'CTO'}, $inc: {Salary: 150}, $push: {Hobby: {$each: ['swimming', 'walking']}).exec()
+Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$set: {Title: 'CTO'}, $inc: {Salary: 150}, $push: {Hobby: {$each: ['swimming', 'walking']}}}).exec()
     .then(employee => {
         // => {FirstName: 'Foo', Name: 'Bar', Salary: 4650, Title: 'CTO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com', Hobby: ['cycling', 'swimming', 'walking']}
     });

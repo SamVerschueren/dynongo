@@ -37,3 +37,17 @@ test('table', t => {
 	t.is(table.name, 'Table');
 	t.truthy(table._dynamodb);
 });
+
+test('raw table', t => {
+	db.connect({prefix: 'foo'});
+	const table = db.table('Table', {raw: true});
+
+	t.is(table.name, 'Table');
+});
+
+test('raw table method', t => {
+	db.connect({prefix: 'foo'});
+	const table = db.rawTable('Table');
+
+	t.is(table.name, 'Table');
+});

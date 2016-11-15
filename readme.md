@@ -75,6 +75,12 @@ const Employee = db.table('Employee');
 
 The table name will be automatically prefixed by the `prefix` provided in the connection object.
 
+If you provided a `prefix` in the connection object but you don't want that for a specific table, you could ask for a raw table. A raw table is like a regular table without the prefix.
+
+```js
+const Employee = db.rawTable('Employee');
+```
+
 ### Methods
 
 #### find

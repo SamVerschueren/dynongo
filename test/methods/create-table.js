@@ -24,7 +24,7 @@ test('create method returns CreateTable object', t => {
 	const query = db.createTable({TableName: 'Table'});
 
 	t.truthy(query instanceof CreateTable);
-	t.is(query._table.name, 'Table');
+	t.is(query._table.name, 'foo.Table');
 });
 
 test('throws error if no schema provided', t => {

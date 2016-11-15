@@ -23,7 +23,7 @@ test('drop method returns DeleteTable object', t => {
 	const query = db.dropTable('Table');
 
 	t.truthy(query instanceof DeleteTable);
-	t.is(query._table.name, 'Table');
+	t.is(query._table.name, 'foo.Table');
 });
 
 test.serial('drop', async t => {

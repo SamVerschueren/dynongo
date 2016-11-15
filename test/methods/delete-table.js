@@ -33,7 +33,7 @@ test.serial('drop', async t => {
 });
 
 test.serial('await', async t => {
-	await db.dropTable('Table').await().exec();
+	await db.dropTable('Table').wait().exec();
 
 	t.deepEqual(db.dynamodb.service.describeTable.lastCall.args[0], {TableName: 'foo.Table'});
 });

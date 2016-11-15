@@ -2,7 +2,7 @@ import test from 'ava';
 import sinon from 'sinon';
 import CreateTable from '../../lib/methods/create-table';
 import db from '../../';
-import schema from '../fixtures/schema.json';
+import schema from '../fixtures/schema';
 
 db.connect({prefix: 'foo'});
 
@@ -85,7 +85,7 @@ test.serial('create table adjusts the table name', async t => {
 });
 
 test.serial('await', async t => {
-	await db.createTable(Object.create(schema)).await().exec();
+	await db.createTable(Object.create(schema)).wait().exec();
 
 	t.deepEqual(db.dynamodb.service.describeTable.lastCall.args[0], {TableName: 'foo.Table'});
 });

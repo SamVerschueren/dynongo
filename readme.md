@@ -216,20 +216,20 @@ This is shorthand for the first method.
 
 Creating a table can take a while. The previous examples do not wait for the action to be completed. But there
 might be use cases where you have to wait untill the table is created entirely before continuing.
-This can be done with the `await()` method.
+This can be done with the `wait()` method.
 
 ```js
-db.createTable(schema).await().exec()
+db.createTable(schema).wait().exec()
     .then(() => {
         // Table is created
     });
 ```
 
 This will make sure the table is polled every 1000 milliseconds untill the status of the table is `active`. If you want to poll
-at another speed, you can by providing the number of milliseconds in the `await` method.
+at another speed, you can by providing the number of milliseconds in the `wait` method.
 
 ```js
-db.createTable(schema).await(5000).exec();
+db.createTable(schema).wait(5000).exec();
 ```
 
 This will poll the status of the table every 5 seconds instead of every second.
@@ -263,20 +263,20 @@ This method is just a shorthand method for the first example.
 #### Awaiting the result
 
 Dropping a table can take a while, especially when the table has a lot of data. The previous examples do not wait for the action to be completed. But there
-might be use cases where you have to wait untill the table is removed entirely before continuing. This can be done with the `await()` method.
+might be use cases where you have to wait untill the table is removed entirely before continuing. This can be done with the `wait()` method.
 
 ```js
-db.dropTable('Employee').await().exec()
+db.dropTable('Employee').wait().exec()
     .then(() => {
         // => Table is dropped
     })
 ```
 
 This will make sure the table is polled every 1000 milliseconds untill the table does not exist anymore. If you want to poll at another speed, you can by providing
-the number of milliseconds in the `await` method.
+the number of milliseconds in the `wait` method.
 
 ```js
-db.dropTable('Employee').await(5000).exec();
+db.dropTable('Employee').wait(5000).exec();
 ```
 
 This will poll the status of the table every 5 seconds instead of every second.

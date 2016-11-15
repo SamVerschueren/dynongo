@@ -84,6 +84,25 @@ test.serial('insert', async t => {
 	});
 });
 
+test.serial('insert empty object', async t => {
+	await Table.insert({id: '5'}, {}).exec();
+
+	t.deepEqual(db.dynamodb.update.lastCall.args[0], {
+		TableName: 'insert-Table',
+		ReturnValues: 'ALL_NEW',
+		Key: {
+			id: '5'
+		},
+		ConditionExpression: 'NOT (#k_id=:v_id)',
+		ExpressionAttributeNames: {
+			'#k_id': 'id'
+		},
+		ExpressionAttributeValues: {
+			':v_id': '5'
+		}
+	});
+});
+
 test.serial('result', async t => {
 	t.is(await Table.insert({id: '5'}, {$set: {foo: 'bar'}}).exec(), 'foo');
 });

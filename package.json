@@ -4,7 +4,7 @@
   "description": "MongoDB like syntax for DynamoDB",
   "main": "index.js",
   "license": "MIT",
-  "repository": "SamVerschueren/clinton",
+  "repository": "SamVerschueren/dynongo",
   "author": {
     "name": "Sam Verschueren",
     "email": "sam.verschueren@gmail.com",

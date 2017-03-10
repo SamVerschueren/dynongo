@@ -2,11 +2,11 @@ import test from 'ava';
 import query from '../../lib/utils/query';
 
 test('Should throw an error if the value is undefined', t => {
-	t.throws(query.parse.bind(query, {id: undefined}), 'Value for key \'id\' is undefined. Please provide a valid value.');
+	t.throws(query.parse.bind(query, {id: undefined}), 'Value for key `id` is undefined. Please provide a valid value.');
 });
 
 test('Should throw an error if the value of a sub property is undefined', t => {
-	t.throws(query.parse.bind(query, {foo: {$gt: undefined}}), 'Value for key \'foo\' is undefined. Please provide a valid value.');
+	t.throws(query.parse.bind(query, {foo: {$gt: undefined}}), 'Value for key `foo` is undefined. Please provide a valid value.');
 });
 
 test('Should parse an object with one object', t => {

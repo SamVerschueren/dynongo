@@ -131,6 +131,15 @@ Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$set: {T
     });
 ```
 
+You can use `$unshift` to prepend a list with one or multiple values.
+
+```js
+Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$unshift: {Hobby: 'programming'}}}).exec()
+    .then(employee => {
+        // => {FirstName: 'Foo', Name: 'Bar', Salary: 4650, Title: 'CTO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com', Hobby: ['programming', 'cycling', 'swimming', 'walking']}
+    });
+```
+
 If no Amazon employee exists with that email address exists, the method will fail.
 
 You can also add extra conditions, for instance if we want to increase the salary by $150 only if the current salary is less then $4500.

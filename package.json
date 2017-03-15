@@ -14,8 +14,13 @@
     "node": ">=4"
   },
   "scripts": {
-    "test": "xo && nyc ava",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls"
+    "prepublish": "npm run clean && npm run compile -- --declaration",
+    "test": "npm run lint && npm run compile && nyc ava",
+    "pretest": "npm run compile -- --sourceMap && cpy \"**/*.json\" .. --cwd=src --parents",
+    "compile": "tsc -p tsconfig.json",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls",
+    "lint": "tslint \"src/**/*.ts\"",
+    "clean": "del -f test lib *.js *.js.map *.d.ts"
   },
   "files": [
     "index.js",
@@ -37,13 +42,17 @@
     "pify": "^2.3.0"
   },
   "devDependencies": {
+    "@types/node": "^7.0.8",
+    "@types/pify": "0.0.28",
+    "@types/sinon": "^1.16.35",
     "ava": "*",
     "coveralls": "^2.11.6",
+    "cpy-cli": "^1.0.1",
+    "del-cli": "^0.2.1",
+    "load-json-file": "^2.0.0",
     "nyc": "^9.0.1",
     "sinon": "^1.17.2",
-    "xo": "*"
-  },
-  "xo": {
-    "esnext": true
+    "tslint": "^4.5.1",
+    "typescript": "^2.2.1"
   }
 }

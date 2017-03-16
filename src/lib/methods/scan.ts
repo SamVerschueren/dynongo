@@ -13,7 +13,7 @@ export class Scan extends BaseQuery implements Executable {
 	/**
 	 * Execute the scan.
 	 */
-	exec() {
+	exec(): Promise<any> {
 		const db = this.dynamodb.dynamodb;
 		const limit = this.params.Limit;
 

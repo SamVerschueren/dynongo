@@ -53,7 +53,7 @@ export class InsertItem extends Method implements Executable {
 	/**
 	 * Execute the insert item request.
 	 */
-	exec() {
+	exec(): Promise<any> {
 		const db = this.dynamodb.dynamodb;
 
 		if (!db) {

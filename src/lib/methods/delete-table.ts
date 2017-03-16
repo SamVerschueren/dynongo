@@ -29,7 +29,7 @@ export class DeleteTable extends Method implements Executable {
 	/**
 	 * This method will execute the delete table request that was built up.
 	 */
-	exec() {
+	exec(): Promise<void> {
 		const db = this.dynamodb.raw;
 
 		if (!db) {

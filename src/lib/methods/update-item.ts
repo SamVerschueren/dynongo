@@ -38,7 +38,7 @@ export class UpdateItem extends InsertItem implements Executable {
 	/**
 	 * This method will execute the update item request that was built up.
 	 */
-	exec() {
+	exec(): Promise<any> {
 		const db = this.dynamodb.dynamodb;
 
 		if (!db) {

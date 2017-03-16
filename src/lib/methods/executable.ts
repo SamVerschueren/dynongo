@@ -1,3 +1,3 @@
 export interface Executable {
-	exec();
+	exec(): Promise<any>;
 }

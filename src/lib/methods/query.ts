@@ -33,7 +33,7 @@ export class Query extends BaseQuery implements Executable {
 	/**
 	 * Execute the query.
 	 */
-	exec() {
+	exec(): Promise<any> {
 		if (this.error) {
 			return Promise.reject(this.error);
 		}

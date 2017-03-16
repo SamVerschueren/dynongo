@@ -12,7 +12,7 @@ export class ListTables extends Method implements Executable {
 	/**
 	 * Execute the `ListTables` request.
 	 */
-	exec() {
+	exec(): Promise<string[]> {
 		if (!this.dynamodb.raw) {
 			return Promise.reject(new Error('Call .connect() before executing queries.'));
 		}

@@ -63,10 +63,8 @@ export class DeleteItem extends Method implements Executable {
 
 	/**
 	 * This method will execute the delete item request that was built up.
-	 *
-	 * @return {Promise}					The promise object that resolves or rejects the promise if something went wrong.
 	 */
-	exec () {
+	exec(): Promise<any> {
 		const db = this.dynamodb.dynamodb;
 
 		if (!db) {

@@ -43,10 +43,8 @@ export class CreateTable extends Method implements Executable {
 
 	/**
 	 * This method will execute the create table request that was built up.
-	 *
-	 * @return {Promise}					The promise object that resolves or rejects the promise if something went wrong.
 	 */
-	exec() {
+	exec(): Promise<void> {
 		const db = this.dynamodb.raw;
 
 		if (!db) {

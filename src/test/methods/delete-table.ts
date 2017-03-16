@@ -1,7 +1,7 @@
 import test from 'ava';
 import * as sinon from 'sinon';
 import { DeleteTable } from '../../lib/methods/delete-table';
-import db from '../../';
+import db = require('../../');
 
 db.connect({prefix: 'foo'});
 

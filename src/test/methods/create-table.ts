@@ -4,7 +4,7 @@ import * as sinon from 'sinon';
 import * as loadJsonFile from 'load-json-file';
 import { CreateTable } from '../../lib/methods/create-table';
 import { Schema } from '../../lib/types/schema';
-import db from '../../';
+import db = require('../../');
 
 db.connect({prefix: 'foo'});
 

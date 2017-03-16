@@ -1,6 +1,6 @@
 import test from 'ava';
 import * as sinon from 'sinon';
-import db from '../../';
+import db = require('../../');
 
 const Table = db.table('Table');
 

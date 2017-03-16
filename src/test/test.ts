@@ -1,5 +1,5 @@
 import test from 'ava';
-import db from '../';
+import db = require('../');
 
 test.before(() => {
 	db.connect();

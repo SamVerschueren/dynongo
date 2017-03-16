@@ -125,7 +125,3 @@ export class DynamoDB {
 		return new ListTables(this);
 	}
 }
-
-const db = new DynamoDB();
-
-export default db;

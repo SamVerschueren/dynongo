@@ -1,3 +1,3 @@
-import db from './lib/dynamodb';
+import { DynamoDB } from './lib/dynamodb';
 
-export default db;
+export = new DynamoDB();

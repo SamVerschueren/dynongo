@@ -2,12 +2,18 @@ import * as pify from 'pify';
 import { Method } from './method';
 import { Executable } from './executable';
 import { Schema } from '../types/schema';
+import { DynamoDB } from '../dynamodb';
+import { Table } from '../table';
 
 export class CreateTable extends Method implements Executable {
 
 	private shouldWait = false;
 	private waitMs: number;
 	private schema: any;
+
+	constructor(table: Table, dynamodb: DynamoDB) {
+		super(table, dynamodb);
+	}
 
 	/**
 	 * Initialize the `CreateTable` object.

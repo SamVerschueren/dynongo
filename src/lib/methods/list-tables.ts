@@ -1,10 +1,13 @@
 import * as pify from 'pify';
 import { DynamoDB } from '../dynamodb';
 import { Executable } from './executable';
+import { Method } from './method';
 
-export class ListTables implements Executable {
+export class ListTables extends Method implements Executable {
 
-	constructor(private dynamodb: DynamoDB) { }
+	constructor(dynamodb: DynamoDB) {
+		super(null, dynamodb);
+	}
 
 	/**
 	 * Execute the `ListTables` request.

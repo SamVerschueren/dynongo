@@ -1,11 +1,17 @@
 import * as pify from 'pify';
 import { Method } from './method';
 import { Executable } from './executable';
+import { DynamoDB } from '../dynamodb';
+import { Table } from '../table';
 import * as queryUtil from '../utils/query';
 
 export class DeleteItem extends Method implements Executable {
 
 	private rawResult: boolean;
+
+	constructor(table: Table, dynamodb: DynamoDB) {
+		super(table, dynamodb);
+	}
 
 	/**
 	 * Initialize the `DeleteItem` object.

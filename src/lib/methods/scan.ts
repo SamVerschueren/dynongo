@@ -1,8 +1,14 @@
 import * as pify from 'pify';
 import { BaseQuery } from './base-query';
 import { Executable } from './executable';
+import { DynamoDB } from '../dynamodb';
+import { Table } from '../table';
 
 export class Scan extends BaseQuery implements Executable {
+
+	constructor(table: Table, dynamodb: DynamoDB) {
+		super(table, dynamodb);
+	}
 
 	/**
 	 * Execute the scan.

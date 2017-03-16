@@ -1,11 +1,17 @@
 import * as pify from 'pify';
 import { Method } from './method';
 import { Executable } from './executable';
+import { DynamoDB } from '../dynamodb';
+import { Table } from '../table';
 
 export class DeleteTable extends Method implements Executable {
 
 	private shouldWait = false;
 	private waitMs: number;
+
+	constructor(table: Table, dynamodb: DynamoDB) {
+		super(table, dynamodb);
+	}
 
 	/**
 	 * Make sure the exec method returns when the table is deleted entirely.

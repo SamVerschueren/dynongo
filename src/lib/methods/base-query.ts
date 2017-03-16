@@ -1,9 +1,15 @@
 import * as queryUtil from '../utils/query';
 import { Method } from './method';
+import { DynamoDB } from '../dynamodb';
+import { Table } from '../table';
 
 export abstract class BaseQuery extends Method {
 
 	protected rawResult: boolean;
+
+	constructor(table: Table, dynamodb: DynamoDB) {
+		super(table, dynamodb);
+	}
 
 	/**
 	 * Initialize the query object.

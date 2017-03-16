@@ -2,8 +2,14 @@ import * as pify from 'pify';
 import * as queryUtil from '../utils/query';
 import { InsertItem } from './insert-item';
 import { Executable } from './executable';
+import { DynamoDB } from '../dynamodb';
+import { Table } from '../table';
 
 export class UpdateItem extends InsertItem implements Executable {
+
+	constructor(table: Table, dynamodb: DynamoDB) {
+		super(table, dynamodb);
+	}
 
 	/**
 	 * Create a conditional update item object where the condition should be satisfied in order for the item to be

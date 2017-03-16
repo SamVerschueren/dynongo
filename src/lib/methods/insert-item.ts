@@ -2,22 +2,20 @@ import * as pify from 'pify';
 import * as queryUtil from '../utils/query';
 import * as updateUtil from '../utils/update';
 import { Executable } from './executable';
+import { Method } from './method';
 import { DynamoDB } from '../dynamodb';
 import { Table } from '../table';
-import { Params } from '../types/params';
 import { UpdateQuery } from '../types/update-query';
 
-export class InsertItem implements Executable {
+export class InsertItem extends Method implements Executable {
 
 	protected rawResult: boolean;
-	protected params: Params = {
-		ReturnValues: 'ALL_NEW'
-	};
 
-	constructor(
-		protected table: Table,
-		protected dynamodb: DynamoDB
-	) { }
+	constructor(table: Table, dynamodb: DynamoDB) {
+		super(table, dynamodb);
+
+		this.params.ReturnValues = 'ALL_NEW';
+	}
 
 	/**
 	 * Initialize the `InsertItem` object.

@@ -1,10 +1,16 @@
 import * as pify from 'pify';
 import { BaseQuery } from './base-query';
 import { Executable } from './executable';
+import { DynamoDB } from '../dynamodb';
+import { Table } from '../table';
 
 export class Query extends BaseQuery implements Executable {
 
 	private error: Error;
+
+	constructor(table: Table, dynamodb: DynamoDB) {
+		super(table, dynamodb);
+	}
 
 	/**
 	 * The order in which to return the query results - either ascending (1) or descending (-1).

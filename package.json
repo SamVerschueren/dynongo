@@ -37,7 +37,6 @@
     "nosql"
   ],
   "dependencies": {
-    "aws-sdk": "^2.2.30",
     "is-object": "^1.0.1",
     "object.pick": "^1.1.1",
     "pify": "^2.3.0"
@@ -47,6 +46,7 @@
     "@types/pify": "0.0.28",
     "@types/sinon": "^1.16.35",
     "ava": "*",
+    "aws-sdk": "^2.28.0",
     "coveralls": "^2.11.6",
     "cpy-cli": "^1.0.1",
     "del-cli": "^0.2.1",
@@ -55,5 +55,8 @@
     "sinon": "^1.17.2",
     "tslint": "^4.5.1",
     "typescript": "^2.2.1"
+  },
+  "peerDependencies": {
+    "aws-sdk": "^2.28.0"
   }
 }

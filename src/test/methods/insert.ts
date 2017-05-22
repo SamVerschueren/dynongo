@@ -43,7 +43,7 @@ test('error if a duplicate key was inserted', async t => {
 });
 
 test('error', async t => {
-	t.throws(Table.insert({id: '20'}, {$set: {foo: 'bar'}}).raw().exec(), 'foo');
+	await t.throws(Table.insert({id: '20'}, {$set: {foo: 'bar'}}).raw().exec(), 'foo');
 });
 
 test.serial('insert key', async t => {

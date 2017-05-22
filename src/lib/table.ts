@@ -7,6 +7,7 @@ import { DeleteItem } from './methods/delete-item';
 import { DeleteTable } from './methods/delete-table';
 import { CreateTable } from './methods/create-table';
 import * as table from './utils/table';
+import { operators as updateOperators } from './utils/update';
 import { Map } from './types/map';
 import { Schema } from './types/schema';
 
@@ -108,8 +109,20 @@ export class Table {
 		const update = new UpdateItem(this, this.dynamodb);
 
 		if (options.upsert && options.upsert === true) {
+			const params = Object.create(null);
+
+			for (const key of Object.keys(data)) {
+				if (updateOperators.indexOf(key) !== -1) {
+					params[key] = data[key];
+					delete data[key];
+				}
+			}
+
+			// Merge `$set` with the other data values
+			params['$set'] = Object.assign({}, params['$set'], data);
+
 			// If upsert is set to true, it does a update or insert
-			return update.initialize(key, {$set: data});
+			return update.initialize(key, params);
 		}
 
 		// Initialize the update item object and use the conditional statement to make sure the item exists.

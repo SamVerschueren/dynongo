@@ -8,6 +8,8 @@ export interface ParseResult {
 	ExpressionAttributeValues: Map<any>;
 }
 
+export const operators = ['$set', '$unset', '$inc', '$push', '$unshift'];
+
 export function parse(query: UpdateQuery): ParseResult {
 	const names = {};
 	const values = {};
@@ -48,11 +50,12 @@ export function parse(query: UpdateQuery): ParseResult {
 
 			const k = nameUtil.generateKeyName(key);
 			const v = nameUtil.generateValueName(key, value, values);
+			v.ExpressionAttributeValues[':_v_empty_value'] = 0;
 
 			Object.assign(names, k.ExpressionAttributeNames);
 			Object.assign(values, v.ExpressionAttributeValues);
 
-			return k.Expression + '=' + k.Expression + '+' + v.Expression;
+			return `${k.Expression}=if_not_exists(${k.Expression}, :_v_empty_value)+${v.Expression}`;
 		}));
 	}
 	if (query.$push || query.$unshift) {

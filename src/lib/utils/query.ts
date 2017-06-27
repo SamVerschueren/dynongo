@@ -112,6 +112,17 @@ const parseExpression = (key: string, value: any, values: {[key: string]: any}) 
 			case '$beginsWith':
 				expression = 'begins_with(' + k.Expression + ', ' + v.Expression + ')';
 				break;
+			case '$between':
+				if (!Array.isArray(value)) {
+					throw new TypeError(`$between value for key \`${key}\` should be an array, got \`${typeof value}\``);
+				}
+
+				if (value.length !== 2) {
+					throw new Error(`$between value for key \`${key}\` should have an exact length of \`2\`, got a length of \`${value.length}\``);
+				}
+
+				expression = `${k.Expression} BETWEEN ${v.Expression[0]} AND ${v.Expression[1]}`;
+				break;
 			default:
 				throw new Error('Unknown operator ' + op);
 		}

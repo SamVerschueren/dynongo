@@ -181,6 +181,24 @@ test('$beginsWith should parse a number to a string', t => {
 	t.deepEqual(result.ExpressionAttributeValues, {':v_foo': '5'});
 });
 
+test('$between', t => {
+	const result = query.parse({foo: {$between: ['a', 'b']}});
+
+	t.is(result.ConditionExpression, '#k_foo BETWEEN :v_foo_0 AND :v_foo_1');
+	t.deepEqual(result.ExpressionAttributeNames, {'#k_foo': 'foo'});
+	t.deepEqual(result.ExpressionAttributeValues, {':v_foo_0': 'a', ':v_foo_1': 'b'});
+});
+
+test('$between throws error when value is not an array', t => {
+	t.throws(() => query.parse({foo: {$between: 'a'}}), '$between value for key `foo` should be an array, got `string`');
+});
+
+test('$between throws error if value does not have exact 2 elements', t => {
+	t.throws(() => query.parse({foo: {$between: []}}), '$between value for key `foo` should have an exact length of `2`, got a length of `0`');
+	t.throws(() => query.parse({foo: {$between: ['a']}}), '$between value for key `foo` should have an exact length of `2`, got a length of `1`');
+	t.throws(() => query.parse({foo: {$between: ['a', 'b', 'c']}}), '$between value for key `foo` should have an exact length of `2`, got a length of `3`');
+});
+
 test('Should parse an object with two properties', t => {
 	const result = query.parse({id: 5, foo: 'bar'});
 

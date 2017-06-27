@@ -95,7 +95,7 @@ Employee.find({Organisation: 'Amazon'}).where({Salary: {$gt: 3000}}).select('Fir
 #### findOne
 
 ```js
-Employee.findOne({Organisation: 'Amazon'}).where({Salary: {$gt: 3000}}).select('FirstName Name').exec()
+Employee.findOne({Organisation: 'Amazon'}).where({Salary: {$between: [3000, 4000]}}).select('FirstName Name').exec()
     .then(employees => {
         // => {FirstName: 'Foo', Name: 'Bar'}
     });

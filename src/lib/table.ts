@@ -37,13 +37,16 @@ export class Table {
 		return table.lookupName(this.tableName, this.dynamodb);
 	}
 
+	find(): Scan;
+	find(query: any, indexName?: string): Query;
+
 	/**
 	 * Initialize a query builder.
 	 *
 	 * @param  query			The query for the index to filter on.
 	 * @param  indexName		The name of the global secondary index.
 	 */
-	find(query?: any, indexName?: string): Scan | Query {
+	find(query?: any, indexName?: string) {
 		if (query === undefined) {
 			// If query is not provided, the caller wants to perform a full table scan.
 			return new Scan(this, this.dynamodb);

@@ -187,6 +187,47 @@ db.listTables().exec().then(tables => {
 If you passed in a `prefix` property in the connection object, only the tables with that prefix will
 be returned.
 
+### Paging
+
+You can implement paging by using the `startFrom()` method together with the `LastEvaluatedKey` property returned when using the `raw()` method.
+
+```js
+const result = Employee.find({Organisation: 'Amazon'}).where({Salary: {$gt: 3000}}).limit(1).raw().exec()
+    .then(result => {
+        /**
+		 * {
+		 *     "Items": [
+		 *         { UserId: '1', FirstName: 'Foo', Name: 'Bar' }
+		 *     ],
+		 *     "Count": 1,
+		 *     "ScannedCount": 1,
+		 *     "LastEvaluatedKey": {
+		 *         Organisation: 'Amazon',
+		 *         UserId: '1'
+		 *     }
+		 * }
+		 */
+
+		// Retrieve the next page
+		return Employee.find({Organisation: 'Amazon'}).where({Salary: {$gt: 3000}}).startFrom(result.LastEvaluatedKey).limit(1).raw().exec()
+	})
+	.then(result => {
+        /**
+		 * {
+		 *     "Items": [
+		 *         { UserId: '2', FirstName: 'Unicorn', Name: 'Rainbow' }
+		 *     ],
+		 *     "Count": 1,
+		 *     "ScannedCount": 1,
+		 *     "LastEvaluatedKey": {
+		 *         Organisation: 'Amazon',
+		 *         UserId: '2'
+		 *     }
+		 * }
+		 */
+	});
+```
+
 ### Create a table
 
 A table can be created by either calling `create()` on a table instance or by calling `createTable` on the database instance.

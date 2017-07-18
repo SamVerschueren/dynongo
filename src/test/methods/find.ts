@@ -90,6 +90,25 @@ test.serial('limit', async t => {
 	});
 });
 
+test.serial('exclusive start key', async t => {
+	await Table.find({id: '5'}).startFrom({id: '10', foo: 'bar'}).exec();
+
+	t.deepEqual(queryStub.lastCall.args[0], {
+		TableName: 'Table',
+		KeyConditionExpression: '#k_id=:v_id',
+		ExclusiveStartKey: {
+			id: '10',
+			foo: 'bar'
+		},
+		ExpressionAttributeNames: {
+			'#k_id': 'id'
+		},
+		ExpressionAttributeValues: {
+			':v_id': '5'
+		}
+	});
+});
+
 test.serial('sort ascending', async t => {
 	await (Table.find({id: '5'}) as any).sort(1).exec();
 
@@ -222,6 +241,18 @@ test.serial('find all where', async t => {
 		},
 		ExpressionAttributeValues: {
 			':v_name': 'foo'
+		}
+	});
+});
+
+test.serial('scan::exclusive start key', async t => {
+	await Table.find().startFrom({id: '10', foo: 'bar'}).exec();
+
+	t.deepEqual(scanStub.lastCall.args[0], {
+		TableName: 'Table',
+		ExclusiveStartKey: {
+			id: '10',
+			foo: 'bar'
 		}
 	});
 });

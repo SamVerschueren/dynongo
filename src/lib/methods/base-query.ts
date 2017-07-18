@@ -87,6 +87,17 @@ export abstract class BaseQuery extends Method {
 	}
 
 	/**
+	 * Start querying from the provided key. Ideally for paging.
+	 *
+	 * @param lastEvaluatedKey 	The primary key of the first item that this operation will evaluate. Use the value that was returned for L`astEvaluatedKey` in the previous operation.
+	 */
+	startFrom(lastEvaluatedKey: any) {
+		this.params.ExclusiveStartKey = lastEvaluatedKey;
+
+		return this;
+	}
+
+	/**
 	 * Limit the number of items returned. If the limit is set to 1, the exec method
 	 * will return the first object instead of an array with one object.
 	 *

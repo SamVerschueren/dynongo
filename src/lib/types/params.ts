@@ -12,6 +12,7 @@ export interface Params {
 	ExpressionAttributeValues?: Map<any>;
 	ProjectionExpression?: string;
 	ScanIndexForward?: boolean;
+	ExclusiveStartKey?: any;
 	Limit?: number;
 	ReturnValues?: 'ALL_NEW' | 'ALL_OLD';
 	Select?: 'COUNT';

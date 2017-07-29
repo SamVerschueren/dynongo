@@ -228,6 +228,8 @@ const result = Employee.find({Organisation: 'Amazon'}).where({Salary: {$gt: 3000
 	});
 ```
 
+You can also use [dynongo-pager](https://github.com/SamVerschueren/dynongo-pager) to make paging even easier.
+
 ### Create a table
 
 A table can be created by either calling `create()` on a table instance or by calling `createTable` on the database instance.
@@ -336,6 +338,11 @@ db.dropTable('Employee').wait(5000).exec();
 ```
 
 This will poll the status of the table every 5 seconds instead of every second.
+
+
+## Related
+
+- [dynongo-pager](https://github.com/SamVerschueren/dynongo-pager) - Easy paging for DynamoDB with dynongo
 
 
 ## License

@@ -12,6 +12,9 @@ export interface Options {
 	localPort?: number;
 	prefix?: string;
 	prefixDelimiter?: string;
+	region?: string;
+	accessKeyId?: string;
+	secretAccessKey?: string;
 }
 
 export class DynamoDB {

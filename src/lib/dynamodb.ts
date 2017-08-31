@@ -28,7 +28,7 @@ export class DynamoDB {
 			localPort: 8000
 		}, options);
 
-		AWS.config.update(pick(this.options, ['region', 'accessKeyId', 'secretAccessKey']));
+		AWS.config.update(pick(this.options, ['region', 'accessKeyId', 'secretAccessKey', 'sessionToken']));
 
 		if (this.options.local) {
 			// Starts dynamodb in local mode

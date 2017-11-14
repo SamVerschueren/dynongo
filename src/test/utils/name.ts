@@ -30,6 +30,13 @@ test('Array name should generate correct result', t => {
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_foo': 'foo'});
 });
 
+test('Non alphanumeric characters should be replaced with underscore', t => {
+	const result = name.generateKeyName('@foo');
+
+	t.is(result.Expression, '#k__foo');
+	t.deepEqual(result.ExpressionAttributeNames, {'#k__foo': '@foo'});
+});
+
 // #generateValueName
 test('throw error', t => {
 	t.throws(name.generateValueName.bind(name, ['key']), Error);
@@ -40,6 +47,13 @@ test('Should generate a correct result name of it does not yet exist', t => {
 
 	t.is(result.Expression, ':v_foo');
 	t.deepEqual(result.ExpressionAttributeValues, {':v_foo': 'bar'});
+});
+
+test('Non alphanumeric characters should be replaced with underscare for values', t => {
+	const result = name.generateValueName('@foo', 'bar');
+
+	t.is(result.Expression, ':v__foo');
+	t.deepEqual(result.ExpressionAttributeValues, {':v__foo': 'bar'});
 });
 
 test('Should generate a correct result name of it already exists, and the value is not the same', t => {

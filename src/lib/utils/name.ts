@@ -1,4 +1,4 @@
-import { Map } from '../types/map';
+import {Map} from '../types/map';
 
 export interface KeyNameResult {
 	Expression: string;
@@ -37,14 +37,18 @@ export function generateKeyName(key: string): KeyNameResult {
 	const names = {};
 
 	for (let token of tokens) {
+		// Filter out non-alphanumeric characters, except for array indexes
+		let expressionKey = `#k_${token.replace(/[^a-zA-Z0-9_\[\]]+/g, '_')}`;
+
 		// Push the key to the expression list
-		expression.push(`#k_${token}`);
+		expression.push(expressionKey);
 
 		// Remove array indexes
+		expressionKey = expressionKey.replace(/\[[0-9]+]/g, '');
 		token = token.replace(/\[[0-9]+]/g, '');
 
 		// Add the key with the keyvalue to the result
-		names[`#k_${token}`] = token;
+		names[expressionKey] = token;
 	}
 
 	// Return the object

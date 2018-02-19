@@ -51,6 +51,10 @@ export class Query extends BaseQuery implements Executable {
 			delete this.params.Limit;
 		}
 
+		if (Object.keys(this.params.ExpressionAttributeValues).length < 1){
+			delete this.params.ExpressionAttributeValues;
+		}
+
 		return pify(db.query.bind(db))(this.params)
 			.then(data => {
 				if (this.params.Select === 'COUNT') {

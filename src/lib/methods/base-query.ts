@@ -49,7 +49,7 @@ export abstract class BaseQuery extends Method {
 		this.params.ExpressionAttributeNames = Object.assign({}, this.params.ExpressionAttributeNames, parsedQuery.ExpressionAttributeNames);
 		this.params.ExpressionAttributeValues = Object.assign({}, this.params.ExpressionAttributeValues, parsedQuery.ExpressionAttributeValues);
 
-		// remove ExpressionAttributeValues if it is an empty object(which will casue a ValidationException error)
+		// Remove ExpressionAttributeValues if it is an empty object(which will casue a ValidationException error)
 		if (JSON.stringify(this.params.ExpressionAttributeValues) === JSON.stringify({})) {
 			delete this.params.ExpressionAttributeValues;
 		}

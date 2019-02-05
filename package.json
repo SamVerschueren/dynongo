@@ -1,62 +1,62 @@
 {
-  "name": "dynongo",
-  "version": "0.14.1",
-  "description": "MongoDB like syntax for DynamoDB",
-  "license": "MIT",
-  "repository": "SamVerschueren/dynongo",
-  "author": {
-    "name": "Sam Verschueren",
-    "email": "sam.verschueren@gmail.com",
-    "url": "github.com/SamVerschueren"
-  },
-  "main": "index.js",
-  "engines": {
-    "node": ">=4"
-  },
-  "scripts": {
-    "prepublish": "npm run clean && npm run compile -- --declaration",
-    "test": "npm run lint && npm run compile && nyc ava",
-    "pretest": "npm run compile -- --sourceMap && cpy \"**/*.json\" .. --cwd=src --parents",
-    "compile": "tsc -p tsconfig.json",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "lint": "tslint \"src/**/*.ts\"",
-    "clean": "del -f test lib *.js *.js.map *.d.ts"
-  },
-  "files": [
-    "index.js",
-    "index.d.ts",
-    "lib"
-  ],
-  "keywords": [
-    "dynamodb",
-    "mongodb",
-    "mongo",
-    "mongoose",
-    "aws",
-    "database",
-    "nosql"
-  ],
-  "dependencies": {
-    "is-object": "^1.0.1",
-    "object.pick": "^1.1.1",
-    "pify": "^2.3.0"
-  },
-  "devDependencies": {
-    "@types/node": "^7.0.8",
-    "@types/pify": "0.0.28",
-    "@types/sinon": "^1.16.35",
-    "ava": "*",
-    "aws-sdk": "^2.28.0",
-    "coveralls": "^2.11.6",
-    "cpy-cli": "^1.0.1",
-    "del-cli": "^0.2.1",
-    "load-json-file": "^2.0.0",
-    "nyc": "^9.0.1",
-    "sinon": "^1.17.2",
-    "tslint": "^4.5.1",
-    "typescript": "^2.2.1"
-  },
-  "peerDependencies": {
-    "aws-sdk": "^2.28.0"
-  }
+	"name": "dynongo",
+	"version": "0.14.1",
+	"description": "MongoDB like syntax for DynamoDB",
+	"license": "MIT",
+	"repository": "SamVerschueren/dynongo",
+	"author": {
+		"name": "Sam Verschueren",
+		"email": "sam.verschueren@gmail.com",
+		"url": "github.com/SamVerschueren"
+	},
+	"main": "index.js",
+	"engines": {
+		"node": ">=4"
+	},
+	"scripts": {
+		"prepublish": "npm run clean && npm run compile -- --declaration",
+		"test": "npm run lint && npm run compile && nyc ava",
+		"pretest": "npm run compile -- --sourceMap && cpy \"**/*.json\" .. --cwd=src --parents",
+		"compile": "tsc -p tsconfig.json",
+		"coveralls": "nyc report --reporter=text-lcov | coveralls",
+		"lint": "tslint \"src/**/*.ts\"",
+		"clean": "del -f test lib *.js *.js.map *.d.ts"
+	},
+	"files": [
+		"index.js",
+		"index.d.ts",
+		"lib"
+	],
+	"keywords": [
+		"dynamodb",
+		"mongodb",
+		"mongo",
+		"mongoose",
+		"aws",
+		"database",
+		"nosql"
+	],
+	"dependencies": {
+		"is-object": "^1.0.1",
+		"object.pick": "^1.1.1",
+		"pify": "^2.3.0"
+	},
+	"devDependencies": {
+		"@types/node": "^7.0.8",
+		"@types/pify": "0.0.28",
+		"@types/sinon": "^1.16.35",
+		"ava": "^0.25.0",
+		"aws-sdk": "^2.28.0",
+		"coveralls": "^2.11.6",
+		"cpy-cli": "^1.0.1",
+		"del-cli": "^0.2.1",
+		"load-json-file": "^2.0.0",
+		"nyc": "^9.0.1",
+		"sinon": "^1.17.2",
+		"tslint": "^4.5.1",
+		"typescript": "^2.2.1"
+	},
+	"peerDependencies": {
+		"aws-sdk": "^2.28.0"
+	}
 }

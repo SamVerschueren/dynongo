@@ -173,6 +173,34 @@ Employee.findOneAndRemove({Organisation: 'Amazon', Email: 'john.doe@amazon.com'}
     });
 ```
 
+### Transactions
+
+The library also supports transactions.
+
+#### Read Transactions
+
+#### Write Transactions
+
+For instance, what if we want to increment the bankroll of a user, but only if we still have enough money on our own back account.
+
+```ts
+import dynongo from 'dynongo';
+
+await dynongo
+	.transactWrite(
+		dynongo.table('User')
+			.update({Id: '1234', Key: 'BankRoll'}, {$inc: {Amount: 150}})
+	)
+	.withConditions(
+		dynongo.table('BankAccount')
+			.find({Key: 'Salary'})
+			.where({value: {$gte: 150}})
+	)
+	.exec();
+```
+
+> **note** You can only provide up to 10 transaction requests per transaction. The previous example uses 2.
+
 ### List all the tables
 
 You can retrieve a list of all the tables.

@@ -28,6 +28,16 @@ export class DeleteTable extends Method implements Executable {
 	}
 
 	/**
+	 * Builds and returns the raw DynamoDB query object.
+	 */
+	buildRawQuery(): DeleteTableInput {
+		return {
+			...this.params,
+			TableName: (this.table !).name
+		};
+	}
+
+	/**
 	 * This method will execute the delete table request that was built up.
 	 */
 	exec(): Promise<void> {
@@ -37,9 +47,7 @@ export class DeleteTable extends Method implements Executable {
 			return Promise.reject(new Error('Call .connect() before executing queries.'));
 		}
 
-		this.params.TableName = (this.table !).name;
-
-		return db.deleteTable(this.params as DeleteTableInput).promise()
+		return db.deleteTable(this.buildRawQuery()).promise()
 			.then(() => {
 				if (this.shouldWait === true) {
 					// If await is true, start polling
@@ -73,6 +81,6 @@ export class DeleteTable extends Method implements Executable {
 
 		await delay(this.waitMs);
 
-		return await db.describeTable({TableName: this.params.TableName !}).promise();
+		return await db.describeTable({TableName: (this.table !).name}).promise();
 	}
 }

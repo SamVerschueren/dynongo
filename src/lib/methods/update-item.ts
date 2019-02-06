@@ -36,6 +36,16 @@ export class UpdateItem extends InsertItem implements Executable {
 	}
 
 	/**
+	 * Builds and returns the raw DynamoDB query object.
+	 */
+	buildRawQuery(): UpdateItemInput {
+		return {
+			...this.params,
+			TableName: (this.table !).name
+		} as UpdateItemInput;
+	}
+
+	/**
 	 * This method will execute the update item request that was built up.
 	 */
 	exec(): Promise<any> {
@@ -45,9 +55,7 @@ export class UpdateItem extends InsertItem implements Executable {
 			return Promise.reject(new Error('Call .connect() before executing queries.'));
 		}
 
-		this.params.TableName = (this.table !).name;
-
-		return db.update(this.params as UpdateItemInput).promise()
+		return db.update(this.buildRawQuery()).promise()
 			.then(data => {
 				// Return the attributes
 				return this.rawResult === true ? data : data.Attributes;

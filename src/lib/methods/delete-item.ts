@@ -62,6 +62,16 @@ export class DeleteItem extends Method implements Executable {
 	}
 
 	/**
+	 * Builds and returns the raw DynamoDB query object.
+	 */
+	buildRawQuery(): DeleteItemInput {
+		return {
+			...this.params,
+			TableName: (this.table !).name
+		} as DeleteItemInput;
+	}
+
+	/**
 	 * This method will execute the delete item request that was built up.
 	 */
 	exec(): Promise<any> {
@@ -71,9 +81,7 @@ export class DeleteItem extends Method implements Executable {
 			return Promise.reject(new Error('Call .connect() before executing queries.'));
 		}
 
-		this.params.TableName = (this.table !).name;
-
-		return db.delete(this.params as DeleteItemInput).promise()
+		return db.delete(this.buildRawQuery()).promise()
 			.then(data => {
 				if (this.params.ReturnValues === 'ALL_OLD') {
 					return this.rawResult === true ? data : data.Attributes;

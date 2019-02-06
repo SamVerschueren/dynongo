@@ -51,6 +51,28 @@ export class InsertItem extends Method implements Executable {
 	}
 
 	/**
+	 * Builds and returns the raw DynamoDB query object.
+	 */
+	buildRawQuery(): UpdateItemInput {
+		// Parse the query to add a negated condition expression https://github.com/SamVerschueren/dynongo/issues/3
+		const parsedQuery = queryUtil.parse(this.params.Key || {});
+
+		const result = {
+			...this.params,
+			TableName: (this.table !).name,
+			ConditionExpression: `NOT (${parsedQuery.ConditionExpression})`,
+			ExpressionAttributeNames: {...this.params.ExpressionAttributeNames, ...parsedQuery.ExpressionAttributeNames},
+			ExpressionAttributeValues: {...this.params.ExpressionAttributeValues, ...parsedQuery.ExpressionAttributeValues}
+		} as UpdateItemInput;
+
+		if (result.UpdateExpression === '') {
+			delete result.UpdateExpression;
+		}
+
+		return result;
+	}
+
+	/**
 	 * Execute the insert item request.
 	 */
 	exec(): Promise<any> {
@@ -60,27 +82,16 @@ export class InsertItem extends Method implements Executable {
 			return Promise.reject(new Error('Call .connect() before executing queries.'));
 		}
 
-		if (this.params.UpdateExpression === '') {
-			delete this.params.UpdateExpression;
-		}
+		const query = this.buildRawQuery();
 
-		// Parse the query to add a negated condition expression https://github.com/SamVerschueren/dynongo/issues/3
-		const parsedQuery = queryUtil.parse(this.params.Key || {});
-
-		const params = this.params;
-		params.TableName = (this.table !).name;
-		params.ConditionExpression = `NOT (${parsedQuery.ConditionExpression})`;
-		params.ExpressionAttributeNames = {...params.ExpressionAttributeNames, ...parsedQuery.ExpressionAttributeNames};
-		params.ExpressionAttributeValues = {...params.ExpressionAttributeValues, ...parsedQuery.ExpressionAttributeValues};
-
-		return db.update(params as UpdateItemInput).promise()
+		return db.update(query).promise()
 			.then(data => {
 				// Return the attributes
 				return this.rawResult === true ? data : data.Attributes;
 			})
 			.catch(err => {
 				if (err.code === 'ConditionalCheckFailedException') {
-					err.message = 'Duplicate key! A record with key `' + JSON.stringify(params.Key) + '` already exists.';
+					err.message = 'Duplicate key! A record with key `' + JSON.stringify(query.Key) + '` already exists.';
 				}
 
 				throw err;

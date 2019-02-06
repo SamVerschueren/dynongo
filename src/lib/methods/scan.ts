@@ -11,25 +11,40 @@ export class Scan extends BaseQuery implements Executable {
 	}
 
 	/**
+	 * Builds and returns the raw DynamoDB query object.
+	 */
+	buildRawQuery(): ScanInput {
+		const limit = this.params.Limit;
+
+		const result: ScanInput = {
+			...this.params,
+			TableName: (this.table !).name
+		};
+
+		if (limit === 1 && result.FilterExpression) {
+			delete result.Limit;
+		}
+
+		return result;
+	}
+
+	/**
 	 * Execute the scan.
 	 */
 	exec(): Promise<any> {
 		const db = this.dynamodb.dynamodb;
-		const limit = this.params.Limit;
 
 		if (!db) {
 			return Promise.reject(new Error('Call .connect() before executing queries.'));
 		}
 
-		this.params.TableName = (this.table !).name;
+		const limit = this.params.Limit;
 
-		if (limit === 1 && this.params.FilterExpression) {
-			delete this.params.Limit;
-		}
+		const query = this.buildRawQuery();
 
-		return db.scan(this.params as ScanInput).promise()
+		return db.scan(this.buildRawQuery()).promise()
 			.then(data => {
-				if (this.params.Select === 'COUNT') {
+				if (query.Select === 'COUNT') {
 					// Return the count property if Select is set to count.
 					return data.Count || 0;
 				}

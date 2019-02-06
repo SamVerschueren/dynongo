@@ -22,11 +22,12 @@ export class Table {
 	constructor(
 		private tableName: string,
 		private dynamodb: DynamoDB,
-		options: TableOptions
+		options?: TableOptions
 	) {
-		this.options = Object.assign({
-			raw: false
-		}, options);
+		this.options = {
+			raw: false,
+			...options
+		};
 	}
 
 	get name() {
@@ -57,7 +58,7 @@ export class Table {
 
 		// Start by invoking the find method of the query
 		return qry.initialize(query, indexName);
-	};
+	}
 
 	/**
 	 * Initialize a query builder that is limitted to one result.
@@ -81,7 +82,7 @@ export class Table {
 
 		// Start by invoking the remove method
 		return del.initialize(query, {result: true});
-	};
+	}
 
 	/**
 	 * This method will insert a new item in the table.
@@ -122,7 +123,10 @@ export class Table {
 			}
 
 			// Merge `$set` with the other data values
-			params['$set'] = Object.assign({}, params['$set'], data);
+			params['$set'] = {
+				...params['$set'],
+				...data
+			};
 
 			// If upsert is set to true, it does a update or insert
 			return update.initialize(key, params);

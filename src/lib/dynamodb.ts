@@ -1,5 +1,5 @@
-import * as AWS from 'aws-sdk';
-import * as pick from 'object.pick';
+import AWS from 'aws-sdk';
+import pick from 'object.pick';
 import { Table, TableOptions } from './table';
 import { ListTables } from './methods/list-tables';
 import { Schema } from './types/schema';
@@ -19,17 +19,18 @@ export interface Options {
 
 export class DynamoDB {
 
-	public raw: AWS.DynamoDB;
-	public dynamodb: AWS.DynamoDB.DocumentClient;
-	private options: Options;
+	public raw?: AWS.DynamoDB;
+	public dynamodb?: AWS.DynamoDB.DocumentClient;
+	private options: Options = {};
 
 	connect(options?: Options) {
-		this.options = Object.assign({
+		this.options = {
 			prefix: '',
 			prefixDelimiter: '.',
 			host: 'localhost',
-			localPort: 8000
-		}, options);
+			localPort: 8000,
+			...options
+		};
 
 		AWS.config.update(pick(this.options, ['region', 'accessKeyId', 'secretAccessKey']));
 

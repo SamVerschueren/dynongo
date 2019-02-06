@@ -7,7 +7,7 @@ export abstract class Method {
 	protected params: Params = {};
 
 	constructor(
-		protected table: Table,
-		protected dynamodb: DynamoDB
+		protected readonly table: Table | null,
+		protected readonly dynamodb: DynamoDB
 	) { }
 }

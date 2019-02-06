@@ -1,23 +1,27 @@
 import test from 'ava';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { DeleteTable } from '../../lib/methods/delete-table';
-import db = require('../../');
+import stubPromise from '../fixtures/stub-promise';
+import db from '../..';
 
 db.connect({prefix: 'foo'});
 
 const Table = db.table('Table');
 
-const sandbox = sinon.sandbox.create();
+const sandbox = sinon.createSandbox();
 let deleteTableStub;
 let describeTableStub;
 
-test.before(() => {
-	deleteTableStub = sandbox.stub(db.raw, 'deleteTable');
-	deleteTableStub.yields(undefined, undefined);
+const resourceNotFound = new Error('ResourceNotFoundException');
+resourceNotFound.name = 'ResourceNotFoundException';
 
-	describeTableStub = sinon.stub(db.raw, 'describeTable');
-	describeTableStub.onFirstCall().yields(undefined, {Table: {TableStatus: 'ACTIVE'}});
-	describeTableStub.yields({name: 'ResourceNotFoundException'});
+test.before(() => {
+	deleteTableStub = sandbox.stub(db.raw !, 'deleteTable');
+	deleteTableStub.returns(stubPromise());
+
+	describeTableStub = sandbox.stub(db.raw !, 'describeTable');
+	describeTableStub.onFirstCall().returns(stubPromise({Table: {TableStatus: 'ACTIVE'}}));
+	describeTableStub.returns(stubPromise(resourceNotFound));
 });
 
 test.after(() => {
@@ -28,7 +32,7 @@ test('drop method returns DeleteTable object', t => {
 	const query = db.dropTable('Table');
 
 	t.truthy(query instanceof DeleteTable);
-	t.is(query['table'].name, 'foo.Table');
+	t.is((query['table'] !).name, 'foo.Table');
 });
 
 test.serial('drop', async t => {
@@ -51,9 +55,9 @@ test.serial('await', async t => {
 
 test.serial('error if not connected', async t => {
 	const original = db.raw;
-	db.raw = undefined;
+	db.raw = undefined as any;
 
-	await t.throws(Table.drop().exec(), 'Call .connect() before executing queries.');
+	await t.throwsAsync(Table.drop().exec(), 'Call .connect() before executing queries.');
 
 	db.raw = original;
 });

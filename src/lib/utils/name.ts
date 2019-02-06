@@ -1,4 +1,4 @@
-import {Map} from '../types/map';
+import { Map } from '../types/map';
 
 export interface KeyNameResult {
 	Expression: string;
@@ -8,7 +8,7 @@ export interface KeyNameResult {
 export interface ValueNameResult {
 	Expression: string | string[];
 	ExpressionAttributeValues: Map<any>;
-};
+}
 
 const indexify = (key: string, value: any, values: any) => {
 	if (values[key] && values[key] !== value) {
@@ -32,7 +32,7 @@ const indexify = (key: string, value: any, values: any) => {
  */
 export function generateKeyName(key: string): KeyNameResult {
 	const tokens = key.split('.');
-	const expression = [];
+	const expression: string[] = [];
 
 	const names = {};
 

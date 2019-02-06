@@ -1,4 +1,4 @@
-import * as pify from 'pify';
+import delay from 'delay';
 import { Method } from './method';
 import { Executable } from './executable';
 import { Schema } from '../types/schema';
@@ -8,7 +8,7 @@ import { Table } from '../table';
 export class CreateTable extends Method implements Executable {
 
 	private shouldWait = false;
-	private waitMs: number;
+	private waitMs: number = 1000;
 	private schema: any;
 
 	constructor(table: Table, dynamodb: DynamoDB) {
@@ -51,9 +51,9 @@ export class CreateTable extends Method implements Executable {
 			return Promise.reject(new Error('Call .connect() before executing queries.'));
 		}
 
-		this.schema.TableName = this.table.name;
+		this.schema.TableName = (this.table !).name;
 
-		return pify(db.createTable.bind(db))(this.schema)
+		return db.createTable(this.schema).promise()
 			.then(() => {
 				if (this.shouldWait === true) {
 					// Start polling if await is set to true
@@ -68,31 +68,25 @@ export class CreateTable extends Method implements Executable {
 			});
 	}
 
-	private poll() {
-		return this.pollHelper()
-			.then((data: any) => {
-				if (data.Table.TableStatus.toLowerCase() !== 'active') {
-					return this.poll();
-				}
-			});
+	private async poll() {
+		const result = await this.pollHelper();
+
+		if (!result.Table || !result.Table.TableStatus) {
+			return;
+		}
+
+		if (result.Table.TableStatus.toLowerCase() === 'active') {
+			return;
+		}
+
+		return await this.poll();
 	}
 
-	private pollHelper() {
-		return new Promise((resolve, reject) => {
-			// Poll after 1000 seconds
-			setTimeout(() => {
-				const db = this.dynamodb.raw;
+	private async pollHelper() {
+		const db = this.dynamodb.raw !;
 
-				db.describeTable({TableName: this.schema.TableName}, (err, data) => {
-					if (err) {
-						// Reject if an error occurred
-						return reject(err);
-					}
+		await delay(this.waitMs);
 
-					// Resolve the data
-					resolve(data);
-				});
-			}, this.waitMs);
-		});
+		return await db.describeTable({TableName: this.schema.TableName}).promise();
 	}
 }

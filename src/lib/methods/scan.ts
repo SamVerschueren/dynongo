@@ -1,4 +1,4 @@
-import * as pify from 'pify';
+import { ScanInput } from 'aws-sdk/clients/dynamodb';
 import { BaseQuery } from './base-query';
 import { Executable } from './executable';
 import { DynamoDB } from '../dynamodb';
@@ -21,17 +21,21 @@ export class Scan extends BaseQuery implements Executable {
 			return Promise.reject(new Error('Call .connect() before executing queries.'));
 		}
 
-		this.params.TableName = this.table.name;
+		this.params.TableName = (this.table !).name;
 
 		if (limit === 1 && this.params.FilterExpression) {
 			delete this.params.Limit;
 		}
 
-		return pify(db.scan.bind(db))(this.params)
+		return db.scan(this.params as ScanInput).promise()
 			.then(data => {
 				if (this.params.Select === 'COUNT') {
 					// Return the count property if Select is set to count.
 					return data.Count || 0;
+				}
+
+				if (!data.Items) {
+					return [];
 				}
 
 				if (limit === 1) {
@@ -47,5 +51,5 @@ export class Scan extends BaseQuery implements Executable {
 				// Resolve all the items
 				return this.rawResult === true ? data : data.Items;
 			});
-	};
+	}
 }

@@ -5,7 +5,7 @@ import { Table } from '../table';
 
 export abstract class BaseQuery extends Method {
 
-	protected rawResult: boolean;
+	protected rawResult: boolean = false;
 
 	constructor(table: Table, dynamodb: DynamoDB) {
 		super(table, dynamodb);
@@ -23,8 +23,8 @@ export abstract class BaseQuery extends Method {
 
 		// Add the parsed query attributes to the correct properties of the params object
 		this.params.KeyConditionExpression = parsedQuery.ConditionExpression;
-		this.params.ExpressionAttributeNames = Object.assign({}, this.params.ExpressionAttributeNames, parsedQuery.ExpressionAttributeNames);
-		this.params.ExpressionAttributeValues = Object.assign({}, this.params.ExpressionAttributeValues, parsedQuery.ExpressionAttributeValues);
+		this.params.ExpressionAttributeNames = {...this.params.ExpressionAttributeNames, ...parsedQuery.ExpressionAttributeNames};
+		this.params.ExpressionAttributeValues = {...this.params.ExpressionAttributeValues, ...parsedQuery.ExpressionAttributeValues};
 
 		if (indexName) {
 			// If the index name is provided, add it to the params object
@@ -33,7 +33,7 @@ export abstract class BaseQuery extends Method {
 
 		// Return the query so that it can be chained
 		return this;
-	};
+	}
 
 	/**
 	 * Filter the records more fine grained.
@@ -46,8 +46,8 @@ export abstract class BaseQuery extends Method {
 
 		// Add the parsed query attributes to the correct properties of the params object
 		this.params.FilterExpression = parsedQuery.ConditionExpression;
-		this.params.ExpressionAttributeNames = Object.assign({}, this.params.ExpressionAttributeNames, parsedQuery.ExpressionAttributeNames);
-		this.params.ExpressionAttributeValues = Object.assign({}, this.params.ExpressionAttributeValues, parsedQuery.ExpressionAttributeValues);
+		this.params.ExpressionAttributeNames = {...this.params.ExpressionAttributeNames, ...parsedQuery.ExpressionAttributeNames};
+		this.params.ExpressionAttributeValues = {...this.params.ExpressionAttributeValues, ...parsedQuery.ExpressionAttributeValues};
 
 		// Return the query so that it can be chained
 		return this;
@@ -80,7 +80,7 @@ export abstract class BaseQuery extends Method {
 
 		// Add the projection expression and add the list of names to the attribute names list
 		this.params.ProjectionExpression = expression;
-		this.params.ExpressionAttributeNames = Object.assign({}, this.params.ExpressionAttributeNames, names);
+		this.params.ExpressionAttributeNames = {...this.params.ExpressionAttributeNames, ...names};
 
 		// Return the query so that it can be chained
 		return this;

@@ -1,16 +1,17 @@
 import test from 'ava';
-import * as sinon from 'sinon';
-import db = require('../../');
+import sinon from 'sinon';
+import stubPromise from '../fixtures/stub-promise';
+import db from '../..';
 
 db.connect();
 
-const sandbox = sinon.sandbox.create();
+const sandbox = sinon.createSandbox();
 let listTablesStub;
 
 test.before(() => {
-	listTablesStub = sandbox.stub(db.raw, 'listTables');
-	listTablesStub.onFirstCall().yields(undefined, {LastEvaluatedTableName: 'test.baz', TableNames: ['test.baz']});
-	listTablesStub.yields(undefined, {TableNames: ['test.foo', 'test.bar', 'prod.foo']});
+	listTablesStub = sandbox.stub(db.raw !, 'listTables');
+	listTablesStub.onFirstCall().returns(stubPromise({LastEvaluatedTableName: 'test.baz', TableNames: ['test.baz']}));
+	listTablesStub.returns(stubPromise({TableNames: ['test.foo', 'test.bar', 'prod.foo']}));
 });
 
 test.after(() => {
@@ -31,9 +32,9 @@ test.serial('filter result on prefix', async t => {
 
 test.serial('error if not connected', async t => {
 	const original = db.raw;
-	db.raw = undefined;
+	db.raw = undefined as any;
 
-	await t.throws(db.listTables().exec(), 'Call .connect() before executing queries.');
+	await t.throwsAsync(db.listTables().exec(), 'Call .connect() before executing queries.');
 
 	db.raw = original;
 });

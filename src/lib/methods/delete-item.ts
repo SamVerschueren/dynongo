@@ -1,4 +1,4 @@
-import * as pify from 'pify';
+import { DeleteItemInput } from 'aws-sdk/clients/dynamodb';
 import { Method } from './method';
 import { Executable } from './executable';
 import { DynamoDB } from '../dynamodb';
@@ -7,7 +7,7 @@ import * as queryUtil from '../utils/query';
 
 export class DeleteItem extends Method implements Executable {
 
-	private rawResult: boolean;
+	private rawResult: boolean = false;
 
 	constructor(table: Table, dynamodb: DynamoDB) {
 		super(table, dynamodb);
@@ -43,8 +43,8 @@ export class DeleteItem extends Method implements Executable {
 
 		// Add the parsed query attributes to the correct properties of the params object
 		this.params.ConditionExpression = parsedQuery.ConditionExpression;
-		this.params.ExpressionAttributeNames = Object.assign({}, this.params.ExpressionAttributeNames, parsedQuery.ExpressionAttributeNames);
-		this.params.ExpressionAttributeValues = Object.assign({}, this.params.ExpressionAttributeValues, parsedQuery.ExpressionAttributeValues);
+		this.params.ExpressionAttributeNames = {...this.params.ExpressionAttributeNames, ...parsedQuery.ExpressionAttributeNames};
+		this.params.ExpressionAttributeValues = {...this.params.ExpressionAttributeValues, ...parsedQuery.ExpressionAttributeValues};
 
 		// Return the query so that it can be chained
 		return this;
@@ -71,13 +71,15 @@ export class DeleteItem extends Method implements Executable {
 			return Promise.reject(new Error('Call .connect() before executing queries.'));
 		}
 
-		this.params.TableName = this.table.name;
+		this.params.TableName = (this.table !).name;
 
-		return pify(db.delete.bind(db))(this.params)
+		return db.delete(this.params as DeleteItemInput).promise()
 			.then(data => {
 				if (this.params.ReturnValues === 'ALL_OLD') {
 					return this.rawResult === true ? data : data.Attributes;
 				}
+
+				return;
 			});
-	};
+	}
 }

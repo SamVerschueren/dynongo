@@ -1,4 +1,4 @@
-import * as pify from 'pify';
+import { UpdateItemInput } from 'aws-sdk/clients/dynamodb';
 import * as queryUtil from '../utils/query';
 import { InsertItem } from './insert-item';
 import { Executable } from './executable';
@@ -28,8 +28,8 @@ export class UpdateItem extends InsertItem implements Executable {
 		}
 
 		// Add the parsed query attributes to the correct properties of the params object
-		this.params.ExpressionAttributeNames = Object.assign({}, this.params.ExpressionAttributeNames, parsedQuery.ExpressionAttributeNames);
-		this.params.ExpressionAttributeValues = Object.assign({}, this.params.ExpressionAttributeValues, parsedQuery.ExpressionAttributeValues);
+		this.params.ExpressionAttributeNames = {...this.params.ExpressionAttributeNames, ...parsedQuery.ExpressionAttributeNames};
+		this.params.ExpressionAttributeValues = {...this.params.ExpressionAttributeValues, ...parsedQuery.ExpressionAttributeValues};
 
 		// Return the object for chaining purposes
 		return this;
@@ -45,9 +45,9 @@ export class UpdateItem extends InsertItem implements Executable {
 			return Promise.reject(new Error('Call .connect() before executing queries.'));
 		}
 
-		this.params.TableName = this.table.name;
+		this.params.TableName = (this.table !).name;
 
-		return pify(db.update.bind(db), Promise)(this.params)
+		return db.update(this.params as UpdateItemInput).promise()
 			.then(data => {
 				// Return the attributes
 				return this.rawResult === true ? data : data.Attributes;

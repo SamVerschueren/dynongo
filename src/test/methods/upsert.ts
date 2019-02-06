@@ -1,17 +1,18 @@
 import test from 'ava';
-import * as sinon from 'sinon';
-import db = require('../../');
+import sinon from 'sinon';
+import stubPromise from '../fixtures/stub-promise';
+import db from '../..';
 
 db.connect();
 
 const Table = db.table('Table');
 
-const sandbox = sinon.sandbox.create();
+const sandbox = sinon.createSandbox();
 let updateStub;
 
 test.before(() => {
-	updateStub = sandbox.stub(db.dynamodb, 'update');
-	updateStub.yields(undefined, {Attributes: 'foo'});
+	updateStub = sandbox.stub(db.dynamodb !, 'update');
+	updateStub.returns(stubPromise({Attributes: 'foo'}));
 });
 
 test.after(() => {
@@ -88,9 +89,9 @@ test.serial('raw result', async t => {
 
 test.serial('error if not connected', async t => {
 	const original = db.dynamodb;
-	db.dynamodb = undefined;
+	db.dynamodb = undefined as any;
 
-	await t.throws(Table.upsert({id: '5'}, {foo: 'bar'}).exec(), 'Call .connect() before executing queries.');
+	await t.throwsAsync(Table.upsert({id: '5'}, {foo: 'bar'}).exec(), 'Call .connect() before executing queries.');
 
 	db.dynamodb = original;
 });

@@ -1,21 +1,22 @@
 import test from 'ava';
-import * as sinon from 'sinon';
-import db = require('../../');
+import sinon from 'sinon';
+import stubPromise from '../fixtures/stub-promise';
+import db from '../..';
 
 db.connect();
 
 const Table = db.table('Table');
 
-const sandbox = sinon.sandbox.create();
+const sandbox = sinon.createSandbox();
 let queryStub: sinon.SinonStub;
 let scanStub: sinon.SinonStub;
 
 test.before(() => {
-	queryStub = sandbox.stub(db.dynamodb, 'query');
-	queryStub.yields(undefined, {Items: ['foo', 'bar']});
+	queryStub = sandbox.stub(db.dynamodb !, 'query');
+	queryStub.returns(stubPromise({Items: ['foo', 'bar']}));
 
-	scanStub = sandbox.stub(db.dynamodb, 'scan');
-	scanStub.yields(undefined, {Items: ['baz', 'foo', 'bar']});
+	scanStub = sandbox.stub(db.dynamodb !, 'scan');
+	scanStub.returns(stubPromise({Items: ['baz', 'foo', 'bar']}));
 });
 
 test.after(() => {
@@ -82,9 +83,9 @@ test.serial('find all but one where', async t => {
 
 test.serial('error if not connected', async t => {
 	const original = db.dynamodb;
-	db.dynamodb = undefined;
+	db.dynamodb = undefined as any;
 
-	await t.throws(Table.findOne().exec(), 'Call .connect() before executing queries.');
+	await t.throwsAsync(Table.findOne().exec(), 'Call .connect() before executing queries.');
 
 	db.dynamodb = original;
 });

@@ -1,6 +1,7 @@
 import test from 'ava';
-import * as sinon from 'sinon';
-import db = require('../../');
+import sinon from 'sinon';
+import stubPromise from '../fixtures/stub-promise';
+import db from '../..';
 
 db.connect();
 
@@ -24,18 +25,18 @@ const fixture2 = {
 	Select: 'COUNT'
 };
 
-const sandbox = sinon.sandbox.create();
+const sandbox = sinon.createSandbox();
 let queryStub: sinon.SinonStub;
 let scanStub: sinon.SinonStub;
 
-test.before(t => {
-	queryStub = sandbox.stub(db.dynamodb, 'query');
-	queryStub.withArgs(fixture1).yields(undefined, {});
-	queryStub.yields(undefined, {Count: 2, Items: ['foo', 'bar']});
+test.before(() => {
+	queryStub = sandbox.stub(db.dynamodb !, 'query');
+	queryStub.withArgs(fixture1).returns(stubPromise({}));
+	queryStub.returns(stubPromise({Count: 2, Items: ['foo', 'bar']}));
 
-	scanStub = sandbox.stub(db.dynamodb, 'scan');
-	scanStub.withArgs(fixture2).yields(undefined, {});
-	scanStub.yields(undefined, {Count: 3, Items: ['foo', 'bar', 'baz']});
+	scanStub = sandbox.stub(db.dynamodb !, 'scan');
+	scanStub.withArgs(fixture2).returns(stubPromise({}));
+	scanStub.returns(stubPromise({Count: 3, Items: ['foo', 'bar', 'baz']}));
 });
 
 test.after(() => {
@@ -211,14 +212,14 @@ test.serial('raw result limit', async t => {
 });
 
 test('sort throws error', async t => {
-	await t.throws((Table.find({id: '5'}) as any).sort(true as any).exec(), 'Provided sort argument is incorrect. Use 1 for ascending and -1 for descending order.');
+	await t.throwsAsync((Table.find({id: '5'}) as any).sort(true as any).exec(), 'Provided sort argument is incorrect. Use 1 for ascending and -1 for descending order.');
 });
 
 test.serial('error if not connected', async t => {
 	const original = db.dynamodb;
-	db.dynamodb = undefined;
+	db.dynamodb = undefined as any;
 
-	await t.throws(Table.find({id: '5'}).exec(), 'Call .connect() before executing queries.');
+	await t.throwsAsync(Table.find({id: '5'}).exec(), 'Call .connect() before executing queries.');
 
 	db.dynamodb = original;
 });
@@ -279,9 +280,9 @@ test.serial('scan::count all with no result', async t => {
 
 test.serial('scan::error if not connected', async t => {
 	const original = db.dynamodb;
-	db.dynamodb = undefined;
+	db.dynamodb = undefined as any;
 
-	await t.throws(Table.find().count().exec(), 'Call .connect() before executing queries.');
+	await t.throwsAsync(Table.find().count().exec(), 'Call .connect() before executing queries.');
 
 	db.dynamodb = original;
 });

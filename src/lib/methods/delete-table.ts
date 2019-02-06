@@ -1,4 +1,5 @@
-import * as pify from 'pify';
+import delay from 'delay';
+import { DeleteTableInput } from 'aws-sdk/clients/dynamodb';
 import { Method } from './method';
 import { Executable } from './executable';
 import { DynamoDB } from '../dynamodb';
@@ -7,7 +8,7 @@ import { Table } from '../table';
 export class DeleteTable extends Method implements Executable {
 
 	private shouldWait = false;
-	private waitMs: number;
+	private waitMs: number = 1000;
 
 	constructor(table: Table, dynamodb: DynamoDB) {
 		super(table, dynamodb);
@@ -36,9 +37,9 @@ export class DeleteTable extends Method implements Executable {
 			return Promise.reject(new Error('Call .connect() before executing queries.'));
 		}
 
-		this.params.TableName = this.table.name;
+		this.params.TableName = (this.table !).name;
 
-		return pify(db.deleteTable.bind(db), Promise)(this.params)
+		return db.deleteTable(this.params as DeleteTableInput).promise()
 			.then(() => {
 				if (this.shouldWait === true) {
 					// If await is true, start polling
@@ -52,33 +53,26 @@ export class DeleteTable extends Method implements Executable {
 			});
 	}
 
-	private poll() {
-		return this.pollHelper()
-			.then(() => this.poll())
-			.catch(err => {
-				if (err && err.name !== 'ResourceNotFoundException') {
-					// If the error is not a ResourceNotFoundException, throw it further down the chain
-					throw err;
-				}
-			});
+	private async poll() {
+		await this.pollHelper();
+
+		try {
+			return await this.poll();
+		} catch (error) {
+			if (error.name !== 'ResourceNotFoundException') {
+				// If the error is not a ResourceNotFoundException, throw it further down the chain
+				throw error;
+			}
+
+			return;
+		}
 	}
 
-	private pollHelper() {
-		return new Promise((resolve, reject) => {
-			// Poll after 1000 seconds
-			setTimeout(() => {
-				const db = this.dynamodb.raw;
+	private async pollHelper() {
+		const db = this.dynamodb.raw !;
 
-				db.describeTable({TableName: this.params.TableName}, (err, data) => {
-					if (err) {
-						// Reject if an error occurred
-						return reject(err);
-					}
+		await delay(this.waitMs);
 
-					// Resolve the data
-					resolve(data);
-				});
-			}, this.waitMs);
-		});
+		return await db.describeTable({TableName: this.params.TableName !}).promise();
 	}
 }

@@ -1,6 +1,7 @@
 import test from 'ava';
-import * as sinon from 'sinon';
-import db = require('../../');
+import sinon from 'sinon';
+import stubPromise from '../fixtures/stub-promise';
+import db from '../..';
 
 const Table = db.table('Table');
 
@@ -18,14 +19,14 @@ conditionalCheckException.statusCode = 400;
 conditionalCheckException.retryable = false;
 conditionalCheckException.retryDelay = 0;
 
-const sandbox = sinon.sandbox.create();
+const sandbox = sinon.createSandbox();
 let updateStub;
 
 test.before(() => {
-	updateStub = sandbox.stub(db.dynamodb, 'update');
-	updateStub.withArgs(fixture1).yields(conditionalCheckException);
-	updateStub.withArgs(fixture2).yields(new Error('foo'));
-	updateStub.yields(undefined, {Attributes: 'foo'});
+	updateStub = sandbox.stub(db.dynamodb !, 'update');
+	updateStub.withArgs(fixture1).returns(stubPromise(conditionalCheckException));
+	updateStub.withArgs(fixture2).returns(stubPromise(new Error('foo')));
+	updateStub.returns(stubPromise({Attributes: 'foo'}));
 });
 
 test.after(() => {
@@ -43,7 +44,7 @@ test('error if a duplicate key was inserted', async t => {
 });
 
 test('error', async t => {
-	await t.throws(Table.insert({id: '20'}, {$set: {foo: 'bar'}}).raw().exec(), 'foo');
+	await t.throwsAsync(Table.insert({id: '20'}, {$set: {foo: 'bar'}}).raw().exec(), 'foo');
 });
 
 test.serial('insert key', async t => {
@@ -116,9 +117,9 @@ test.serial('raw result', async t => {
 
 test.serial('error if not connected', async t => {
 	const original = db.dynamodb;
-	db.dynamodb = undefined;
+	db.dynamodb = undefined as any;
 
-	await t.throws(Table.insert({id: '5'}, {$set: {foo: 'bar'}}).exec(), 'Call .connect() before executing queries.');
+	await t.throwsAsync(Table.insert({id: '5'}, {$set: {foo: 'bar'}}).exec(), 'Call .connect() before executing queries.');
 
 	db.dynamodb = original;
 });

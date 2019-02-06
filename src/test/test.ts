@@ -25,10 +25,10 @@ test('connect options', t => {
 
 test('connect locally', t => {
 	db.connect({local: true});
-	t.is(db.raw.endpoint.href, 'http://localhost:8000/');
+	t.is((db.raw !).endpoint.href, 'http://localhost:8000/');
 
 	db.connect({local: true, localPort: 9000});
-	t.is(db.raw.endpoint.href, 'http://localhost:9000/');
+	t.is((db.raw !).endpoint.href, 'http://localhost:9000/');
 });
 
 test('table', t => {

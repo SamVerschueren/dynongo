@@ -1,4 +1,4 @@
-import * as isObject from 'is-object';
+import isObject from 'is-object';
 import * as nameUtil from './name';
 import { Map } from '../types/map';
 
@@ -6,10 +6,10 @@ export interface ParseResult {
 	ConditionExpression: string;
 	ExpressionAttributeNames: Map<string>;
 	ExpressionAttributeValues: Map<any>;
-};
+}
 
 const parseArray = (arr, values, join, brackets: boolean) => {
-	const expressions = [];
+	const expressions: string[] = [];
 	const names = {};
 
 	for (const subquery of arr) {
@@ -142,7 +142,7 @@ const parseExpression = (key: string, value: any, values: {[key: string]: any}) 
 };
 
 export function parse(query: {$or?: any[], $and?: any[], [key: string]: any}, values?: any): ParseResult {
-	const expressions = [];
+	const expressions: string[] = [];
 	const names = {};
 	const keys = Object.keys(query);
 
@@ -178,7 +178,7 @@ export function parse(query: {$or?: any[], $and?: any[], [key: string]: any}, va
 
 		Object.assign(names, parsed.ExpressionAttributeNames);
 		Object.assign(values, parsed.ExpressionAttributeValues);
-	};
+	}
 
 	return {
 		ConditionExpression: expressions.join(' AND '),

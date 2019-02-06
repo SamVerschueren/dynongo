@@ -9,23 +9,20 @@
 		"email": "sam.verschueren@gmail.com",
 		"url": "github.com/SamVerschueren"
 	},
-	"main": "index.js",
+	"main": "dist/index.js",
 	"engines": {
-		"node": ">=4"
+		"node": ">=6"
 	},
 	"scripts": {
-		"prepublish": "npm run clean && npm run compile -- --declaration",
-		"test": "npm run lint && npm run compile && nyc ava",
-		"pretest": "npm run compile -- --sourceMap && cpy \"**/*.json\" .. --cwd=src --parents",
-		"compile": "tsc -p tsconfig.json",
-		"coveralls": "nyc report --reporter=text-lcov | coveralls",
-		"lint": "tslint \"src/**/*.ts\"",
-		"clean": "del -f test lib *.js *.js.map *.d.ts"
+		"prepublish": "npm run clean && npm run compile -- --declaration && del-cli dist/test",
+		"test": "npm run lint && nyc ava dist/test",
+		"pretest": "npm run compile -- --sourceMap && cpy \"test/**/*.json\" ../dist --cwd=src --parents",
+		"compile": "npm run clean && tsc",
+		"lint": "tslint --format stylish --project .",
+		"clean": "del-cli dist"
 	},
 	"files": [
-		"index.js",
-		"index.d.ts",
-		"lib"
+		"dist"
 	],
 	"keywords": [
 		"dynamodb",
@@ -37,26 +34,32 @@
 		"nosql"
 	],
 	"dependencies": {
+		"delay": "^4.1.0",
 		"is-object": "^1.0.1",
-		"object.pick": "^1.1.1",
-		"pify": "^2.3.0"
+		"object.pick": "^1.1.1"
 	},
 	"devDependencies": {
-		"@types/node": "^7.0.8",
-		"@types/pify": "0.0.28",
-		"@types/sinon": "^1.16.35",
-		"ava": "^0.25.0",
-		"aws-sdk": "^2.28.0",
-		"coveralls": "^2.11.6",
-		"cpy-cli": "^1.0.1",
-		"del-cli": "^0.2.1",
-		"load-json-file": "^2.0.0",
-		"nyc": "^9.0.1",
-		"sinon": "^1.17.2",
-		"tslint": "^4.5.1",
-		"typescript": "^2.2.1"
+		"@sindresorhus/tsconfig": "^0.2.0",
+		"@types/node": "^10.12.21",
+		"@types/sinon": "^7.0.5",
+		"ava": "^1.2.1",
+		"aws-sdk": "^2.397.0",
+		"codecov": "^3.1.0",
+		"cpy-cli": "^2.0.0",
+		"del-cli": "^1.1.0",
+		"load-json-file": "^5.1.0",
+		"nyc": "^13.2.0",
+		"sinon": "^7.2.3",
+		"tslint": "^5.12.1",
+		"typescript": "^3.3.1"
 	},
 	"peerDependencies": {
-		"aws-sdk": "^2.28.0"
+		"aws-sdk": "^2.397.0"
+	},
+	"typings": "dist",
+	"nyc": {
+		"exclude": [
+			"dist/test"
+		]
 	}
 }

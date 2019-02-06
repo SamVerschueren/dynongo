@@ -39,7 +39,7 @@ test('Non alphanumeric characters should be replaced with underscore', t => {
 
 // #generateValueName
 test('throw error', t => {
-	t.throws(name.generateValueName.bind(name, ['key']), Error);
+	t.throws(() => name.generateValueName('key', undefined), Error);
 });
 
 test('Should generate a correct result name of it does not yet exist', t => {

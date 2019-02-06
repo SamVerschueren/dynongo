@@ -216,7 +216,7 @@ test('$or', t => {
 });
 
 test('$or throws error', t => {
-	t.throws(query.parse.bind(query, {$or: {id: 5}}), 'Invalid expression $or. Value should be an array.');
+	t.throws(query.parse.bind(query, {$or: {id: 5} as any}), 'Invalid expression $or. Value should be an array.');
 });
 
 test('$and', t => {
@@ -228,7 +228,7 @@ test('$and', t => {
 });
 
 test('$and throws error', t => {
-	t.throws(query.parse.bind(query, {$and: {id: 5}}), 'Invalid expression $and. Value should be an array.');
+	t.throws(query.parse.bind(query, {$and: {id: 5} as any}), 'Invalid expression $and. Value should be an array.');
 });
 
 test('throw error if operator is not supported', t => {

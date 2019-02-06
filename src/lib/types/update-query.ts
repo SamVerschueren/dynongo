@@ -4,4 +4,4 @@ export interface UpdateQuery {
 	$inc?: {[key: string]: any};
 	$push?: {[key: string]: any};
 	$unshift?: {[key: string]: any};
-};
+}

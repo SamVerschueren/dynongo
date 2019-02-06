@@ -1,8 +1,4 @@
 node_modules
 .nyc_output
 coverage
-/lib
-/test
-index.js
-index.js.map
-index.d.ts
+dist

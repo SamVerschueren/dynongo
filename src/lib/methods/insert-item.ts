@@ -1,4 +1,4 @@
-import * as pify from 'pify';
+import { UpdateItemInput } from 'aws-sdk/clients/dynamodb';
 import * as queryUtil from '../utils/query';
 import * as updateUtil from '../utils/update';
 import { Executable } from './executable';
@@ -9,7 +9,7 @@ import { UpdateQuery } from '../types/update-query';
 
 export class InsertItem extends Method implements Executable {
 
-	protected rawResult: boolean;
+	protected rawResult: boolean = false;
 
 	constructor(table: Table, dynamodb: DynamoDB) {
 		super(table, dynamodb);
@@ -32,8 +32,8 @@ export class InsertItem extends Method implements Executable {
 
 		// Append the attributes to the correct properties
 		this.params.UpdateExpression = parsedData.UpdateExpression;
-		this.params.ExpressionAttributeNames = Object.assign({}, this.params.ExpressionAttributeNames, parsedData.ExpressionAttributeNames);
-		this.params.ExpressionAttributeValues = Object.assign({}, this.params.ExpressionAttributeValues, parsedData.ExpressionAttributeValues);
+		this.params.ExpressionAttributeNames = {...this.params.ExpressionAttributeNames, ...parsedData.ExpressionAttributeNames};
+		this.params.ExpressionAttributeValues = {...this.params.ExpressionAttributeValues, ...parsedData.ExpressionAttributeValues};
 
 		// Return the object so that it can be chained
 		return this;
@@ -65,15 +65,15 @@ export class InsertItem extends Method implements Executable {
 		}
 
 		// Parse the query to add a negated condition expression https://github.com/SamVerschueren/dynongo/issues/3
-		const parsedQuery = queryUtil.parse(this.params.Key);
+		const parsedQuery = queryUtil.parse(this.params.Key || {});
 
 		const params = this.params;
-		params.TableName = this.table.name;
+		params.TableName = (this.table !).name;
 		params.ConditionExpression = `NOT (${parsedQuery.ConditionExpression})`;
-		params.ExpressionAttributeNames = Object.assign({}, params.ExpressionAttributeNames, parsedQuery.ExpressionAttributeNames);
-		params.ExpressionAttributeValues = Object.assign({}, params.ExpressionAttributeValues, parsedQuery.ExpressionAttributeValues);
+		params.ExpressionAttributeNames = {...params.ExpressionAttributeNames, ...parsedQuery.ExpressionAttributeNames};
+		params.ExpressionAttributeValues = {...params.ExpressionAttributeValues, ...parsedQuery.ExpressionAttributeValues};
 
-		return pify(db.update.bind(db))(params)
+		return db.update(params as UpdateItemInput).promise()
 			.then(data => {
 				// Return the attributes
 				return this.rawResult === true ? data : data.Attributes;
@@ -85,5 +85,5 @@ export class InsertItem extends Method implements Executable {
 
 				throw err;
 			});
-	};
+	}
 }

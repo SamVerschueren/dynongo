@@ -1,4 +1,4 @@
-import * as pify from 'pify';
+import { QueryInput } from 'aws-sdk/clients/dynamodb';
 import { BaseQuery } from './base-query';
 import { Executable } from './executable';
 import { DynamoDB } from '../dynamodb';
@@ -6,7 +6,7 @@ import { Table } from '../table';
 
 export class Query extends BaseQuery implements Executable {
 
-	private error: Error;
+	private error: Error | null = null;
 
 	constructor(table: Table, dynamodb: DynamoDB) {
 		super(table, dynamodb);
@@ -45,17 +45,21 @@ export class Query extends BaseQuery implements Executable {
 			return Promise.reject(new Error('Call .connect() before executing queries.'));
 		}
 
-		this.params.TableName = this.table.name;
+		this.params.TableName = (this.table !).name;
 
 		if (limit === 1 && this.params.FilterExpression) {
 			delete this.params.Limit;
 		}
 
-		return pify(db.query.bind(db))(this.params)
+		return db.query(this.params as QueryInput).promise()
 			.then(data => {
 				if (this.params.Select === 'COUNT') {
 					// Return the count property if Select is set to count.
 					return data.Count || 0;
+				}
+
+				if (!data.Items) {
+					return [];
 				}
 
 				if (limit === 1) {
@@ -71,5 +75,5 @@ export class Query extends BaseQuery implements Executable {
 				// Return all the items
 				return this.rawResult === true ? data : data.Items;
 			});
-	};
+	}
 }

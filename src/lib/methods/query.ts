@@ -31,6 +31,24 @@ export class Query extends BaseQuery implements Executable {
 	}
 
 	/**
+	 * Builds and returns the raw DynamoDB query object.
+	 */
+	buildRawQuery(): QueryInput {
+		const limit = this.params.Limit;
+
+		const result: QueryInput = {
+			...this.params,
+			TableName: (this.table !).name
+		};
+
+		if (limit === 1 && result.FilterExpression) {
+			delete result.Limit;
+		}
+
+		return result;
+	}
+
+	/**
 	 * Execute the query.
 	 */
 	exec(): Promise<any> {
@@ -39,21 +57,18 @@ export class Query extends BaseQuery implements Executable {
 		}
 
 		const db = this.dynamodb.dynamodb;
-		const limit = this.params.Limit;
 
 		if (!db) {
 			return Promise.reject(new Error('Call .connect() before executing queries.'));
 		}
 
-		this.params.TableName = (this.table !).name;
+		const limit = this.params.Limit;
 
-		if (limit === 1 && this.params.FilterExpression) {
-			delete this.params.Limit;
-		}
+		const query = this.buildRawQuery();
 
-		return db.query(this.params as QueryInput).promise()
+		return db.query(query).promise()
 			.then(data => {
-				if (this.params.Select === 'COUNT') {
+				if (query.Select === 'COUNT') {
 					// Return the count property if Select is set to count.
 					return data.Count || 0;
 				}

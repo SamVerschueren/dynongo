@@ -1,8 +1,9 @@
 import { DynamoDB } from '../dynamodb';
 import { Table } from '../table';
 import { Params } from '../types/params';
+import { QueryBuilder } from '../types/query-builder';
 
-export abstract class Method {
+export abstract class Method implements QueryBuilder {
 
 	protected params: Params = {};
 
@@ -10,4 +11,9 @@ export abstract class Method {
 		protected readonly table: Table | null,
 		protected readonly dynamodb: DynamoDB
 	) { }
+
+	/**
+	 * Builds and returns the raw DynamoDB query object.
+	 */
+	abstract buildRawQuery(): any;
 }

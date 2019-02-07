@@ -5,6 +5,8 @@ import { ListTables } from './methods/list-tables';
 import { Schema } from './types/schema';
 import { DeleteTable } from './methods/delete-table';
 import { CreateTable } from './methods/create-table';
+import { TransactWrite, WriteItem } from './methods/transactions/write/transact-write';
+import { TransactRead, ReadItem } from './methods/transactions/read/transact-read';
 
 export interface Options {
 	local?: boolean;
@@ -127,5 +129,23 @@ export class DynamoDB {
 	 */
 	listTables() {
 		return new ListTables(this);
+	}
+
+	/**
+	 * Start a write transaction with the provided actions.
+	 *
+	 * @param	actions		List of transaction actions.
+	 */
+	transactWrite(...actions: WriteItem[]) {
+		return new TransactWrite(this, actions);
+	}
+
+	/**
+	 * Start a read transaction with the provided actions.
+	 *
+	 * @param	actions		List of transaction actions.
+	 */
+	transactRead(...actions: ReadItem[]) {
+		return new TransactRead(this, actions);
 	}
 }

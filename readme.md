@@ -173,6 +173,48 @@ Employee.findOneAndRemove({Organisation: 'Amazon', Email: 'john.doe@amazon.com'}
     });
 ```
 
+### Transactions
+
+The library also supports transactions. Transactions simplify the developer experience of making coordinated, all-or-nothing changes to multiple items both within and across tables. You can only provide up to 10 transaction requests per transaction.
+
+#### Read Transactions
+
+```ts
+import dynongo from 'dynongo';
+
+const result = await dynongo
+	.transactRead(
+		dynongo.table('User')
+			.find({Id: '1234', Key: 'BankRoll'}),
+		dynongo.table('BankAccount')
+			.find({Key: 'Salary'})
+	)
+	.exec();
+
+//=> [{Id: '1234', Key: 'BankRoll', Value: 100}, {Key: 'Salary', Value: 1500}]
+```
+
+#### Write Transactions
+
+For instance, what if we want to increment the bankroll of a user, but only if we still have enough money on our own back account.
+
+```ts
+import dynongo from 'dynongo';
+
+await dynongo
+	.transactWrite(
+		dynongo.table('User')
+			.update({Id: '1234', Key: 'BankRoll'}, {$inc: {Amount: 150}})
+	)
+	.withConditions(
+		dynongo.table('BankAccount')
+			.find({Key: 'Salary'})
+			.where({value: {$gte: 150}})
+	)
+	.exec();
+```
+
+
 ### List all the tables
 
 You can retrieve a list of all the tables.

@@ -4,6 +4,7 @@ import { Executable } from './executable';
 import { Schema } from '../types/schema';
 import { DynamoDB } from '../dynamodb';
 import { Table } from '../table';
+import { CreateTableInput } from 'aws-sdk/clients/dynamodb';
 
 export class CreateTable extends Method implements Executable {
 
@@ -42,6 +43,16 @@ export class CreateTable extends Method implements Executable {
 	}
 
 	/**
+	 * Builds and returns the raw DynamoDB query object.
+	 */
+	buildRawQuery(): CreateTableInput {
+		return {
+			...this.schema,
+			TableName: (this.table !).name
+		};
+	}
+
+	/**
 	 * This method will execute the create table request that was built up.
 	 */
 	exec(): Promise<void> {
@@ -51,9 +62,7 @@ export class CreateTable extends Method implements Executable {
 			return Promise.reject(new Error('Call .connect() before executing queries.'));
 		}
 
-		this.schema.TableName = (this.table !).name;
-
-		return db.createTable(this.schema).promise()
+		return db.createTable(this.buildRawQuery()).promise()
 			.then(() => {
 				if (this.shouldWait === true) {
 					// Start polling if await is set to true
@@ -87,6 +96,6 @@ export class CreateTable extends Method implements Executable {
 
 		await delay(this.waitMs);
 
-		return await db.describeTable({TableName: this.schema.TableName}).promise();
+		return await db.describeTable({TableName: (this.table !).name}).promise();
 	}
 }

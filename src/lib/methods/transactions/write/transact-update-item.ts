@@ -1,6 +1,6 @@
 import { TransactWriteItem, Converter } from 'aws-sdk/clients/dynamodb';
-import { UpdateItem } from '../../update-item';
 import { TransactMethod } from '../transact-method';
+import { UpdateItem } from '../../update-item';
 
 export class TransactUpdateItem extends TransactMethod {
 	constructor(

@@ -1,6 +1,6 @@
 import { TransactWriteItem, Converter } from 'aws-sdk/clients/dynamodb';
-import { DeleteItem } from '../../delete-item';
 import { TransactMethod } from '../transact-method';
+import { DeleteItem } from '../../delete-item';
 
 export class TransactDeleteItem extends TransactMethod {
 

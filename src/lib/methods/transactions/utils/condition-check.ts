@@ -1,21 +1,6 @@
 import { QueryInput, Converter, ConditionCheck } from 'aws-sdk/clients/dynamodb';
 import { Query } from '../../query';
-
-const generateKeyMap = (expression: string) => {
-	const keyExtractRegex = /(#.*?)=(:.*?)(\s|$)/g;
-
-	const result = new Map<string, string>();
-
-	let match = keyExtractRegex.exec(expression);
-
-	while (match !== null) {
-		result.set(match[1], match[2]);
-
-		match = keyExtractRegex.exec(expression);
-	}
-
-	return result;
-};
+import { keyParser } from './key-parser';
 
 /**
  * Generate a transaction `ConditionCheck` based on a `Query`.
@@ -30,32 +15,13 @@ export const generateConditionCheck = (query: Query): ConditionCheck => {
 		throw new Error('No `where` clause provided in transaction ConditionCheck');
 	}
 
-	const keyMap = generateKeyMap(build.KeyConditionExpression || '');
-
-	const key = {};
-
-	const attributeNames = {
-		...build.ExpressionAttributeNames
-	};
-
-	const attributeValues = {
-		...build.ExpressionAttributeValues
-	};
-
-	for (const [name, value] of keyMap) {
-		const keyName = attributeNames[name];
-
-		key[keyName] = attributeValues[value];
-
-		delete attributeNames[name];
-		delete attributeValues[value];
-	}
+	const result = keyParser(build);
 
 	return {
 		TableName: build.TableName,
-		Key: Converter.marshall(key),
+		Key: Converter.marshall(result.Key),
 		ConditionExpression: build.FilterExpression,
-		ExpressionAttributeNames: attributeNames,
-		ExpressionAttributeValues: Converter.marshall(attributeValues)
+		ExpressionAttributeNames: result.AttributeNames,
+		ExpressionAttributeValues: Converter.marshall(result.AttributeValues)
 	};
 };

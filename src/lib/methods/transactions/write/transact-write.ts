@@ -70,7 +70,7 @@ export class TransactWrite extends Method  implements Executable {
 	}
 
 	/**
-	 * Execute the scan.
+	 * Execute the write transaction.
 	 */
 	async exec(): Promise<any> {
 		const db = this.dynamodb.raw !;

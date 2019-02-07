@@ -29,17 +29,17 @@ test('error if action is not supported', async t => {
 test('error if number of transaction items is higher than 10', async t => {
 	await t.throwsAsync(
 		db.transactWrite(
-			db.table('foo') .insert({id: '1'}, {foo: 'bar'}),
-			db.table('foo') .insert({id: '2'}, {foo: 'bar'}),
-			db.table('foo') .insert({id: '3'}, {foo: 'bar'}),
-			db.table('foo') .insert({id: '4'}, {foo: 'bar'}),
-			db.table('foo') .insert({id: '5'}, {foo: 'bar'}),
-			db.table('foo') .insert({id: '6'}, {foo: 'bar'}),
-			db.table('foo') .insert({id: '7'}, {foo: 'bar'}),
-			db.table('foo') .insert({id: '8'}, {foo: 'bar'}),
-			db.table('foo') .insert({id: '9'}, {foo: 'bar'}),
-			db.table('foo') .insert({id: '10'}, {foo: 'bar'}),
-			db.table('foo') .insert({id: '11'}, {foo: 'bar'})
+			db.table('foo').insert({id: '1'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '2'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '3'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '4'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '5'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '6'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '7'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '8'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '9'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '10'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '11'}, {foo: 'bar'})
 		).exec(),
 	'Number of transaction items should be less than or equal to `10`, got `11`');
 });
@@ -47,15 +47,15 @@ test('error if number of transaction items is higher than 10', async t => {
 test('error if number of transaction items with conditionals is higher than 10', async t => {
 	await t.throwsAsync(
 		db.transactWrite(
-			db.table('foo') .insert({id: '1'}, {foo: 'bar'}),
-			db.table('foo') .insert({id: '2'}, {foo: 'bar'}),
-			db.table('foo') .insert({id: '3'}, {foo: 'bar'}),
-			db.table('foo') .insert({id: '4'}, {foo: 'bar'}),
-			db.table('foo') .insert({id: '5'}, {foo: 'bar'}),
-			db.table('foo') .insert({id: '6'}, {foo: 'bar'}),
-			db.table('foo') .insert({id: '7'}, {foo: 'bar'}),
-			db.table('foo') .insert({id: '8'}, {foo: 'bar'}),
-			db.table('foo') .insert({id: '9'}, {foo: 'bar'})
+			db.table('foo').insert({id: '1'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '2'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '3'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '4'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '5'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '6'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '7'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '8'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '9'}, {foo: 'bar'})
 		).withConditions(
 			db.table('bar').find({id: '1'}).where({foo: 10}),
 			db.table('bar').find({id: '2'}).where({foo: 20})

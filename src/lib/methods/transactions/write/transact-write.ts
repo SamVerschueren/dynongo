@@ -72,7 +72,7 @@ export class TransactWrite extends Method  implements Executable {
 	/**
 	 * Execute the write transaction.
 	 */
-	async exec(): Promise<any> {
+	async exec(): Promise<void> {
 		const db = this.dynamodb.raw !;
 
 		const query = this.buildRawQuery();
@@ -81,6 +81,6 @@ export class TransactWrite extends Method  implements Executable {
 			throw new Error(`Number of transaction items should be less than or equal to \`10\`, got \`${query.TransactItems.length}\``);
 		}
 
-		return db.transactWriteItems(query).promise();
+		await db.transactWriteItems(query).promise();
 	}
 }

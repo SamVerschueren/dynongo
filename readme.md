@@ -33,9 +33,20 @@ If you still want to use embedded credentials, you can by providing an `accessKe
 
 ```js
 db.connect({
-    accessKeyId: 'accessKeyId',
-    secretAccessKey: 'secretAccessKey',
+    accessKeyId: 'AKIAI44QH8DHBEXAMPLE',
+    secretAccessKey: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY',
     region: 'us-west-1'
+});
+```
+
+Or if you rather work with [temporary security credentials](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp.html), you can do that as well.
+
+```js
+db.connect({
+	accessKeyId: 'AKIAI44QH8DHBEXAMPLE',
+    secretAccessKey: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY',
+	sessionToken: 'AQoDYXdzEJr...<remainder of security token>',
+	region: 'us-west-1'
 });
 ```
 

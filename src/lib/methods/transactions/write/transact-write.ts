@@ -77,8 +77,8 @@ export class TransactWrite extends Method  implements Executable {
 
 		const query = this.buildRawQuery();
 
-		if (query.TransactItems.length > 10) {
-			throw new Error(`Number of transaction items should be less than or equal to \`10\`, got \`${query.TransactItems.length}\``);
+		if (query.TransactItems.length > 25) {
+			throw new Error(`Number of transaction items should be less than or equal to \`25\`, got \`${query.TransactItems.length}\``);
 		}
 
 		await db.transactWriteItems(query).promise();

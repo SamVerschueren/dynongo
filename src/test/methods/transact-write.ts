@@ -26,7 +26,7 @@ test('error if action is not supported', async t => {
 	'Unknown TransactWrite action provided');
 });
 
-test('error if number of transaction items is higher than 10', async t => {
+test('error if number of transaction items is higher than 25', async t => {
 	await t.throwsAsync(
 		db.transactWrite(
 			db.table('foo').insert({id: '1'}, {foo: 'bar'}),
@@ -39,12 +39,27 @@ test('error if number of transaction items is higher than 10', async t => {
 			db.table('foo').insert({id: '8'}, {foo: 'bar'}),
 			db.table('foo').insert({id: '9'}, {foo: 'bar'}),
 			db.table('foo').insert({id: '10'}, {foo: 'bar'}),
-			db.table('foo').insert({id: '11'}, {foo: 'bar'})
+			db.table('foo').insert({id: '11'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '12'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '13'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '14'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '15'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '16'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '17'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '18'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '19'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '20'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '21'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '22'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '23'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '24'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '25'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '26'}, {foo: 'bar'})
 		).exec(),
-	'Number of transaction items should be less than or equal to `10`, got `11`');
+	'Number of transaction items should be less than or equal to `25`, got `26`');
 });
 
-test('error if number of transaction items with conditionals is higher than 10', async t => {
+test('error if number of transaction items with conditionals is higher than 25', async t => {
 	await t.throwsAsync(
 		db.transactWrite(
 			db.table('foo').insert({id: '1'}, {foo: 'bar'}),
@@ -55,12 +70,27 @@ test('error if number of transaction items with conditionals is higher than 10',
 			db.table('foo').insert({id: '6'}, {foo: 'bar'}),
 			db.table('foo').insert({id: '7'}, {foo: 'bar'}),
 			db.table('foo').insert({id: '8'}, {foo: 'bar'}),
-			db.table('foo').insert({id: '9'}, {foo: 'bar'})
+			db.table('foo').insert({id: '9'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '10'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '11'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '12'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '13'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '14'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '15'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '16'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '17'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '18'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '19'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '20'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '21'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '22'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '23'}, {foo: 'bar'}),
+			db.table('foo').insert({id: '24'}, {foo: 'bar'})
 		).withConditions(
 			db.table('bar').find({id: '1'}).where({foo: 10}),
 			db.table('bar').find({id: '2'}).where({foo: 20})
 		).exec(),
-	'Number of transaction items should be less than or equal to `10`, got `11`');
+	'Number of transaction items should be less than or equal to `25`, got `26`');
 });
 
 test('error if condition does not have a where clause', async t => {

@@ -45,7 +45,7 @@ test('error if another index is used', async t => {
 	'Can not use a Global Secondary Index in a read transaction');
 });
 
-test('error if number of transaction items is higher than 10', async t => {
+test('error if number of transaction items is higher than 25', async t => {
 	await t.throwsAsync(
 		db.transactRead(
 			db.table('foo').find({id: '1'}),
@@ -59,9 +59,23 @@ test('error if number of transaction items is higher than 10', async t => {
 			db.table('foo').find({id: '9'}),
 			db.table('foo').find({id: '10'}),
 			db.table('foo').find({id: '11'}),
-			db.table('foo').find({id: '12'})
+			db.table('foo').find({id: '12'}),
+			db.table('foo').find({id: '13'}),
+			db.table('foo').find({id: '14'}),
+			db.table('foo').find({id: '15'}),
+			db.table('foo').find({id: '16'}),
+			db.table('foo').find({id: '17'}),
+			db.table('foo').find({id: '18'}),
+			db.table('foo').find({id: '19'}),
+			db.table('foo').find({id: '20'}),
+			db.table('foo').find({id: '21'}),
+			db.table('foo').find({id: '22'}),
+			db.table('foo').find({id: '23'}),
+			db.table('foo').find({id: '24'}),
+			db.table('foo').find({id: '25'}),
+			db.table('foo').find({id: '26'})
 		).exec(),
-	'Number of transaction items should be less than or equal to `10`, got `12`');
+	'Number of transaction items should be less than or equal to `25`, got `26`');
 });
 
 test.serial('execute transactions', async t => {

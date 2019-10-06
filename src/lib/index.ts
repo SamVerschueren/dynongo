@@ -1,5 +1,3 @@
-import { DynamoDB } from './lib';
-
 export {
 	ReadItem,
 	TransactRead,
@@ -20,12 +18,8 @@ export {
 	Method,
 	Query,
 	Scan,
-	UpdateItem,
-	UpdateQuery,
-	DynamoDBOptions,
-	DynamoDB,
-	TableOptions,
-	Table
-} from './lib';
-
-export default new DynamoDB();
+	UpdateItem
+} from './methods';
+export { UpdateQuery } from './types';
+export { DynamoDBOptions, DynamoDB } from './dynamodb';
+export { TableOptions, Table } from './table';

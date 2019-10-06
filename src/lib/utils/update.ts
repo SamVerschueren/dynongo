@@ -1,8 +1,7 @@
 import * as nameUtil from './name';
-import { UpdateQuery } from '../types/update-query';
-import { Map } from '../types/map';
+import { UpdateQuery, Map } from '../types';
 
-export interface ParseResult {
+interface ParseResult {
 	UpdateExpression: string;
 	ExpressionAttributeNames: Map<string>;
 	ExpressionAttributeValues: Map<any>;
@@ -20,7 +19,7 @@ export function parse(query: UpdateQuery): ParseResult {
 		expr.set = expr.set || [];
 
 		expr.set = expr.set.concat(Object.keys(query.$set).map(key => {
-			const value = (query.$set !)[key];
+			const value = (query.$set!)[key];
 
 			const k = nameUtil.generateKeyName(key);
 			const v = nameUtil.generateValueName(key, value, values, true);
@@ -46,7 +45,7 @@ export function parse(query: UpdateQuery): ParseResult {
 		expr.set = expr.set || [];
 
 		expr.set = expr.set.concat(Object.keys(query.$inc).map(key => {
-			const value = (query.$inc !)[key];
+			const value = (query.$inc!)[key];
 
 			const k = nameUtil.generateKeyName(key);
 			const v = nameUtil.generateValueName(key, value, values);
@@ -64,7 +63,7 @@ export function parse(query: UpdateQuery): ParseResult {
 		const operator = query.$push ? '$push' : '$unshift';
 
 		expr.set = expr.set.concat(Object.keys(query[operator] || {}).map(key => {
-			let value = (query[operator] !)[key];
+			let value = (query[operator]!)[key];
 
 			if (value.$each) {
 				value = value.$each;

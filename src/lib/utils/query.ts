@@ -1,8 +1,8 @@
 import isObject from 'is-object';
 import * as nameUtil from './name';
-import { Map } from '../types/map';
+import { Map } from '../types';
 
-export interface ParseResult {
+interface ParseResult {
 	ConditionExpression: string;
 	ExpressionAttributeNames: Map<string>;
 	ExpressionAttributeValues: Map<any>;

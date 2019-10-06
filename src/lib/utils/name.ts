@@ -1,11 +1,11 @@
-import { Map } from '../types/map';
+import { Map } from '../types';
 
-export interface KeyNameResult {
+interface KeyNameResult {
 	Expression: string;
 	ExpressionAttributeNames: Map<string>;
 }
 
-export interface ValueNameResult {
+interface ValueNameResult {
 	Expression: string | string[];
 	ExpressionAttributeValues: Map<any>;
 }

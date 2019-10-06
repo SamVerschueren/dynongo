@@ -1,14 +1,10 @@
 import AWS from 'aws-sdk';
 import pick from 'object.pick';
 import { Table, TableOptions } from './table';
-import { ListTables } from './methods/list-tables';
-import { Schema } from './types/schema';
-import { DeleteTable } from './methods/delete-table';
-import { CreateTable } from './methods/create-table';
-import { TransactWrite, WriteItem } from './methods/transactions/write/transact-write';
-import { TransactRead, ReadItem } from './methods/transactions/read/transact-read';
+import { ListTables, DeleteTable, CreateTable, TransactWrite, WriteItem, TransactRead, ReadItem } from './methods';
+import { Schema } from './types';
 
-export interface Options {
+export interface DynamoDBOptions {
 	local?: boolean;
 	host?: string;
 	localPort?: number;
@@ -24,9 +20,9 @@ export class DynamoDB {
 
 	public raw?: AWS.DynamoDB;
 	public dynamodb?: AWS.DynamoDB.DocumentClient;
-	private options: Options = {};
+	private options: DynamoDBOptions = {};
 
-	connect(options?: Options) {
+	connect(options?: DynamoDBOptions) {
 		this.options = {
 			prefix: '',
 			prefixDelimiter: '.',

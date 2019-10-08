@@ -1,6 +1,6 @@
 import { DynamoDB } from '../dynamodb';
 import { Table } from '../table';
-import { Params } from '../types/params';
+import { Params } from '../types';
 import { QueryBuilder } from '../types/query-builder';
 
 export abstract class Method implements QueryBuilder {
@@ -10,7 +10,7 @@ export abstract class Method implements QueryBuilder {
 	constructor(
 		protected readonly table: Table | null,
 		protected readonly dynamodb: DynamoDB
-	) { }
+	) {}
 
 	/**
 	 * Builds and returns the raw DynamoDB query object.

@@ -1,7 +1,7 @@
 import delay from 'delay';
 import { Method } from './method';
 import { Executable } from './executable';
-import { Schema } from '../types/schema';
+import { Schema } from '../types';
 import { DynamoDB } from '../dynamodb';
 import { Table } from '../table';
 import { CreateTableInput } from 'aws-sdk/clients/dynamodb';
@@ -48,7 +48,7 @@ export class CreateTable extends Method implements Executable {
 	buildRawQuery(): CreateTableInput {
 		return {
 			...this.schema,
-			TableName: (this.table !).name
+			TableName: (this.table!).name
 		};
 	}
 
@@ -92,10 +92,10 @@ export class CreateTable extends Method implements Executable {
 	}
 
 	private async pollHelper() {
-		const db = this.dynamodb.raw !;
+		const db = this.dynamodb.raw!;
 
 		await delay(this.waitMs);
 
-		return await db.describeTable({TableName: (this.table !).name}).promise();
+		return await db.describeTable({TableName: (this.table!).name}).promise();
 	}
 }

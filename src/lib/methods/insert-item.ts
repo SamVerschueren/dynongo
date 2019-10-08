@@ -5,7 +5,7 @@ import { Executable } from './executable';
 import { Method } from './method';
 import { DynamoDB } from '../dynamodb';
 import { Table } from '../table';
-import { UpdateQuery } from '../types/update-query';
+import { UpdateQuery } from '../types';
 
 export class InsertItem extends Method implements Executable {
 
@@ -59,7 +59,7 @@ export class InsertItem extends Method implements Executable {
 
 		const result = {
 			...this.params,
-			TableName: (this.table !).name,
+			TableName: (this.table!).name,
 			ConditionExpression: `NOT (${parsedQuery.ConditionExpression})`,
 			ExpressionAttributeNames: {...this.params.ExpressionAttributeNames, ...parsedQuery.ExpressionAttributeNames},
 			ExpressionAttributeValues: {...this.params.ExpressionAttributeValues, ...parsedQuery.ExpressionAttributeValues}

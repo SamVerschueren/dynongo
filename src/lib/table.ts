@@ -1,15 +1,8 @@
 import { DynamoDB } from './dynamodb';
-import { Query } from './methods/query';
-import { Scan } from './methods/scan';
-import { InsertItem } from './methods/insert-item';
-import { UpdateItem } from './methods/update-item';
-import { DeleteItem } from './methods/delete-item';
-import { DeleteTable } from './methods/delete-table';
-import { CreateTable } from './methods/create-table';
+import { Query, Scan, InsertItem, UpdateItem, DeleteItem, DeleteTable, CreateTable } from './methods';
 import * as table from './utils/table';
 import { operators as updateOperators } from './utils/update';
-import { Map } from './types/map';
-import { Schema } from './types/schema';
+import { Map, Schema } from './types';
 
 export interface TableOptions {
 	raw?: boolean;

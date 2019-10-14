@@ -2,21 +2,72 @@ import test from 'ava';
 import sinon from 'sinon';
 import stubPromise from '../fixtures/stub-promise';
 import db from '../..';
+import { serviceUnavailableException, throttlingException, conditionalCheckFailedException } from '../fixtures/aws-error';
 
 db.connect();
 
 const Table = db.table('Table');
+
+const fixtureWithRetry = {
+	TableName: 'Table',
+	ReturnValues: 'ALL_NEW',
+	Key: {
+		id: '200'
+	},
+	UpdateExpression: 'SET #k_foo=:v_foo',
+	ExpressionAttributeNames: {
+		'#k_foo': 'foo'
+	},
+	ExpressionAttributeValues: {
+		':v_foo': 'bar'
+	}
+};
+
+const fixtureWithRetryAbort = {
+	TableName: 'Table',
+	ReturnValues: 'ALL_NEW',
+	Key: {
+		id: '422'
+	},
+	UpdateExpression: 'SET #k_foo=:v_foo',
+	ExpressionAttributeNames: {
+		'#k_foo': 'foo'
+	},
+	ExpressionAttributeValues: {
+		':v_foo': 'bar'
+	}
+};
 
 const sandbox = sinon.createSandbox();
 let updateStub;
 
 test.before(() => {
 	updateStub = sandbox.stub(db.dynamodb !, 'update');
+	updateStub.withArgs(fixtureWithRetry).onFirstCall().returns(stubPromise(serviceUnavailableException));
+	updateStub.withArgs(fixtureWithRetry).onSecondCall().returns(stubPromise(throttlingException));
+	updateStub.withArgs(fixtureWithRetry).onThirdCall().returns(stubPromise({Attributes: 'foo'}));
+	updateStub.withArgs(fixtureWithRetryAbort).returns(stubPromise(conditionalCheckFailedException));
 	updateStub.returns(stubPromise({Attributes: 'foo'}));
 });
 
 test.after(() => {
 	sandbox.restore();
+});
+
+test.serial('should retry on error', async t => {
+	updateStub.resetHistory();
+
+	await t.notThrowsAsync(Table.upsert({id: '200'}, {foo: 'bar'}).retry(3).exec());
+
+	t.is(updateStub.callCount, 3);
+});
+
+test.serial('should abort retry when non-retryable error', async t => {
+	updateStub.resetHistory();
+
+	await t.throwsAsync(Table.upsert({id: '422'}, {foo: 'bar'}).retry(3).exec(), conditionalCheckFailedException);
+
+	t.is(updateStub.callCount, 1);
 });
 
 test.serial('upsert', async t => {

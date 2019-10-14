@@ -2,6 +2,7 @@ import test from 'ava';
 import sinon from 'sinon';
 import stubPromise from '../fixtures/stub-promise';
 import db from '../..';
+import { serviceUnavailableException, throttlingException, conditionalCheckFailedException } from '../fixtures/aws-error';
 
 db.connect();
 
@@ -25,6 +26,28 @@ const fixture2 = {
 	Select: 'COUNT'
 };
 
+const fixtureWithRetry = {
+	TableName: 'Table',
+	KeyConditionExpression: '#k_id=:v_id',
+	ExpressionAttributeNames: {
+		'#k_id': 'id'
+	},
+	ExpressionAttributeValues: {
+		':v_id': '200'
+	}
+};
+
+const fixtureWithRetryAbort = {
+	TableName: 'Table',
+	KeyConditionExpression: '#k_id=:v_id',
+	ExpressionAttributeNames: {
+		'#k_id': 'id'
+	},
+	ExpressionAttributeValues: {
+		':v_id': '422'
+	}
+};
+
 const sandbox = sinon.createSandbox();
 let queryStub: sinon.SinonStub;
 let scanStub: sinon.SinonStub;
@@ -32,6 +55,10 @@ let scanStub: sinon.SinonStub;
 test.before(() => {
 	queryStub = sandbox.stub(db.dynamodb !, 'query');
 	queryStub.withArgs(fixture1).returns(stubPromise({}));
+	queryStub.withArgs(fixtureWithRetry).onFirstCall().returns(stubPromise(serviceUnavailableException));
+	queryStub.withArgs(fixtureWithRetry).onSecondCall().returns(stubPromise(throttlingException));
+	queryStub.withArgs(fixtureWithRetry).onThirdCall().returns(stubPromise({Count: 2, Items: ['foo', 'bar']}));
+	queryStub.withArgs(fixtureWithRetryAbort).returns(stubPromise(conditionalCheckFailedException));
 	queryStub.returns(stubPromise({Count: 2, Items: ['foo', 'bar']}));
 
 	scanStub = sandbox.stub(db.dynamodb !, 'scan');
@@ -57,6 +84,22 @@ test.serial('find', async t => {
 			':v_id': '5'
 		}
 	});
+});
+
+test.serial('should retry on error', async t => {
+	queryStub.resetHistory();
+
+	await t.notThrowsAsync(Table.find({id: '200'}).retry(3).exec());
+
+	t.is(queryStub.callCount, 3);
+});
+
+test.serial('should abort retry when non-retryable error', async t => {
+	queryStub.resetHistory();
+
+	await t.throwsAsync(Table.find({id: '422'}).retry(3).exec(), conditionalCheckFailedException);
+
+	t.is(queryStub.callCount, 1);
 });
 
 test.serial('find with index', async t => {

@@ -25,6 +25,8 @@ const db = require('dynongo');
 db.connect();
 ```
 
+#### Credentials
+
 Please use IAM roles or environment variables to connect with the dynamodb database. This way, no keys have to
 be embedded in your code. You can find more information on the [SDK](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html)
 page.
@@ -48,6 +50,28 @@ db.connect({
 	sessionToken: 'AQoDYXdzEJr...<remainder of security token>',
 	region: 'us-west-1'
 });
+```
+
+#### Retry
+
+The retry configuration can be passed during initialisation, or per individual query. The mechanism is based on [`p-retry`](https://github.com/sindresorhus/p-retry) and requires the same [options](https://github.com/tim-kos/node-retry#retryoperationoptions). Configuring retry will allow the user to automatically retry the DynamoDB operation if it's a retryable error.
+
+```js
+db.connect({
+	retries: {
+		retries: 3,
+		factor: 1,
+		randomize: false
+	}
+})
+```
+
+You can simply pass a number as well when you don't want to configure the retry strategy.
+
+```js
+db.connect({
+	retries: 3
+})
 ```
 
 #### DynamoDB Local
@@ -93,6 +117,34 @@ const Employee = db.rawTable('Employee');
 ```
 
 ### Methods
+
+Every method can override the retry [options](https://github.com/tim-kos/node-retry#retryoperationoptions) passed with the `.connect()` method or can customise the retry configuration for the specific method.
+
+```js
+Employee
+	.find({Organisation: 'Amazon'})
+	.where({Salary: {$gt: 3000}})
+	.select('FirstName Name')
+	.retry({retries: 2})
+	.exec()
+    .then(employees => {
+        // => [{FirstName: 'Foo', Name: 'Bar'}]
+	});
+```
+
+If you don't want to configure the retry strategy, you can simply pass the number of retries.
+
+```js
+Employee
+	.find({Organisation: 'Amazon'})
+	.where({Salary: {$gt: 3000}})
+	.select('FirstName Name')
+	.retry(2)
+	.exec()
+    .then(employees => {
+        // => [{FirstName: 'Foo', Name: 'Bar'}]
+    });
+```
 
 #### find
 

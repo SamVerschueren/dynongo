@@ -81,7 +81,7 @@ export class DeleteItem extends Method implements Executable {
 			return Promise.reject(new Error('Call .connect() before executing queries.'));
 		}
 
-		return db.delete(this.buildRawQuery()).promise()
+		return this.runQuery(() => db.delete(this.buildRawQuery()).promise())
 			.then(data => {
 				if (this.params.ReturnValues === 'ALL_OLD') {
 					return this.rawResult === true ? data : data.Attributes;

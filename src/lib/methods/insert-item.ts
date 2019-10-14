@@ -84,7 +84,7 @@ export class InsertItem extends Method implements Executable {
 
 		const query = this.buildRawQuery();
 
-		return db.update(query).promise()
+		return this.runQuery(() => db.update(query).promise())
 			.then(data => {
 				// Return the attributes
 				return this.rawResult === true ? data : data.Attributes;

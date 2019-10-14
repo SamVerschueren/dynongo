@@ -12,15 +12,17 @@ test('connect', t => {
 	t.is(db.delimiter, '.');
 	t.truthy(db.dynamodb);
 	t.truthy(db.raw);
+	t.falsy(db.retries);
 });
 
 test('connect options', t => {
-	db.connect({prefix: 'dynongo', prefixDelimiter: ':'});
+	db.connect({prefix: 'dynongo', prefixDelimiter: ':', retries: 3});
 
 	t.is(db.prefix, 'dynongo');
 	t.is(db.delimiter, ':');
 	t.truthy(db.dynamodb);
 	t.truthy(db.raw);
+	t.is(db.retries, 3);
 });
 
 test('connect locally', t => {

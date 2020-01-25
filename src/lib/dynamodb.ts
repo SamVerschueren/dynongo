@@ -23,7 +23,7 @@ export class DynamoDB {
 	public raw?: AWS.DynamoDB;
 	public dynamodb?: AWS.DynamoDB.DocumentClient;
 	private options: DynamoDBOptions = {};
-	public retries?: number | RetryOptions;
+	private _retries?: number | RetryOptions;
 
 	connect(options?: DynamoDBOptions) {
 		this.options = {
@@ -34,7 +34,7 @@ export class DynamoDB {
 			...options
 		};
 
-		this.retries = this.options.retries;
+		this._retries = this.options.retries;
 
 		AWS.config.update(pick(this.options, ['region', 'accessKeyId', 'secretAccessKey', 'sessionToken']));
 
@@ -59,6 +59,10 @@ export class DynamoDB {
 
 	get prefix() {
 		return this.options.prefix;
+	}
+
+	get retries() {
+		return this._retries;
 	}
 
 	/**

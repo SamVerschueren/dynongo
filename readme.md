@@ -125,7 +125,7 @@ Employee
 	.find({Organisation: 'Amazon'})
 	.where({Salary: {$gt: 3000}})
 	.select('FirstName Name')
-	.retry({retries: 2})
+	.retry({retries: 3, factor: 1, randomize: false})
 	.exec()
     .then(employees => {
         // => [{FirstName: 'Foo', Name: 'Bar'}]

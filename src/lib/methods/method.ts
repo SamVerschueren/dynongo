@@ -21,9 +21,9 @@ export abstract class Method implements QueryBuilder {
 	abstract buildRawQuery(): any;
 
 	/**
-	 * Configure the retry policy
+	 * Configure the retry policy.
 	 *
-	 * @param opts - Retry configuration options.
+	 * @param retries - Retry configuration options.
 	 */
 	retry(retries: number | RetryOptions) {
 		this.retries = retries;
@@ -33,9 +33,10 @@ export abstract class Method implements QueryBuilder {
 
 	protected async runQuery<T>(operation: () => Promise<T>) {
 		const retries = this.retries || this.dynamodb.retries;
+		const retryOptions = typeof retries === 'number' ? {retries} : retries;
 
 		return retries
-			? retry(() => operation().catch(retryErrorHandler), {...typeof retries === 'number' ? {retries} : retries})
+			? retry(() => operation().catch(retryErrorHandler), retryOptions)
 			: operation();
 	}
 }

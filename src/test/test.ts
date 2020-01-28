@@ -12,7 +12,13 @@ test('connect', t => {
 	t.is(db.delimiter, '.');
 	t.truthy(db.dynamodb);
 	t.truthy(db.raw);
-	t.falsy(db.retries);
+	t.deepEqual(db.retries, {
+		factor: 2,
+		maxTimeout: 2000,
+		minTimeout: 500,
+		randomize: true,
+		retries: 5
+	});
 });
 
 test('connect options', t => {
@@ -22,7 +28,13 @@ test('connect options', t => {
 	t.is(db.delimiter, ':');
 	t.truthy(db.dynamodb);
 	t.truthy(db.raw);
-	t.is(db.retries, 3);
+	t.deepEqual(db.retries, {
+		factor: 2,
+		maxTimeout: 2000,
+		minTimeout: 500,
+		randomize: true,
+		retries: 3
+	});
 });
 
 test('connect locally', t => {

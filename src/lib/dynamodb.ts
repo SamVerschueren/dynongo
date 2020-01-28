@@ -4,6 +4,7 @@ import { Options as RetryOptions } from 'p-retry';
 import { Table, TableOptions } from './table';
 import { ListTables, DeleteTable, CreateTable, TransactWrite, WriteItem, TransactRead, ReadItem } from './methods';
 import { Schema } from './types';
+import { configureRetryOptions } from './utils';
 
 export interface DynamoDBOptions {
 	local?: boolean;
@@ -34,7 +35,7 @@ export class DynamoDB {
 			...options
 		};
 
-		this._retries = this.options.retries;
+		this._retries = configureRetryOptions(this.options.retries);
 
 		AWS.config.update(pick(this.options, ['region', 'accessKeyId', 'secretAccessKey', 'sessionToken']));
 

@@ -13,4 +13,10 @@ const defaultRetryOptions: RetryOptions = {
  *
  * @param retries - Retry configuration.
  */
-export const configureRetryOptions = (retries: number | RetryOptions | undefined) => typeof retries === 'number' ? {...defaultRetryOptions, retries} : {...defaultRetryOptions, ...retries};
+export const configureRetryOptions = (retries: number | RetryOptions | undefined) => {
+	if (retries === undefined) {
+		return;
+	}
+
+	return typeof retries === 'number' ? {...defaultRetryOptions, retries} : {...defaultRetryOptions, ...retries};
+};

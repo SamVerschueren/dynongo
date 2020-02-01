@@ -12,13 +12,7 @@ test('connect', t => {
 	t.is(db.delimiter, '.');
 	t.truthy(db.dynamodb);
 	t.truthy(db.raw);
-	t.deepEqual(db.retries, {
-		factor: 2,
-		maxTimeout: 2000,
-		minTimeout: 500,
-		randomize: true,
-		retries: 5
-	});
+	t.falsy(db.retries);
 });
 
 test('connect options', t => {

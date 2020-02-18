@@ -23,9 +23,9 @@ test('connect options', t => {
 	t.truthy(db.dynamodb);
 	t.truthy(db.raw);
 	t.deepEqual(db.retries, {
-		factor: 2,
+		factor: 1,
 		maxTimeout: 2000,
-		minTimeout: 500,
+		minTimeout: 300,
 		randomize: true,
 		retries: 3
 	});

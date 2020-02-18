@@ -2,8 +2,8 @@ import { Options as RetryOptions } from 'p-retry';
 
 const defaultRetryOptions: RetryOptions = {
 	retries: 5,
-	factor: 2,
-	minTimeout: 500,
+	factor: 1,
+	minTimeout: 300,
 	maxTimeout: 2000,
 	randomize: true
 };
@@ -18,5 +18,7 @@ export const configureRetryOptions = (retries: number | RetryOptions | undefined
 		return;
 	}
 
-	return typeof retries === 'number' ? {...defaultRetryOptions, retries} : {...defaultRetryOptions, ...retries};
+	return typeof retries === 'number'
+		? {...defaultRetryOptions, retries}
+		: {...defaultRetryOptions, ...retries};
 };

@@ -1,6 +1,6 @@
 {
 	"name": "dynongo",
-	"version": "0.15.0",
+	"version": "0.16.0",
 	"description": "MongoDB like syntax for DynamoDB",
 	"license": "MIT",
 	"repository": "SamVerschueren/dynongo",

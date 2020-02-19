@@ -142,7 +142,7 @@ Employee
 	.retry(2)
 	.exec()
 	.then(employees => {
-	// => [{FirstName: 'Foo', Name: 'Bar'}]
+		// => [{FirstName: 'Foo', Name: 'Bar'}]
 	});
 ```
 

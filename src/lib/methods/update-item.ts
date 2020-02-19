@@ -55,7 +55,7 @@ export class UpdateItem extends InsertItem implements Executable {
 			return Promise.reject(new Error('Call .connect() before executing queries.'));
 		}
 
-		return db.update(this.buildRawQuery()).promise()
+		return this.runQuery(() => db.update(this.buildRawQuery()).promise())
 			.then(data => {
 				// Return the attributes
 				return this.rawResult === true ? data : data.Attributes;

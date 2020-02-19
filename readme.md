@@ -25,6 +25,8 @@ const db = require('dynongo');
 db.connect();
 ```
 
+#### Credentials
+
 Please use IAM roles or environment variables to connect with the dynamodb database. This way, no keys have to
 be embedded in your code. You can find more information on the [SDK](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html)
 page.
@@ -33,9 +35,9 @@ If you still want to use embedded credentials, you can by providing an `accessKe
 
 ```js
 db.connect({
-    accessKeyId: 'AKIAI44QH8DHBEXAMPLE',
-    secretAccessKey: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY',
-    region: 'us-west-1'
+	accessKeyId: 'AKIAI44QH8DHBEXAMPLE',
+	secretAccessKey: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY',
+	region: 'us-west-1'
 });
 ```
 
@@ -44,10 +46,32 @@ Or if you rather work with [temporary security credentials](https://docs.aws.ama
 ```js
 db.connect({
 	accessKeyId: 'AKIAI44QH8DHBEXAMPLE',
-    secretAccessKey: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY',
+	secretAccessKey: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY',
 	sessionToken: 'AQoDYXdzEJr...<remainder of security token>',
 	region: 'us-west-1'
 });
+```
+
+#### Retry
+
+The retry configuration can be passed during initialisation, or per individual query. The mechanism is based on [`p-retry`](https://github.com/sindresorhus/p-retry) and requires the same [options](https://github.com/tim-kos/node-retry#retryoperationoptions). Configuring retry will allow the user to automatically retry the DynamoDB operation if it's a retryable error.
+
+```js
+db.connect({
+	retries: {
+		retries: 3,
+		factor: 1,
+		randomize: false
+	}
+})
+```
+
+You can simply pass a number as well when you don't want to configure the retry strategy.
+
+```js
+db.connect({
+	retries: 3
+})
 ```
 
 #### DynamoDB Local
@@ -57,9 +81,9 @@ by setting the `local` property to `true`. It will use port 8000 by default, but
 
 ```js
 db.connect({
-    local: true,
-    host: '192.168.5.5',            // localhost if not provided
-    localPort: 4444                 // 8000 if not provided
+	local: true,
+	host: '192.168.5.5',            // localhost if not provided
+	localPort: 4444                 // 8000 if not provided
 });
 ```
 
@@ -71,8 +95,8 @@ default delimiter is the `.`.
 
 ```js
 db.connect({
-    prefix: 'myapp-development',
-    prefixDelimiter: '-'            // . if not provided
+	prefix: 'myapp-development',
+	prefixDelimiter: '-'            // . if not provided
 });
 ```
 
@@ -94,40 +118,68 @@ const Employee = db.rawTable('Employee');
 
 ### Methods
 
+Every method can override the retry [options](https://github.com/tim-kos/node-retry#retryoperationoptions) passed with the `.connect()` method or can customise the retry configuration for the specific method.
+
+```js
+Employee
+	.find({Organisation: 'Amazon'})
+	.where({Salary: {$gt: 3000}})
+	.select('FirstName Name')
+	.retry({retries: 3, factor: 1, randomize: false})
+	.exec()
+	.then(employees => {
+		// => [{FirstName: 'Foo', Name: 'Bar'}]
+	});
+```
+
+If you don't want to configure the retry strategy, you can simply pass the number of retries.
+
+```js
+Employee
+	.find({Organisation: 'Amazon'})
+	.where({Salary: {$gt: 3000}})
+	.select('FirstName Name')
+	.retry(2)
+	.exec()
+	.then(employees => {
+		// => [{FirstName: 'Foo', Name: 'Bar'}]
+	});
+```
+
 #### find
 
 ```js
 Employee.find({Organisation: 'Amazon'}).where({Salary: {$gt: 3000}}).select('FirstName Name').exec()
-    .then(employees => {
-        // => [{FirstName: 'Foo', Name: 'Bar'}]
-    });
+	.then(employees => {
+		// => [{FirstName: 'Foo', Name: 'Bar'}]
+	});
 ```
 
 #### findOne
 
 ```js
 Employee.findOne({Organisation: 'Amazon'}).where({Salary: {$between: [3000, 4000]}}).select('FirstName Name').exec()
-    .then(employee => {
-        // => {FirstName: 'Foo', Name: 'Bar'}
-    });
+	.then(employee => {
+		// => {FirstName: 'Foo', Name: 'Bar'}
+	});
 ```
 
 #### count
 
 ```js
 Employee.find({Organisation: 'Amazon'}).where({Salary: {$gt: 3000}}).count().exec()
-    .then(count => {
-        // => 8
-    });
+	.then(count => {
+		// => 8
+	});
 ```
 
 #### insert
 
 ```js
- Employee.insert({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {Title: 'CFO', FirstName: 'Foo', Name: 'Bar', Salary: 4500}).exec()
-    .then(employee => {
-        // => {FirstName: 'Foo', Name: 'Bar', Salary: 4500, Title: 'CFO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}
-    });
+Employee.insert({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {Title: 'CFO', FirstName: 'Foo', Name: 'Bar', Salary: 4500}).exec()
+	.then(employee => {
+		// => {FirstName: 'Foo', Name: 'Bar', Salary: 4500, Title: 'CFO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}
+	});
 ```
 
 #### update
@@ -137,18 +189,18 @@ defines the updates of the fields.
 
 ```js
 Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$set: {Title: 'CTO'}, $inc: {Salary: 150}, $push: {Hobby: {$each: ['swimming', 'walking']}}}).exec()
-    .then(employee => {
-        // => {FirstName: 'Foo', Name: 'Bar', Salary: 4650, Title: 'CTO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com', Hobby: ['cycling', 'swimming', 'walking']}
-    });
+	.then(employee => {
+		// => {FirstName: 'Foo', Name: 'Bar', Salary: 4650, Title: 'CTO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com', Hobby: ['cycling', 'swimming', 'walking']}
+	});
 ```
 
 You can use `$unshift` to prepend a list with one or multiple values.
 
 ```js
 Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$unshift: {Hobby: 'programming'}}}).exec()
-    .then(employee => {
-        // => {FirstName: 'Foo', Name: 'Bar', Salary: 4650, Title: 'CTO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com', Hobby: ['programming', 'cycling', 'swimming', 'walking']}
-    });
+	.then(employee => {
+		// => {FirstName: 'Foo', Name: 'Bar', Salary: 4650, Title: 'CTO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com', Hobby: ['programming', 'cycling', 'swimming', 'walking']}
+	});
 ```
 
 If no Amazon employee exists with that email address exists, the method will fail.
@@ -157,9 +209,9 @@ You can also add extra conditions, for instance if we want to increase the salar
 
 ```js
 Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$inc: {Salary: 150}}).where({Salary: {$lt: 4500}}).exec()
-    .catch(err => {
-        // ConditionalCheckFailedException: The conditional request failed
-    });
+	.catch(err => {
+		// ConditionalCheckFailedException: The conditional request failed
+	});
 ```
 
 #### remove
@@ -168,9 +220,9 @@ The remove method expects the primary key (hash + range).
 
 ```js
 Employee.remove({Organisation: 'Amazon', Email: 'john.doe@amazon.com'}).exec()
-    .then(() => {
-        // => removed
-    });
+	.then(() => {
+		// => removed
+	});
 ```
 
 #### findOneAndRemove
@@ -179,9 +231,9 @@ This method is the same as the `remove` method, except that it will return the r
 
 ```js
 Employee.findOneAndRemove({Organisation: 'Amazon', Email: 'john.doe@amazon.com'}).exec()
-    .then(result => {
-        // => {Organisation: 'Amazon', Email: 'john.doe@amazon.com'}
-    });
+	.then(result => {
+		// => {Organisation: 'Amazon', Email: 'john.doe@amazon.com'}
+	});
 ```
 
 ### Transactions
@@ -246,8 +298,8 @@ You can implement paging by using the `startFrom()` method together with the `La
 
 ```js
 const result = Employee.find({Organisation: 'Amazon'}).where({Salary: {$gt: 3000}}).limit(1).raw().exec()
-    .then(result => {
-        /**
+	.then(result => {
+		/**
 		 * {
 		 *     "Items": [
 		 *         { UserId: '1', FirstName: 'Foo', Name: 'Bar' }
@@ -265,7 +317,7 @@ const result = Employee.find({Organisation: 'Amazon'}).where({Salary: {$gt: 3000
 		return Employee.find({Organisation: 'Amazon'}).where({Salary: {$gt: 3000}}).startFrom(result.LastEvaluatedKey).limit(1).raw().exec()
 	})
 	.then(result => {
-        /**
+		/**
 		 * {
 		 *     "Items": [
 		 *         { UserId: '2', FirstName: 'Unicorn', Name: 'Rainbow' }
@@ -293,32 +345,32 @@ The first way is by calling the `create()` method.
 const Employee = db.table('Employee');
 
 const schema = {
-    TableName: 'Employee',
-    AttributeDefinitions: [
-        { AttributeName: 'id', AttributeType: 'S' }
-    ],
-    KeySchema: [
-        { AttributeName: 'id', KeyType: 'HASH' }
-    ],
-    ProvisionedThroughput: {
-        ReadCapacityUnits: 1,
-        WriteCapacityUnits: 1
-    }
+	TableName: 'Employee',
+	AttributeDefinitions: [
+		{ AttributeName: 'id', AttributeType: 'S' }
+	],
+	KeySchema: [
+		{ AttributeName: 'id', KeyType: 'HASH' }
+	],
+	ProvisionedThroughput: {
+		ReadCapacityUnits: 1,
+		WriteCapacityUnits: 1
+	}
 };
 
 Employee.create(schema).exec()
-    .then(() => {
-        // => Table is being created
-    });
+	.then(() => {
+		// => Table is being created
+	});
 ```
 
 The second way is by calling the `createTable()` method.
 
 ```js
 db.createTable(schema).exec()
-    .then(() => {
-        // Table is being created
-    });
+	.then(() => {
+		// Table is being created
+	});
 ```
 
 This is shorthand for the first method.
@@ -331,9 +383,9 @@ This can be done with the `wait()` method.
 
 ```js
 db.createTable(schema).wait().exec()
-    .then(() => {
-        // Table is created
-    });
+	.then(() => {
+		// Table is created
+	});
 ```
 
 This will make sure the table is polled every 1000 milliseconds untill the status of the table is `active`. If you want to poll
@@ -355,18 +407,18 @@ The first way is by calling the `drop()` method.
 const Employee = db.table('Employee');
 
 Employee.drop().exec()
-    .then(() => {
-        // => Table is being dropped
-    });
+	.then(() => {
+		// => Table is being dropped
+	});
 ```
 
 The second way is by calling the `dropTable()` method.
 
 ```js
 db.dropTable('Employee').exec()
-    .then(() => {
-        // => Table is being dropped
-    })
+	.then(() => {
+		// => Table is being dropped
+	})
 ```
 
 This method is just a shorthand method for the first example.
@@ -378,9 +430,9 @@ might be use cases where you have to wait untill the table is removed entirely b
 
 ```js
 db.dropTable('Employee').wait().exec()
-    .then(() => {
-        // => Table is dropped
-    })
+	.then(() => {
+		// => Table is dropped
+	})
 ```
 
 This will make sure the table is polled every 1000 milliseconds untill the table does not exist anymore. If you want to poll at another speed, you can by providing

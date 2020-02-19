@@ -1,8 +1,10 @@
 import AWS from 'aws-sdk';
 import pick from 'object.pick';
+import { Options as RetryOptions } from 'p-retry';
 import { Table, TableOptions } from './table';
 import { ListTables, DeleteTable, CreateTable, TransactWrite, WriteItem, TransactRead, ReadItem } from './methods';
 import { Schema } from './types';
+import { configureRetryOptions } from './utils';
 
 export interface DynamoDBOptions {
 	local?: boolean;
@@ -14,6 +16,7 @@ export interface DynamoDBOptions {
 	accessKeyId?: string;
 	secretAccessKey?: string;
 	sessionToken?: string;
+	retries?: number | RetryOptions;
 }
 
 export class DynamoDB {
@@ -21,6 +24,7 @@ export class DynamoDB {
 	public raw?: AWS.DynamoDB;
 	public dynamodb?: AWS.DynamoDB.DocumentClient;
 	private options: DynamoDBOptions = {};
+	private _retries?: number | RetryOptions;
 
 	connect(options?: DynamoDBOptions) {
 		this.options = {
@@ -30,6 +34,8 @@ export class DynamoDB {
 			localPort: 8000,
 			...options
 		};
+
+		this._retries = configureRetryOptions(this.options.retries);
 
 		AWS.config.update(pick(this.options, ['region', 'accessKeyId', 'secretAccessKey', 'sessionToken']));
 
@@ -54,6 +60,10 @@ export class DynamoDB {
 
 	get prefix() {
 		return this.options.prefix;
+	}
+
+	get retries() {
+		return this._retries;
 	}
 
 	/**

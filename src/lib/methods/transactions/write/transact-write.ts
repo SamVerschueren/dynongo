@@ -81,6 +81,31 @@ export class TransactWrite extends Method  implements Executable {
 			throw new Error(`Number of transaction items should be less than or equal to \`25\`, got \`${query.TransactItems.length}\``);
 		}
 
-		await db.transactWriteItems(query).promise();
+		const request = db.transactWriteItems(query);
+
+		return new Promise((resolve, reject) => {
+			let cancellationReasons;
+
+			request.on('extractError', (response) => {
+				try {
+					cancellationReasons = JSON.parse(response.httpResponse.body.toString()).CancellationReasons;
+				} catch (err) {
+					// If for some reason we can't parse the error, we still want everything to work
+					console.error('Error extracting cancellation error', err);
+				}
+			});
+
+			request.send((err) => {
+				if (err) {
+					if (cancellationReasons) {
+						(err as any).cancellationReasons = cancellationReasons;
+					}
+
+					return reject(err);
+				}
+
+				return resolve();
+			});
+		});
 	}
 }

@@ -1,6 +1,5 @@
 import test from 'ava';
 import sinon from 'sinon';
-import stubPromise from '../fixtures/stub-promise';
 import db from '../..';
 
 db.connect();
@@ -10,7 +9,12 @@ let transactWriteStub;
 
 test.before(() => {
 	transactWriteStub = sandbox.stub(db.raw !, 'transactWriteItems');
-	transactWriteStub.returns(stubPromise({Attributes: 'foo'}));
+	transactWriteStub.returns({
+		on: () => {}, // tslint:disable-line:no-empty
+		send: (fn) => {
+			fn();
+		}
+	});
 });
 
 test.after(() => {

@@ -157,3 +157,16 @@ test.serial('error if not connected', async t => {
 
 	db.dynamodb = original;
 });
+
+test.serial('should not include attritube values when empty', async t => {
+	await Table.findOne().where({name: {$exists: true}}).exec();
+
+	t.deepEqual(scanStub.lastCall.args[0], {
+		TableName: 'Table',
+		ConsistentRead: false,
+		FilterExpression: 'attribute_exists(#k_name)',
+		ExpressionAttributeNames: {
+			'#k_name': 'name'
+		}
+	});
+});

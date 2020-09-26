@@ -48,7 +48,13 @@ export abstract class BaseQuery extends Method {
 		// Add the parsed query attributes to the correct properties of the params object
 		this.params.FilterExpression = parsedQuery.ConditionExpression;
 		this.params.ExpressionAttributeNames = {...this.params.ExpressionAttributeNames, ...parsedQuery.ExpressionAttributeNames};
-		this.params.ExpressionAttributeValues = {...this.params.ExpressionAttributeValues, ...parsedQuery.ExpressionAttributeValues};
+
+		const expressionAttributeValues = {...this.params.ExpressionAttributeValues, ...parsedQuery.ExpressionAttributeValues};
+
+		// `ExpressionAttributeValues` should not be empty
+		if (Object.keys(expressionAttributeValues).length > 0) {
+			this.params.ExpressionAttributeValues = expressionAttributeValues;
+		}
 
 		// Return the query so that it can be chained
 		return this;

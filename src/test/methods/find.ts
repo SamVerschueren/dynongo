@@ -355,3 +355,16 @@ test.serial('scan::consistent read', async t => {
 		ConsistentRead: true
 	});
 });
+
+test.serial('should not include attritube values when empty', async t => {
+	await Table.find().where({name: {$exists: true}}).exec();
+
+	t.deepEqual(scanStub.lastCall.args[0], {
+		TableName: 'Table',
+		ConsistentRead: false,
+		FilterExpression: 'attribute_exists(#k_name)',
+		ExpressionAttributeNames: {
+			'#k_name': 'name'
+		}
+	});
+});

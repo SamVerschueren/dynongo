@@ -6,6 +6,7 @@ import { Table } from '../table';
 export abstract class BaseQuery extends Method {
 
 	protected rawResult: boolean = false;
+	protected consistentRead: boolean = false;
 
 	constructor(table: Table, dynamodb: DynamoDB) {
 		super(table, dynamodb);
@@ -130,6 +131,15 @@ export abstract class BaseQuery extends Method {
 		this.rawResult = true;
 
 		// Return the query so that it can be chained
+		return this;
+	}
+
+	/**
+	 * Make the read strongly consistent.
+	 */
+	consistent() {
+		this.consistentRead = true;
+
 		return this;
 	}
 }

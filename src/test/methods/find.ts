@@ -11,6 +11,7 @@ const Table2 = db.table('Table2');
 
 const fixture1 = {
 	TableName: 'Table',
+	ConsistentRead: false,
 	KeyConditionExpression: '#k_foo=:v_foo',
 	ExpressionAttributeNames: {
 		'#k_foo': 'foo'
@@ -23,11 +24,13 @@ const fixture1 = {
 
 const fixture2 = {
 	TableName: 'Table2',
+	ConsistentRead: false,
 	Select: 'COUNT'
 };
 
 const fixtureWithRetry = {
 	TableName: 'Table',
+	ConsistentRead: false,
 	KeyConditionExpression: '#k_id=:v_id',
 	ExpressionAttributeNames: {
 		'#k_id': 'id'
@@ -39,6 +42,7 @@ const fixtureWithRetry = {
 
 const fixtureWithRetryAbort = {
 	TableName: 'Table',
+	ConsistentRead: false,
 	KeyConditionExpression: '#k_id=:v_id',
 	ExpressionAttributeNames: {
 		'#k_id': 'id'
@@ -76,6 +80,7 @@ test.serial('find', async t => {
 
 	t.deepEqual(queryStub.lastCall.args[0], {
 		TableName: 'Table',
+		ConsistentRead: false,
 		KeyConditionExpression: '#k_id=:v_id',
 		ExpressionAttributeNames: {
 			'#k_id': 'id'
@@ -107,6 +112,7 @@ test.serial('find with index', async t => {
 
 	t.deepEqual(queryStub.lastCall.args[0], {
 		TableName: 'Table',
+		ConsistentRead: false,
 		IndexName: 'IdIndex',
 		KeyConditionExpression: '#k_id=:v_id',
 		ExpressionAttributeNames: {
@@ -123,6 +129,7 @@ test.serial('limit', async t => {
 
 	t.deepEqual(queryStub.lastCall.args[0], {
 		TableName: 'Table',
+		ConsistentRead: false,
 		KeyConditionExpression: '#k_id=:v_id',
 		Limit: 2,
 		ExpressionAttributeNames: {
@@ -139,6 +146,7 @@ test.serial('exclusive start key', async t => {
 
 	t.deepEqual(queryStub.lastCall.args[0], {
 		TableName: 'Table',
+		ConsistentRead: false,
 		KeyConditionExpression: '#k_id=:v_id',
 		ExclusiveStartKey: {
 			id: '10',
@@ -178,6 +186,7 @@ test.serial('select undefined', async t => {
 
 	t.deepEqual(queryStub.lastCall.args[0], {
 		TableName: 'Table',
+		ConsistentRead: false,
 		KeyConditionExpression: '#k_foo=:v_foo',
 		ExpressionAttributeNames: {
 			'#k_foo': 'foo'
@@ -194,6 +203,7 @@ test.serial('select one', async t => {
 
 	t.deepEqual(queryStub.lastCall.args[0], {
 		TableName: 'Table',
+		ConsistentRead: false,
 		KeyConditionExpression: '#k_foo=:v_foo',
 		ExpressionAttributeNames: {
 			'#k_foo': 'foo'
@@ -211,6 +221,7 @@ test.serial('select multiple (comma separated)', async t => {
 
 	t.deepEqual(queryStub.lastCall.args[0], {
 		TableName: 'Table',
+		ConsistentRead: false,
 		KeyConditionExpression: '#k_foo=:v_foo',
 		ExpressionAttributeNames: {
 			'#k_foo': 'foo',
@@ -229,6 +240,7 @@ test.serial('select multiple (space separated)', async t => {
 
 	t.deepEqual(queryStub.lastCall.args[0], {
 		TableName: 'Table',
+		ConsistentRead: false,
 		KeyConditionExpression: '#k_foo=:v_foo',
 		ExpressionAttributeNames: {
 			'#k_foo': 'foo',
@@ -271,7 +283,10 @@ test.serial('error if not connected', async t => {
 test.serial('find all', async t => {
 	await Table.find().exec();
 
-	t.deepEqual(scanStub.lastCall.args[0], {TableName: 'Table'});
+	t.deepEqual(scanStub.lastCall.args[0], {
+		TableName: 'Table',
+		ConsistentRead: false
+	});
 });
 
 test.serial('find all where', async t => {
@@ -279,6 +294,7 @@ test.serial('find all where', async t => {
 
 	t.deepEqual(scanStub.lastCall.args[0], {
 		TableName: 'Table',
+		ConsistentRead: false,
 		FilterExpression: '#k_name=:v_name',
 		ExpressionAttributeNames: {
 			'#k_name': 'name'
@@ -294,6 +310,7 @@ test.serial('scan::exclusive start key', async t => {
 
 	t.deepEqual(scanStub.lastCall.args[0], {
 		TableName: 'Table',
+		ConsistentRead: false,
 		ExclusiveStartKey: {
 			id: '10',
 			foo: 'bar'
@@ -328,4 +345,13 @@ test.serial('scan::error if not connected', async t => {
 	await t.throwsAsync(Table.find().count().exec(), 'Call .connect() before executing queries.');
 
 	db.dynamodb = original;
+});
+
+test.serial('scan::consistent read', async t => {
+	await Table.find().consistent().exec();
+
+	t.deepEqual(scanStub.lastCall.args[0], {
+		TableName: 'Table',
+		ConsistentRead: true
+	});
 });

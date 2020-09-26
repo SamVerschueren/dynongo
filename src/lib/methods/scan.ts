@@ -18,6 +18,7 @@ export class Scan extends BaseQuery implements Executable {
 
 		const result: ScanInput = {
 			...this.params,
+			ConsistentRead: this.consistentRead,
 			TableName: (this.table !).name
 		};
 

@@ -108,3 +108,34 @@ test.serial('execute transactions', async t => {
 		]
 	});
 });
+
+test.serial('execute transactions with a strongly consistent read', async t => {
+	const result = await db.transactRead(
+		db.table('foo')
+			.find({id: '5'})
+			.select('foo')
+	).exec();
+
+	t.deepEqual(result, [
+		{foo: 'bar'}
+	]);
+
+	t.deepEqual(transactReadStub.lastCall.args[0], {
+		TransactItems: [
+			{
+				Get: {
+					TableName: 'foo',
+					Key: {
+						id: {
+							S: '5'
+						}
+					},
+					ProjectionExpression: '#k_foo',
+					ExpressionAttributeNames: {
+						'#k_foo': 'foo'
+					}
+				}
+			}
+		]
+	});
+});

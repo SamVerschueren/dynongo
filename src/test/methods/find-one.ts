@@ -17,6 +17,7 @@ const fixtureWithRetry = {
 		':v_id': '20'
 	},
 	Limit: 1,
+	ConsistentRead: false,
 	TableName: 'Table'
 };
 
@@ -29,6 +30,7 @@ const fixtureWithRetryAbort = {
 		':v_id': '30'
 	},
 	Limit: 1,
+	ConsistentRead: false,
 	TableName: 'Table'
 };
 
@@ -73,6 +75,24 @@ test.serial('find one', async t => {
 
 	t.deepEqual(queryStub.lastCall.args[0], {
 		TableName: 'Table',
+		ConsistentRead: false,
+		KeyConditionExpression: '#k_id=:v_id',
+		ExpressionAttributeNames: {
+			'#k_id': 'id'
+		},
+		ExpressionAttributeValues: {
+			':v_id': '5'
+		},
+		Limit: 1
+	});
+});
+
+test.serial('find one with a consistent read', async t => {
+	t.is(await Table.findOne({id: '5'}).consistent().exec(), 'foo');
+
+	t.deepEqual(queryStub.lastCall.args[0], {
+		TableName: 'Table',
+		ConsistentRead: true,
 		KeyConditionExpression: '#k_id=:v_id',
 		ExpressionAttributeNames: {
 			'#k_id': 'id'
@@ -89,6 +109,7 @@ test.serial('find one where', async t => {
 
 	t.deepEqual(queryStub.lastCall.args[0], {
 		TableName: 'Table',
+		ConsistentRead: false,
 		KeyConditionExpression: '#k_id=:v_id',
 		FilterExpression: '#k_foo=:v_foo',
 		ExpressionAttributeNames: {
@@ -107,6 +128,7 @@ test.serial('find all but one', async t => {
 
 	t.deepEqual(scanStub.lastCall.args[0], {
 		TableName: 'Table',
+		ConsistentRead: false,
 		Limit: 1
 	});
 });
@@ -116,6 +138,7 @@ test.serial('find all but one where', async t => {
 
 	t.deepEqual(scanStub.lastCall.args[0], {
 		TableName: 'Table',
+		ConsistentRead: false,
 		FilterExpression: '#k_foo=:v_foo',
 		ExpressionAttributeNames: {
 			'#k_foo': 'foo'

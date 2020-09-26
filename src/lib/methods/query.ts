@@ -38,6 +38,7 @@ export class Query extends BaseQuery implements Executable {
 
 		const result: QueryInput = {
 			...this.params,
+			ConsistentRead: this.consistentRead,
 			TableName: (this.table !).name
 		};
 

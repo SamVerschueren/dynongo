@@ -236,6 +236,28 @@ Employee.findOneAndRemove({Organisation: 'Amazon', Email: 'john.doe@amazon.com'}
 	});
 ```
 
+### Read consistency
+
+By default, all reads are eventually consistent which means the response migh include some stale data.
+
+When you request a strongly consistent read, DynamoDB returns a response with the most up-to-date data, reflecting the updates from all prior write operations that were successful.
+
+Dynongo supports strongly consistent reads by adding the `.consistent()` chaining operator.
+
+```js
+Employee
+	.find({Organisation: 'Amazon'})
+	.where({Salary: {$gt: 3000}})
+	.select('FirstName Name')
+	.consistent()
+	.exec()
+	.then(employees => {
+		// => [{FirstName: 'Foo', Name: 'Bar'}]
+	});
+```
+
+More information can be found in the [AWS documentation](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadConsistency.html).
+
 ### Transactions
 
 The library also supports transactions. Transactions simplify the developer experience of making coordinated, all-or-nothing changes to multiple items both within and across tables. You can only provide up to 10 transaction requests per transaction.

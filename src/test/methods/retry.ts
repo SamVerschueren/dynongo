@@ -17,6 +17,7 @@ const fixtureWithRetry = {
 		':v_id': '20'
 	},
 	Limit: 1,
+	ConsistentRead: false,
 	TableName: 'Table'
 };
 
@@ -29,6 +30,7 @@ const fixtureWithRetryLong = {
 		':v_id': '200'
 	},
 	Limit: 1,
+	ConsistentRead: false,
 	TableName: 'Table'
 };
 
@@ -41,6 +43,7 @@ const fixtureOverrideWithOptions = {
 		':v_id': '300'
 	},
 	Limit: 1,
+	ConsistentRead: false,
 	TableName: 'Table'
 };
 
@@ -53,6 +56,7 @@ const fixtureWithRetryAbort = {
 		':v_id': '30'
 	},
 	Limit: 1,
+	ConsistentRead: false,
 	TableName: 'Table'
 };
 
@@ -65,6 +69,7 @@ const fixtureForceNoRetries = {
 		':v_id': '40'
 	},
 	Limit: 1,
+	ConsistentRead: false,
 	TableName: 'Table'
 };
 
@@ -77,6 +82,7 @@ const fixtureAllErrorsRetries = {
 		':v_id': '400'
 	},
 	Limit: 1,
+	ConsistentRead: false,
 	TableName: 'Table'
 };
 

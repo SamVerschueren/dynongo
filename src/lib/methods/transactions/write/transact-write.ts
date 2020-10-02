@@ -87,6 +87,46 @@ export class TransactWrite extends Method  implements Executable {
 			let cancellationReasons;
 
 			request.on('extractError', (response) => {
+				let actionMap = {}
+				for (let writeItem of this.actions) {
+				    let keys = Object.values(item.params.ExpressionAttributeNames);
+				    let type = "";
+
+				    if (action instanceof UpdateItem) {
+					type = "update";
+				    }
+
+				    if (action instanceof InsertItem) {
+					type = "insert";
+				    }
+
+				    if (action instanceof DeleteItem) {
+					type = "delete";
+				    }
+
+				    if (actionMap.hasOwnProperty(type)) {
+					actionMap[type].keys = actionMap[type].keys.concat(keys);
+				    } else {
+					actionMap.push({
+					    type,
+					    keys
+					})
+				    }
+				}
+
+				for (let writeAction of Object.keys(actionMap)) {
+
+				    // taken under CC BY-SA 3.0 from https://stackoverflow.com/a/35922651 
+				    let duplicates = writeAction.keys.reduce(function(acc, el, i, arr) {
+					if (arr.indexOf(el) !== i && acc.indexOf(el) < 0) acc.push(el);
+					return acc;
+				    }, []);
+
+				    console.error("Duplicate key(s)", duplicates, "for", writeAction.type, "action")
+
+				}
+				
+				
 				try {
 					cancellationReasons = JSON.parse(response.httpResponse.body.toString()).CancellationReasons;
 				} catch (err) {

@@ -1,5 +1,8 @@
+import AWS from 'aws-sdk';
+import { Map, UpdateQuery } from '../types';
 import * as nameUtil from './name';
-import { UpdateQuery, Map } from '../types';
+
+const db = new AWS.DynamoDB.DocumentClient();
 
 interface ParseResult {
 	UpdateExpression: string;
@@ -7,7 +10,18 @@ interface ParseResult {
 	ExpressionAttributeValues: Map<any>;
 }
 
-export const operators = ['$set', '$unset', '$inc', '$push', '$unshift'];
+export const operators = ['$set', '$unset', '$inc', '$push', '$unshift', '$addToSet'];
+
+const fromArrayEach = (value) => {
+	if (value.$each) {
+		if (!Array.isArray(value.$each)) {
+			throw new Error('The value for $each should be an array.');
+		}
+		return value.$each;
+
+	}
+	return [value];
+};
 
 export function parse(query: UpdateQuery): ParseResult {
 	const names = {};
@@ -63,18 +77,7 @@ export function parse(query: UpdateQuery): ParseResult {
 		const operator = query.$push ? '$push' : '$unshift';
 
 		expr.set = expr.set.concat(Object.keys(query[operator] || {}).map(key => {
-			let value = (query[operator]!)[key];
-
-			if (value.$each) {
-				value = value.$each;
-
-				if (!Array.isArray(value)) {
-					throw new Error('The value for $each should be an array.');
-				}
-			} else {
-				value = [value];
-			}
-
+			const value = fromArrayEach((query[operator]!)[key]);
 			const k = nameUtil.generateKeyName(key);
 			const v = nameUtil.generateValueName(key, value, values, true);
 			v.ExpressionAttributeValues[':_v_empty_list'] = [];
@@ -90,6 +93,21 @@ export function parse(query: UpdateQuery): ParseResult {
 			}
 
 			return k.Expression + '=list_append(' + args + ')';
+		}));
+	}
+
+	if (query.$addToSet) {
+		expr.add = expr.add || [];
+
+		expr.add = expr.add.concat(Object.keys(query.$addToSet || {}).map(key => {
+			const value = fromArrayEach((query.$addToSet!)[key]);
+			const k = nameUtil.generateKeyName(key);
+			const v = nameUtil.generateValueName(key, db.createSet(value), values, true);
+
+			Object.assign(names, k.ExpressionAttributeNames);
+			Object.assign(values, v.ExpressionAttributeValues);
+
+			return `${k.Expression} ${v.Expression}`;
 		}));
 	}
 

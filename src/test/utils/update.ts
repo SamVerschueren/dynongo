@@ -1,8 +1,6 @@
 import test from 'ava';
-import AWS from 'aws-sdk';
+import DynamoDBSet from 'aws-sdk/lib/dynamodb/set';
 import * as update from '../../lib/utils/update';
-
-const db = new AWS.DynamoDB.DocumentClient();
 
 test('$set', t => {
 	const result = update.parse({$set: {id: 5, description: 'foo'}});
@@ -41,7 +39,7 @@ test('$addToSet', t => {
 
 	t.is(result.UpdateExpression, 'ADD #k_friends :v_friends');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends'});
-	t.deepEqual(result.ExpressionAttributeValues, {':v_friends': db.createSet(['mario'])});
+	t.deepEqual(result.ExpressionAttributeValues, {':v_friends': new DynamoDBSet(['mario'])});
 });
 
 test('$unshift', t => {
@@ -81,7 +79,7 @@ test('$addToSet $each in array', t => {
 
 	t.is(result.UpdateExpression, 'ADD #k_friends :v_friends');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends'});
-	t.deepEqual(result.ExpressionAttributeValues, {':v_friends': db.createSet(['mario', 'luigi'])});
+	t.deepEqual(result.ExpressionAttributeValues, {':v_friends': new DynamoDBSet(['mario', 'luigi'])});
 });
 
 test('$addToSet (double)', t => {
@@ -90,8 +88,8 @@ test('$addToSet (double)', t => {
 	t.is(result.UpdateExpression, 'ADD #k_friends :v_friends, #k_enemies :v_enemies');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends', '#k_enemies': 'enemies'});
 	t.deepEqual(result.ExpressionAttributeValues, {
-		':v_friends': db.createSet(['mario', 'luigi']),
-		':v_enemies': db.createSet(['bowser'])
+		':v_friends': new DynamoDBSet(['mario', 'luigi']),
+		':v_enemies': new DynamoDBSet(['bowser'])
 	});
 });
 

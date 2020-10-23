@@ -1,8 +1,6 @@
-import AWS from 'aws-sdk';
+import DynamoDBSet from 'aws-sdk/lib/dynamodb/set';
 import { Map, UpdateQuery } from '../types';
 import * as nameUtil from './name';
-
-const db = new AWS.DynamoDB.DocumentClient();
 
 interface ParseResult {
 	UpdateExpression: string;
@@ -101,8 +99,9 @@ export function parse(query: UpdateQuery): ParseResult {
 
 		expr.add = expr.add.concat(Object.keys(query.$addToSet).map(key => {
 			const value = fromArrayEach((query.$addToSet!)[key]);
+			const dynamoDBSet = new DynamoDBSet(value);
 			const k = nameUtil.generateKeyName(key);
-			const v = nameUtil.generateValueName(key, db.createSet(value), values, true);
+			const v = nameUtil.generateValueName(key, dynamoDBSet, values, true);
 
 			Object.assign(names, k.ExpressionAttributeNames);
 			Object.assign(values, v.ExpressionAttributeValues);

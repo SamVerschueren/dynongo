@@ -1,8 +1,9 @@
 import { QueryInput } from 'aws-sdk/clients/dynamodb';
-import { BaseQuery } from './base-query';
-import { Executable } from './executable';
 import { DynamoDB } from '../dynamodb';
 import { Table } from '../table';
+import { buildQueryResponse } from '../utils/query';
+import { BaseQuery } from './base-query';
+import { Executable } from './executable';
 
 export class Query extends BaseQuery implements Executable {
 
@@ -52,7 +53,7 @@ export class Query extends BaseQuery implements Executable {
 	/**
 	 * Execute the query.
 	 */
-	exec(): Promise<any> {
+	async exec(): Promise<any> {
 		if (this.error) {
 			return Promise.reject(this.error);
 		}
@@ -63,33 +64,8 @@ export class Query extends BaseQuery implements Executable {
 			return Promise.reject(new Error('Call .connect() before executing queries.'));
 		}
 
-		const limit = this.params.Limit;
-
 		const query = this.buildRawQuery();
-
-		return this.runQuery(() => db.query(query).promise())
-			.then(data => {
-				if (query.Select === 'COUNT') {
-					// Return the count property if Select is set to count.
-					return data.Count || 0;
-				}
-
-				if (!data.Items) {
-					return [];
-				}
-
-				if (limit === 1) {
-					// If the limit is specifically set to 1, we should return the object instead of the array.
-					if (this.rawResult === true) {
-						data.Items = [data.Items[0]];
-						return data;
-					}
-
-					return data.Items[0];
-				}
-
-				// Return all the items
-				return this.rawResult === true ? data : data.Items;
-			});
+		const data = await this.runQuery(() => db.query(query).promise());
+		return buildQueryResponse(query, data, this.params.Limit, this.rawResult);
 	}
 }

@@ -1,6 +1,7 @@
+import { QueryInput, QueryOutput, ScanOutput } from 'aws-sdk/clients/dynamodb';
 import isObject from 'is-object';
-import * as nameUtil from './name';
 import { Map } from '../types';
+import * as nameUtil from './name';
 
 interface ParseResult {
 	ConditionExpression: string;
@@ -31,7 +32,7 @@ const parseArray = (arr, values, join, brackets: boolean) => {
 	};
 };
 
-const parseExpression = (key: string, value: any, values: {[key: string]: any}) => {
+const parseExpression = (key: string, value: any, values: { [key: string]: any }) => {
 	const k = nameUtil.generateKeyName(key);
 	let expression;
 	let v;
@@ -141,7 +142,7 @@ const parseExpression = (key: string, value: any, values: {[key: string]: any}) 
 	};
 };
 
-export function parse(query: {$or?: any[], $and?: any[], [key: string]: any}, values?: any): ParseResult {
+export function parse(query: { $or?: any[], $and?: any[], [key: string]: any }, values?: any): ParseResult {
 	const expressions: string[] = [];
 	const names = {};
 	const keys = Object.keys(query);
@@ -186,3 +187,30 @@ export function parse(query: {$or?: any[], $and?: any[], [key: string]: any}, va
 		ExpressionAttributeValues: values
 	};
 }
+
+export const buildQueryResponse = (query: QueryInput, data: ScanOutput | QueryOutput, limit?: number, raw?: boolean) => {
+	// Return the count property if Select is set to count.
+	if (query.Select === 'COUNT') {
+		return data.Count || 0;
+	}
+
+	if (!data.Items) {
+		if (raw) {
+			data.Items = [];
+			return data;
+		}
+		return [];
+	}
+
+	// If the limit is specifically set to 1, we should return the object instead of the array.
+	if (limit === 1) {
+		if (raw) {
+			data.Items = [data.Items[0]];
+			return data;
+		}
+		return data.Items[0];
+	}
+
+	// Resolve all the items
+	return raw ? data : data.Items;
+};

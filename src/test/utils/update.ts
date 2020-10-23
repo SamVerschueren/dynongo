@@ -84,6 +84,17 @@ test('$addToSet $each in array', t => {
 	t.deepEqual(result.ExpressionAttributeValues, {':v_friends': db.createSet(['mario', 'luigi'])});
 });
 
+test('$addToSet (double)', t => {
+	const result = update.parse({$addToSet: {friends: {$each: ['mario', 'luigi']}, enemies: 'bowser'}});
+
+	t.is(result.UpdateExpression, 'ADD #k_friends :v_friends, #k_enemies :v_enemies');
+	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends', '#k_enemies': 'enemies'});
+	t.deepEqual(result.ExpressionAttributeValues, {
+		':v_friends': db.createSet(['mario', 'luigi']),
+		':v_enemies': db.createSet(['bowser'])
+	});
+});
+
 test('$unshift $each in array', t => {
 	const result = update.parse({$unshift: {scores: {$each: [85, 94]}}});
 

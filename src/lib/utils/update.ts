@@ -76,7 +76,7 @@ export function parse(query: UpdateQuery): ParseResult {
 
 		const operator = query.$push ? '$push' : '$unshift';
 
-		expr.set = expr.set.concat(Object.keys(query[operator] || {}).map(key => {
+		expr.set = expr.set.concat(Object.keys(query[operator]!).map(key => {
 			const value = fromArrayEach((query[operator]!)[key]);
 			const k = nameUtil.generateKeyName(key);
 			const v = nameUtil.generateValueName(key, value, values, true);
@@ -99,7 +99,7 @@ export function parse(query: UpdateQuery): ParseResult {
 	if (query.$addToSet) {
 		expr.add = expr.add || [];
 
-		expr.add = expr.add.concat(Object.keys(query.$addToSet || {}).map(key => {
+		expr.add = expr.add.concat(Object.keys(query.$addToSet).map(key => {
 			const value = fromArrayEach((query.$addToSet!)[key]);
 			const k = nameUtil.generateKeyName(key);
 			const v = nameUtil.generateValueName(key, db.createSet(value), values, true);

@@ -1,5 +1,4 @@
 import test from 'ava';
-import DynamoDBSet from 'aws-sdk/lib/dynamodb/set';
 import sinon from 'sinon';
 import db from '../..';
 import {
@@ -152,7 +151,7 @@ test.serial('multi key update ADD and SET', async t => {
 			':v_foo': 'bar',
 			':v_id': '5',
 			':v_email': 'foo@bar.com',
-			':v_friends': new DynamoDBSet(['bar@bar.com'])
+			':v_friends': db.dynamodb?.createSet(['bar@bar.com'])
 		},
 		ConditionExpression: '#k_id=:v_id AND #k_email=:v_email'
 	});

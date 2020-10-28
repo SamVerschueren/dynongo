@@ -44,6 +44,14 @@ test('$addToSet', t => {
 	t.deepEqual(result.ExpressionAttributeValues, {':v_friends': db.createSet(['mario'])});
 });
 
+test('$removeFromSet', t => {
+	const result = update.parse({$removeFromSet: {friends: 'mario'}});
+
+	t.is(result.UpdateExpression, 'DELETE #k_friends :v_friends');
+	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends'});
+	t.deepEqual(result.ExpressionAttributeValues, {':v_friends': db.createSet(['mario'])});
+});
+
 test('$unshift', t => {
 	const result = update.parse({$unshift: {scores: 85}});
 
@@ -64,6 +72,14 @@ test('$addToSet array', t => {
 	const result = update.parse({$addToSet: {friends: ['mario', 'luigi']}});
 
 	t.is(result.UpdateExpression, 'ADD #k_friends :v_friends');
+	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends'});
+	t.deepEqual(result.ExpressionAttributeValues, {':v_friends': db.createSet(['mario', 'luigi'])});
+});
+
+test('$removeFromSet array', t => {
+	const result = update.parse({$removeFromSet: {friends: ['mario', 'luigi']}});
+
+	t.is(result.UpdateExpression, 'DELETE #k_friends :v_friends');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends'});
 	t.deepEqual(result.ExpressionAttributeValues, {':v_friends': db.createSet(['mario', 'luigi'])});
 });
@@ -96,6 +112,25 @@ test('$addToSet (double)', t => {
 	const result = update.parse({$addToSet: {friends: {$each: ['mario', 'luigi']}, enemies: 'bowser'}});
 
 	t.is(result.UpdateExpression, 'ADD #k_friends :v_friends, #k_enemies :v_enemies');
+	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends', '#k_enemies': 'enemies'});
+	t.deepEqual(result.ExpressionAttributeValues, {
+		':v_friends': db.createSet(['mario', 'luigi']),
+		':v_enemies': db.createSet(['bowser'])
+	});
+});
+
+test('$removeFromSet $each in array', t => {
+	const result = update.parse({$removeFromSet: {friends: {$each: ['mario', 'luigi']}}});
+
+	t.is(result.UpdateExpression, 'DELETE #k_friends :v_friends');
+	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends'});
+	t.deepEqual(result.ExpressionAttributeValues, {':v_friends': db.createSet(['mario', 'luigi'])});
+});
+
+test('$removeFromSet (double)', t => {
+	const result = update.parse({$removeFromSet: {friends: {$each: ['mario', 'luigi']}, enemies: 'bowser'}});
+
+	t.is(result.UpdateExpression, 'DELETE #k_friends :v_friends, #k_enemies :v_enemies');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends', '#k_enemies': 'enemies'});
 	t.deepEqual(result.ExpressionAttributeValues, {
 		':v_friends': db.createSet(['mario', 'luigi']),

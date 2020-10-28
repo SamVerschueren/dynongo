@@ -197,9 +197,20 @@ Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$set: {T
 Or, if working with [Sets](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes.SetTypes) you can use `$addToSet` to add unique values to a Set, it supports single value, arrays and `$each` operator.
 
 ```js
-Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$addToSet: {Departments: ['IT', 'IT']}}).exec()
+Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$addToSet: {Departments: ['IT', 'IT', 'HR']}}).exec()
 	.then(employee => {
-		// => {FirstName: 'Foo', Name: 'Bar', Salary: 4650, Title: 'CTO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com', Hobby: ['cycling', 'swimming', 'walking'], Departments: ['IT]}
+		// => {FirstName: 'Foo', Name: 'Bar', Salary: 4650, Title: 'CTO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com', Hobby: ['cycling', 'swimming', 'walking'], Departments: ['IT', 'HR']}
+	});
+```
+
+You can use `$removeFromSet` to remove one, or many elements from sets
+
+Obs.: This is a special operator that does not exist on MongoDB syntax, but as DynamoDB supports it we thought it was a good addition.
+
+```js
+Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$removeFromSet: {Departments: ['IT']}}).exec()
+	.then(employee => {
+		// => {FirstName: 'Foo', Name: 'Bar', Salary: 4650, Title: 'CTO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com', Hobby: ['cycling', 'swimming', 'walking'], Departments: ['HR']}
 	});
 ```
 

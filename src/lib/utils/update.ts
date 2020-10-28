@@ -103,7 +103,23 @@ export function parse(query: UpdateQuery): ParseResult {
 		expr.add = expr.add || [];
 
 		expr.add = expr.add.concat(Object.keys(query.$addToSet).map(key => {
-			const value = fromArrayEach((query.$addToSet!)[key], false);
+			const value = fromArrayEach(query.$addToSet![key], false);
+			const dynamoDBSet = new DynamoDBSet(value);
+			const k = nameUtil.generateKeyName(key);
+			const v = nameUtil.generateValueName(key, dynamoDBSet, values, true);
+
+			Object.assign(names, k.ExpressionAttributeNames);
+			Object.assign(values, v.ExpressionAttributeValues);
+
+			return `${k.Expression} ${v.Expression}`;
+		}));
+	}
+
+	if (query.$removeFromSet) {
+		expr.delete = expr.delete || [];
+
+		expr.delete = expr.delete.concat(Object.keys(query.$removeFromSet).map(key => {
+			const value = fromArrayEach(query.$removeFromSet![key], false);
 			const dynamoDBSet = new DynamoDBSet(value);
 			const k = nameUtil.generateKeyName(key);
 			const v = nameUtil.generateValueName(key, dynamoDBSet, values, true);

@@ -15,9 +15,10 @@ const fromArrayEach = (value) => {
 		if (!Array.isArray(value.$each)) {
 			throw new Error('The value for $each should be an array.');
 		}
-		return value.$each;
 
+		return value.$each;
 	}
+
 	return [value];
 };
 

@@ -10,7 +10,7 @@ interface ParseResult {
 
 export const operators = ['$set', '$unset', '$inc', '$push', '$unshift', '$addToSet'];
 
-const fromArrayEach = (value) => {
+const fromArrayEach = (value, allowArrayInArray = true) => {
 	if (value.$each) {
 		if (!Array.isArray(value.$each)) {
 			throw new Error('The value for $each should be an array.');
@@ -19,7 +19,11 @@ const fromArrayEach = (value) => {
 		return value.$each;
 	}
 
-	return [value];
+	if (allowArrayInArray) {
+		return [value];
+	}
+
+	return Array.isArray(value) ? value : [value];
 };
 
 export function parse(query: UpdateQuery): ParseResult {
@@ -99,7 +103,7 @@ export function parse(query: UpdateQuery): ParseResult {
 		expr.add = expr.add || [];
 
 		expr.add = expr.add.concat(Object.keys(query.$addToSet).map(key => {
-			const value = fromArrayEach((query.$addToSet!)[key]);
+			const value = fromArrayEach((query.$addToSet!)[key], false);
 			const dynamoDBSet = new DynamoDBSet(value);
 			const k = nameUtil.generateKeyName(key);
 			const v = nameUtil.generateValueName(key, dynamoDBSet, values, true);

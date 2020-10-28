@@ -199,7 +199,7 @@ Or, if working with [Sets](https://docs.aws.amazon.com/amazondynamodb/latest/dev
 ```js
 Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$addToSet: {Departments: ['IT', 'IT']}}).exec()
 	.then(employee => {
-		// => {FirstName: 'Foo', Name: 'Bar', Salary: 4650, Title: 'CTO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com', Hobby: ['cycling', 'swimming', 'walking'], Departments: ['IT]}
+		// => {FirstName: 'Foo', Name: 'Bar', Salary: 4650, Title: 'CTO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com', Hobby: ['cycling', 'swimming', 'walking'], Departments: ['IT']}
 	});
 ```
 

@@ -194,12 +194,21 @@ Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$set: {T
 	});
 ```
 
+Or, if working with [Sets](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes.SetTypes) you can use `$addToSet` to add unique values to a Set, it supports single value, arrays and `$each` operator.
+
+```js
+Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$addToSet: {Departments: ['IT', 'IT']}}).exec()
+	.then(employee => {
+		// => {FirstName: 'Foo', Name: 'Bar', Salary: 4650, Title: 'CTO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com', Hobby: ['cycling', 'swimming', 'walking'], Departments: ['IT]}
+	});
+```
+
 You can use `$unshift` to prepend a list with one or multiple values.
 
 ```js
-Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$unshift: {Hobby: 'programming'}}}).exec()
+Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$unshift: {Hobby: 'programming'}}).exec()
 	.then(employee => {
-		// => {FirstName: 'Foo', Name: 'Bar', Salary: 4650, Title: 'CTO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com', Hobby: ['programming', 'cycling', 'swimming', 'walking']}
+		// => {FirstName: 'Foo', Name: 'Bar', Salary: 4650, Title: 'CTO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com', Hobby: ['programming', 'cycling', 'swimming', 'walking'], Departments: ['IT]}
 	});
 ```
 

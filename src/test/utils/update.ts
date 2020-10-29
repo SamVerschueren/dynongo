@@ -1,5 +1,8 @@
 import test from 'ava';
+import AWS from 'aws-sdk';
 import * as update from '../../lib/utils/update';
+
+const db = new AWS.DynamoDB.DocumentClient();
 
 test('$set', t => {
 	const result = update.parse({$set: {id: 5, description: 'foo'}});
@@ -33,6 +36,14 @@ test('$push', t => {
 	t.deepEqual(result.ExpressionAttributeValues, {':v_scores': [85], ':_v_empty_list': []});
 });
 
+test('$addToSet', t => {
+	const result = update.parse({$addToSet: {friends: 'mario'}});
+
+	t.is(result.UpdateExpression, 'ADD #k_friends :v_friends');
+	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends'});
+	t.deepEqual(result.ExpressionAttributeValues, {':v_friends': db.createSet(['mario'])});
+});
+
 test('$unshift', t => {
 	const result = update.parse({$unshift: {scores: 85}});
 
@@ -49,6 +60,14 @@ test('$push array', t => {
 	t.deepEqual(result.ExpressionAttributeValues, {':v_scores': [[85, 94]], ':_v_empty_list': []});
 });
 
+test('$addToSet array', t => {
+	const result = update.parse({$addToSet: {friends: ['mario', 'luigi']}});
+
+	t.is(result.UpdateExpression, 'ADD #k_friends :v_friends');
+	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends'});
+	t.deepEqual(result.ExpressionAttributeValues, {':v_friends': db.createSet(['mario', 'luigi'])});
+});
+
 test('$unshift array', t => {
 	const result = update.parse({$unshift: {scores: [85, 94]}});
 
@@ -63,6 +82,25 @@ test('$push $each in array', t => {
 	t.is(result.UpdateExpression, 'SET #k_scores=list_append(if_not_exists(#k_scores, :_v_empty_list), :v_scores)');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_scores': 'scores'});
 	t.deepEqual(result.ExpressionAttributeValues, {':v_scores': [85, 94], ':_v_empty_list': []});
+});
+
+test('$addToSet $each in array', t => {
+	const result = update.parse({$addToSet: {friends: {$each: ['mario', 'luigi']}}});
+
+	t.is(result.UpdateExpression, 'ADD #k_friends :v_friends');
+	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends'});
+	t.deepEqual(result.ExpressionAttributeValues, {':v_friends': db.createSet(['mario', 'luigi'])});
+});
+
+test('$addToSet (double)', t => {
+	const result = update.parse({$addToSet: {friends: {$each: ['mario', 'luigi']}, enemies: 'bowser'}});
+
+	t.is(result.UpdateExpression, 'ADD #k_friends :v_friends, #k_enemies :v_enemies');
+	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends', '#k_enemies': 'enemies'});
+	t.deepEqual(result.ExpressionAttributeValues, {
+		':v_friends': db.createSet(['mario', 'luigi']),
+		':v_enemies': db.createSet(['bowser'])
+	});
 });
 
 test('$unshift $each in array', t => {

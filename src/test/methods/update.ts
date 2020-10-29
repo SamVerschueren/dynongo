@@ -1,8 +1,12 @@
 import test from 'ava';
 import sinon from 'sinon';
-import stubPromise from '../fixtures/stub-promise';
 import db from '../..';
-import { serviceUnavailableException, throttlingException, conditionalCheckFailedException } from '../fixtures/aws-error';
+import {
+	conditionalCheckFailedException,
+	serviceUnavailableException,
+	throttlingException
+} from '../fixtures/aws-error';
+import stubPromise from '../fixtures/stub-promise';
 
 db.connect();
 
@@ -123,6 +127,36 @@ test.serial('multi key update', async t => {
 	});
 });
 
+test.serial('multi key update ADD and SET', async t => {
+	await Table.update({id: '5', email: 'foo@bar.com'}, {
+		$set: {foo: 'bar'},
+		$addToSet: {friends: 'bar@bar.com'}
+	}).exec();
+
+	t.deepEqual(updateStub.lastCall.args[0], {
+		TableName: 'Table',
+		ReturnValues: 'ALL_NEW',
+		Key: {
+			id: '5',
+			email: 'foo@bar.com'
+		},
+		UpdateExpression: 'SET #k_foo=:v_foo ADD #k_friends :v_friends',
+		ExpressionAttributeNames: {
+			'#k_foo': 'foo',
+			'#k_id': 'id',
+			'#k_email': 'email',
+			'#k_friends': 'friends'
+		},
+		ExpressionAttributeValues: {
+			':v_foo': 'bar',
+			':v_id': '5',
+			':v_email': 'foo@bar.com',
+			':v_friends': db.dynamodb?.createSet(['bar@bar.com'])
+		},
+		ConditionExpression: '#k_id=:v_id AND #k_email=:v_email'
+	});
+});
+
 test.serial('where', async t => {
 	await Table.update({id: '5'}, {$set: {foo: 'bar'}, $inc: {salary: 1000}}).where({email: 'foo@bar.com'}).exec();
 
@@ -175,7 +209,10 @@ test.serial('where with $or', async t => {
 });
 
 test.serial('where with $or and comparison', async t => {
-	await Table.update({id: '5'}, {$set: {foo: 'bar'}}).where({foo: 'baz', $or: [{email: {$exists: false}}, {email: 'foo@bar.com'}]}).exec();
+	await Table.update({id: '5'}, {$set: {foo: 'bar'}}).where({
+		foo: 'baz',
+		$or: [{email: {$exists: false}}, {email: 'foo@bar.com'}]
+	}).exec();
 
 	t.deepEqual(updateStub.lastCall.args[0], {
 		TableName: 'Table',

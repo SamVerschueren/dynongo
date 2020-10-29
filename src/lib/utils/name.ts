@@ -11,7 +11,7 @@ interface ValueNameResult {
 }
 
 const indexify = (key: string, value: any, values: any) => {
-	if (values[key] && values[key] !== value) {
+	if (values[key] !== undefined && values[key] !== value) {
 		let i = 1;
 
 		while (values[`${key}_${i}`] && values[`${key}_${i}`] !== value) {

@@ -244,6 +244,29 @@ test.serial('raw result', async t => {
 	t.deepEqual(await Table.update({id: '5'}, {$set: {foo: 'bar'}}).where({email: 'foo@bar.com'}).raw().exec(), {Attributes: 'foo'});
 });
 
+test.serial('same field with null and value on conditional', async t => {
+	await Table.update({id: '5'}, {$set: {foo: null}}).where({foo: 'bar'}).exec();
+
+	t.deepEqual(updateStub.lastCall.args[0], {
+		TableName: 'Table',
+		ReturnValues: 'ALL_NEW',
+		Key: {
+			id: '5'
+		},
+		UpdateExpression: 'SET #k_foo=:v_foo',
+		ExpressionAttributeNames: {
+			'#k_foo': 'foo',
+			'#k_id': 'id'
+		},
+		ExpressionAttributeValues: {
+			':v_foo': null,
+			':v_foo_1': 'bar',
+			':v_id': '5'
+		},
+		ConditionExpression: '(#k_id=:v_id) AND (#k_foo=:v_foo_1)'
+	});
+});
+
 test.serial('error if not connected', async t => {
 	const original = db.dynamodb;
 	db.dynamodb = undefined as any;

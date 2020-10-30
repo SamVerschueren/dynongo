@@ -205,8 +205,6 @@ Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$addToSe
 
 You can use `$removeFromSet` to remove one, or many elements from sets
 
-Obs.: This is a special operator that does not exist on MongoDB syntax, but as DynamoDB supports it we thought it was a good addition.
-
 ```js
 Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$removeFromSet: {Departments: ['IT']}}).exec()
 	.then(employee => {

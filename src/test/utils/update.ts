@@ -23,9 +23,9 @@ test('$unset', t => {
 test('$inc', t => {
 	const result = update.parse({$inc: {value: 5}});
 
-	t.is(result.UpdateExpression, 'SET #k_value=if_not_exists(#k_value, :_v_empty_value)+:v_value');
+	t.is(result.UpdateExpression, 'ADD #k_value :v_value');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_value': 'value'});
-	t.deepEqual(result.ExpressionAttributeValues, {':_v_empty_value': 0, ':v_value': 5});
+	t.deepEqual(result.ExpressionAttributeValues, {':v_value': 5});
 });
 
 test('$push', t => {

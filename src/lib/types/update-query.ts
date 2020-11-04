@@ -5,4 +5,5 @@ export interface UpdateQuery {
 	$push?: { [key: string]: any };
 	$unshift?: { [key: string]: any };
 	$addToSet?: { [key: string]: any };
+	$removeFromSet?: { [key: string]: any };
 }

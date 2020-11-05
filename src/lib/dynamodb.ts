@@ -17,6 +17,7 @@ export interface DynamoDBOptions {
 	secretAccessKey?: string;
 	sessionToken?: string;
 	retries?: number | RetryOptions;
+	httpOptions?: AWS.HTTPOptions;
 }
 
 export class DynamoDB {
@@ -42,11 +43,14 @@ export class DynamoDB {
 		if (this.options.local) {
 			// Starts dynamodb in local mode
 			this.raw = new AWS.DynamoDB({
-				endpoint: `http://${this.options.host}:${this.options.localPort}`
+				endpoint: `http://${this.options.host}:${this.options.localPort}`,
+				httpOptions: this.options.httpOptions
 			});
 		} else {
 			// Starts dynamodb in remote mode
-			this.raw = new AWS.DynamoDB();
+			this.raw = new AWS.DynamoDB({
+				httpOptions: this.options.httpOptions
+			});
 		}
 
 		this.dynamodb = new AWS.DynamoDB.DocumentClient({

@@ -16,7 +16,7 @@ test('connect', t => {
 });
 
 test('connect options', t => {
-	db.connect({prefix: 'dynongo', prefixDelimiter: ':', retries: 3});
+	db.connect({prefix: 'dynongo', prefixDelimiter: ':', retries: 3, httpOptions: {timeout: 5000}});
 
 	t.is(db.prefix, 'dynongo');
 	t.is(db.delimiter, ':');
@@ -28,6 +28,9 @@ test('connect options', t => {
 		minTimeout: 300,
 		randomize: true,
 		retries: 3
+	});
+	t.deepEqual(db.raw?.config.httpOptions, {
+		timeout: 5000
 	});
 });
 

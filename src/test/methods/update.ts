@@ -102,6 +102,30 @@ test.serial('single key update', async t => {
 	});
 });
 
+test.serial('single key update if not exists', async t => {
+	await Table.update({id: '5'}, {$set: {foo: {$ifNotExists: 'foo'}, bar: 'bar'}}).exec();
+
+	t.deepEqual(updateStub.lastCall.args[0], {
+		TableName: 'Table',
+		ReturnValues: 'ALL_NEW',
+		Key: {
+			id: '5'
+		},
+		UpdateExpression: 'SET #k_foo=if_not_exists(#k_foo, :v_foo), #k_bar=:v_bar',
+		ExpressionAttributeNames: {
+			'#k_bar': 'bar',
+			'#k_foo': 'foo',
+			'#k_id': 'id'
+		},
+		ExpressionAttributeValues: {
+			':v_bar': 'bar',
+			':v_foo': 'foo',
+			':v_id': '5'
+		},
+		ConditionExpression: '#k_id=:v_id'
+	});
+});
+
 test.serial('multi key update', async t => {
 	await Table.update({id: '5', email: 'foo@bar.com'}, {$set: {foo: 'bar'}}).exec();
 

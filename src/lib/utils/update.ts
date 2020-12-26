@@ -37,6 +37,15 @@ export function parse(query: UpdateQuery): ParseResult {
 
 		expr.set = expr.set.concat(Object.keys(query.$set).map(key => {
 			const value = (query.$set!)[key];
+			if (value?.$ifNotExists) {
+				const k = nameUtil.generateKeyName(key);
+				const v = nameUtil.generateValueName(key, value.$ifNotExists, values, true);
+
+				Object.assign(names, k.ExpressionAttributeNames);
+				Object.assign(values, v.ExpressionAttributeValues);
+
+				return k.Expression + '=if_not_exists(' + k.Expression + ', ' + v.Expression + ')';
+			}
 
 			const k = nameUtil.generateKeyName(key);
 			const v = nameUtil.generateValueName(key, value, values, true);

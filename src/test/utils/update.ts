@@ -12,6 +12,14 @@ test('$set', t => {
 	t.deepEqual(result.ExpressionAttributeValues, {':v_id': 5, ':v_description': 'foo'});
 });
 
+test('$set $ifNotExists', t => {
+	const result = update.parse({$set: {id: 5, description: {$ifNotExists: 'foo'}}});
+
+	t.is(result.UpdateExpression, 'SET #k_id=:v_id, #k_description=if_not_exists(#k_description, :v_description)');
+	t.deepEqual(result.ExpressionAttributeNames, {'#k_id': 'id', '#k_description': 'description'});
+	t.deepEqual(result.ExpressionAttributeValues, {':v_id': 5, ':v_description': 'foo'});
+});
+
 test('$unset', t => {
 	const result = update.parse({$unset: {description: true}});
 

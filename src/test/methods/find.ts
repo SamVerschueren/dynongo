@@ -1,8 +1,12 @@
 import test from 'ava';
 import sinon from 'sinon';
-import stubPromise from '../fixtures/stub-promise';
 import db from '../..';
-import { serviceUnavailableException, throttlingException, conditionalCheckFailedException } from '../fixtures/aws-error';
+import {
+	conditionalCheckFailedException,
+	serviceUnavailableException,
+	throttlingException
+} from '../fixtures/aws-error';
+import stubPromise from '../fixtures/stub-promise';
 
 db.connect();
 
@@ -177,6 +181,10 @@ test.serial('count', async t => {
 	t.is(await Table.find({id: '5'}).count().exec(), 2);
 });
 
+test.serial('find with undefined where', async t => {
+	t.is(await Table.find({id: '5'}).where(undefined).count().exec(), 2);
+});
+
 test.serial('count with no result', async t => {
 	t.is(await Table.find({foo: 'bar'}).count().exec(), 0);
 });
@@ -195,6 +203,22 @@ test.serial('select undefined', async t => {
 			':v_foo': 'bar'
 		},
 		Select: 'COUNT'
+	});
+});
+
+test.serial('undefined where', async t => {
+	await Table.find({foo: 'bar'}).where(undefined).exec();
+
+	t.deepEqual(queryStub.lastCall.args[0], {
+		TableName: 'Table',
+		ConsistentRead: false,
+		KeyConditionExpression: '#k_foo=:v_foo',
+		ExpressionAttributeNames: {
+			'#k_foo': 'foo'
+		},
+		ExpressionAttributeValues: {
+			':v_foo': 'bar'
+		}
 	});
 });
 

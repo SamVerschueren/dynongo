@@ -1,9 +1,9 @@
 import { UpdateItemInput } from 'aws-sdk/clients/dynamodb';
-import * as queryUtil from '../utils/query';
-import { InsertItem } from './insert-item';
-import { Executable } from './executable';
 import { DynamoDB } from '../dynamodb';
 import { Table } from '../table';
+import * as queryUtil from '../utils/query';
+import { Executable } from './executable';
+import { InsertItem } from './insert-item';
 
 export class UpdateItem extends InsertItem implements Executable {
 
@@ -18,6 +18,10 @@ export class UpdateItem extends InsertItem implements Executable {
 	 * @param	condition           A condition that must be satisfied in order for a conditional UpdateItem to succeed.
 	 */
 	where(condition: any) {
+		if (!condition) {
+			return this;
+		}
+
 		// Parse the query
 		const parsedQuery = queryUtil.parse(condition, this.params.ExpressionAttributeValues);
 

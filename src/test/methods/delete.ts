@@ -1,8 +1,12 @@
 import test from 'ava';
 import sinon from 'sinon';
-import stubPromise from '../fixtures/stub-promise';
 import db from '../..';
-import { serviceUnavailableException, conditionalCheckFailedException, throttlingException } from '../fixtures/aws-error';
+import {
+	conditionalCheckFailedException,
+	serviceUnavailableException,
+	throttlingException
+} from '../fixtures/aws-error';
+import stubPromise from '../fixtures/stub-promise';
 
 db.connect({prefix: 'delete'});
 
@@ -81,6 +85,17 @@ test.serial('delete', async t => {
 
 test.serial('result', async t => {
 	t.falsy(await Table.remove({id: '5'}).exec());
+});
+
+test.serial('undefined where', async t => {
+	await Table.remove({id: '5'}).where(undefined).exec();
+
+	t.deepEqual(deleteStub.lastCall.args[0], {
+		TableName: 'delete.Table',
+		Key: {
+			id: '5'
+		}
+	});
 });
 
 test.serial('where', async t => {

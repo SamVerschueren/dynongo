@@ -1,7 +1,7 @@
-import * as queryUtil from '../utils/query';
-import { Method } from './method';
 import { DynamoDB } from '../dynamodb';
 import { Table } from '../table';
+import * as queryUtil from '../utils/query';
+import { Method } from './method';
 
 export abstract class BaseQuery extends Method {
 
@@ -42,6 +42,10 @@ export abstract class BaseQuery extends Method {
 	 * @param	query			The query to filter the records on.
 	 */
 	where(query: any) {
+		if (!query) {
+			return this;
+		}
+
 		// Parse the query
 		const parsedQuery = queryUtil.parse(query, this.params.ExpressionAttributeValues);
 

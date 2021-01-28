@@ -102,6 +102,30 @@ test.serial('single key update', async t => {
 	});
 });
 
+test.serial('single key update if not exists', async t => {
+	await Table.update({id: '5'}, {$set: {foo: {$ifNotExists: 'foo'}, bar: 'bar'}}).exec();
+
+	t.deepEqual(updateStub.lastCall.args[0], {
+		TableName: 'Table',
+		ReturnValues: 'ALL_NEW',
+		Key: {
+			id: '5'
+		},
+		UpdateExpression: 'SET #k_foo=if_not_exists(#k_foo, :v_foo), #k_bar=:v_bar',
+		ExpressionAttributeNames: {
+			'#k_bar': 'bar',
+			'#k_foo': 'foo',
+			'#k_id': 'id'
+		},
+		ExpressionAttributeValues: {
+			':v_bar': 'bar',
+			':v_foo': 'foo',
+			':v_id': '5'
+		},
+		ConditionExpression: '#k_id=:v_id'
+	});
+});
+
 test.serial('multi key update', async t => {
 	await Table.update({id: '5', email: 'foo@bar.com'}, {$set: {foo: 'bar'}}).exec();
 
@@ -154,6 +178,31 @@ test.serial('multi key update ADD and SET', async t => {
 			':v_friends': db.dynamodb?.createSet(['bar@bar.com'])
 		},
 		ConditionExpression: '#k_id=:v_id AND #k_email=:v_email'
+	});
+});
+
+test.serial('undefined where', async t => {
+	await Table.update({id: '5'}, {$set: {foo: 'bar'}, $inc: {salary: 1000}}).where(undefined).exec();
+
+	t.deepEqual(updateStub.lastCall.args[0], {
+		TableName: 'Table',
+		ReturnValues: 'ALL_NEW',
+		Key: {
+			id: '5'
+		},
+		UpdateExpression: 'SET #k_foo=:v_foo, #k_salary=if_not_exists(#k_salary, :_v_empty_value)+:v_salary',
+		ExpressionAttributeNames: {
+			'#k_foo': 'foo',
+			'#k_salary': 'salary',
+			'#k_id': 'id'
+		},
+		ExpressionAttributeValues: {
+			':_v_empty_value': 0,
+			':v_foo': 'bar',
+			':v_salary': 1000,
+			':v_id': '5'
+		},
+		ConditionExpression: '#k_id=:v_id'
 	});
 });
 

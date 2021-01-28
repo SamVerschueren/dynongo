@@ -38,6 +38,10 @@ export class DeleteItem extends Method implements Executable {
 	 * @param	condition		A condition that must be satisfied in order for a conditional DeleteItem to succeed.
 	 */
 	where(condition: any) {
+		if (!condition) {
+			return this;
+		}
+
 		// Parse the query
 		const parsedQuery = queryUtil.parse(condition, this.params.ExpressionAttributeValues);
 

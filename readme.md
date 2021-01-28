@@ -176,9 +176,9 @@ Employee.find({Organisation: 'Amazon'}).where({Salary: {$gt: 3000}}).count().exe
 #### insert
 
 ```js
-Employee.insert({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {Title: 'CFO', FirstName: 'Foo', Name: 'Bar', Salary: 4500}).exec()
+Employee.insert({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {Title: 'CFO', HiredAt: 'last year', FirstName: 'Foo', Name: 'Bar', Salary: 4500}).exec()
 	.then(employee => {
-		// => {FirstName: 'Foo', Name: 'Bar', Salary: 4500, Title: 'CFO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}
+		// => {FirstName: 'Foo', Name: 'Bar', Salary: 4500, Title: 'CFO', HiredAt: 'last year', Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}
 	});
 ```
 
@@ -187,10 +187,12 @@ Employee.insert({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {Title: '
 The first parameter in the `update` method is the primary key (hash + range) and the second method is a query that
 defines the updates of the fields.
 
+You can use `$set: { field: { $ifNotExists: value } }` to only set the value if the field does not exists on the record
+
 ```js
-Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$set: {Title: 'CTO'}, $inc: {Salary: 150}, $push: {Hobby: {$each: ['swimming', 'walking']}}}).exec()
+Employee.update({Organisation: 'Amazon', Email: 'foo.bar@amazon.com'}, {$set: {Title: 'CTO', HiredAt: {$ifNotExists: 'today'}}, $inc: {Salary: 150}, $push: {Hobby: {$each: ['swimming', 'walking']}}}).exec()
 	.then(employee => {
-		// => {FirstName: 'Foo', Name: 'Bar', Salary: 4650, Title: 'CTO', Organisation: 'Amazon', Email: 'foo.bar@amazon.com', Hobby: ['cycling', 'swimming', 'walking']}
+		// => {FirstName: 'Foo', Name: 'Bar', Salary: 4650, Title: 'CTO', HiredAt: 'last year', Organisation: 'Amazon', Email: 'foo.bar@amazon.com', Hobby: ['cycling', 'swimming', 'walking']}
 	});
 ```
 

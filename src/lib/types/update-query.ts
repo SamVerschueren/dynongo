@@ -1,5 +1,5 @@
 export interface UpdateQuery {
-	$set?: { [key: string]: any };
+	$set?: { [key: string]: { $ifNotExists: any } | any };
 	$unset?: { [key: string]: any };
 	$inc?: { [key: string]: any };
 	$push?: { [key: string]: any };

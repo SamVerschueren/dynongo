@@ -113,7 +113,7 @@ test.serial('result', async t => {
 });
 
 test.serial('increment and set with upsert', async t => {
-	await Table.upsert({id: '5'}, {foo: 'bar', $inc: {salary: 5}}).exec();
+	await Table.upsert({id: '5'}, {foo: 'bar', $inc: {salary: 5, workingHours: -2}}).exec();
 
 	t.deepEqual(updateStub.lastCall.args[0], {
 		TableName: 'Table',
@@ -121,15 +121,16 @@ test.serial('increment and set with upsert', async t => {
 		Key: {
 			id: '5'
 		},
-		UpdateExpression: 'SET #k_foo=:v_foo, #k_salary=if_not_exists(#k_salary, :_v_empty_value)+:v_salary',
+		UpdateExpression: 'SET #k_foo=:v_foo ADD #k_salary :v_salary, #k_workingHours :v_workingHours',
 		ExpressionAttributeNames: {
 			'#k_foo': 'foo',
-			'#k_salary': 'salary'
+			'#k_salary': 'salary',
+			'#k_workingHours': 'workingHours'
 		},
 		ExpressionAttributeValues: {
-			':_v_empty_value': 0,
 			':v_foo': 'bar',
-			':v_salary': 5
+			':v_salary': 5,
+			':v_workingHours': -2
 		}
 	});
 });

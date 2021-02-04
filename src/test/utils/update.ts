@@ -31,9 +31,9 @@ test('$unset', t => {
 test('$inc', t => {
 	const result = update.parse({$inc: {value: 5}});
 
-	t.is(result.UpdateExpression, 'SET #k_value=if_not_exists(#k_value, :_v_empty_value)+:v_value');
+	t.is(result.UpdateExpression, 'ADD #k_value :v_value');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_value': 'value'});
-	t.deepEqual(result.ExpressionAttributeValues, {':_v_empty_value': 0, ':v_value': 5});
+	t.deepEqual(result.ExpressionAttributeValues, {':v_value': 5});
 });
 
 test('$push', t => {
@@ -106,6 +106,14 @@ test('$push $each in array', t => {
 	t.is(result.UpdateExpression, 'SET #k_scores=list_append(if_not_exists(#k_scores, :_v_empty_list), :v_scores)');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_scores': 'scores'});
 	t.deepEqual(result.ExpressionAttributeValues, {':v_scores': [85, 94], ':_v_empty_list': []});
+});
+
+test('$addToSet and $inc', t => {
+	const result = update.parse({$addToSet: {friends: 'mario'}, $inc: {number: 1}});
+
+	t.is(result.UpdateExpression, 'ADD #k_number :v_number, #k_friends :v_friends');
+	t.deepEqual(result.ExpressionAttributeNames, {'#k_number': 'number', '#k_friends': 'friends'});
+	t.deepEqual(result.ExpressionAttributeValues, {':v_number': 1, ':v_friends': db.createSet(['mario'])});
 });
 
 test('$addToSet $each in array', t => {

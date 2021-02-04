@@ -68,19 +68,18 @@ export function parse(query: UpdateQuery): ParseResult {
 		}));
 	}
 	if (query.$inc) {
-		expr.set = expr.set || [];
+		expr.add = expr.add || [];
 
-		expr.set = expr.set.concat(Object.keys(query.$inc).map(key => {
+		expr.add = expr.add.concat(Object.keys(query.$inc).map(key => {
 			const value = (query.$inc!)[key];
 
 			const k = nameUtil.generateKeyName(key);
 			const v = nameUtil.generateValueName(key, value, values);
-			v.ExpressionAttributeValues[':_v_empty_value'] = 0;
 
 			Object.assign(names, k.ExpressionAttributeNames);
 			Object.assign(values, v.ExpressionAttributeValues);
 
-			return `${k.Expression}=if_not_exists(${k.Expression}, :_v_empty_value)+${v.Expression}`;
+			return `${k.Expression} ${v.Expression}`;
 		}));
 	}
 	if (query.$push || query.$unshift) {

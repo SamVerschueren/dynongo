@@ -190,14 +190,13 @@ test.serial('undefined where', async t => {
 		Key: {
 			id: '5'
 		},
-		UpdateExpression: 'SET #k_foo=:v_foo, #k_salary=if_not_exists(#k_salary, :_v_empty_value)+:v_salary',
+		UpdateExpression: 'SET #k_foo=:v_foo ADD #k_salary :v_salary',
 		ExpressionAttributeNames: {
 			'#k_foo': 'foo',
 			'#k_salary': 'salary',
 			'#k_id': 'id'
 		},
 		ExpressionAttributeValues: {
-			':_v_empty_value': 0,
 			':v_foo': 'bar',
 			':v_salary': 1000,
 			':v_id': '5'
@@ -215,7 +214,7 @@ test.serial('where', async t => {
 		Key: {
 			id: '5'
 		},
-		UpdateExpression: 'SET #k_foo=:v_foo, #k_salary=if_not_exists(#k_salary, :_v_empty_value)+:v_salary',
+		UpdateExpression: 'SET #k_foo=:v_foo ADD #k_salary :v_salary',
 		ExpressionAttributeNames: {
 			'#k_foo': 'foo',
 			'#k_salary': 'salary',
@@ -223,7 +222,6 @@ test.serial('where', async t => {
 			'#k_email': 'email'
 		},
 		ExpressionAttributeValues: {
-			':_v_empty_value': 0,
 			':v_foo': 'bar',
 			':v_salary': 1000,
 			':v_id': '5',

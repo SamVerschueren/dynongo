@@ -1,8 +1,6 @@
 # dynongo
 
-[![Build Status](https://travis-ci.org/SamVerschueren/dynongo.svg)](https://travis-ci.org/SamVerschueren/dynongo)
-[![codecov](https://codecov.io/gh/SamVerschueren/dynongo/branch/master/graph/badge.svg)](https://codecov.io/gh/SamVerschueren/dynongo)
-
+![CI](https://github.com/SamVerschueren/dynongo/workflows/CI/badge.svg) [![codecov](https://codecov.io/gh/SamVerschueren/dynongo/badge.svg?branch=master)](https://codecov.io/gh/SamVerschueren/dynongo?branch=master)
 > MongoDB like syntax for [DynamoDB](https://aws.amazon.com/dynamodb/)
 
 

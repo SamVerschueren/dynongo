@@ -10,3 +10,4 @@ export { Method } from './method';
 export { Query } from './query';
 export { Scan } from './scan';
 export { UpdateItem } from './update-item';
+export { BatchWrite } from './batch/batch-write';

@@ -2,9 +2,18 @@ import AWS from 'aws-sdk';
 import pick from 'object.pick';
 import { Options as RetryOptions } from 'p-retry';
 import { Table, TableOptions } from './table';
-import { ListTables, DeleteTable, CreateTable, TransactWrite, WriteItem, TransactRead, ReadItem } from './methods';
+import {
+	ListTables,
+	DeleteTable,
+	CreateTable,
+	TransactWrite,
+	WriteItem,
+	TransactRead,
+	ReadItem, BatchWrite
+} from './methods';
 import { Schema } from './types';
 import { configureRetryOptions } from './utils';
+import { BatchItem } from './methods/batch';
 
 export interface DynamoDBOptions {
 	local?: boolean;
@@ -158,5 +167,9 @@ export class DynamoDB {
 	 */
 	transactRead(...actions: ReadItem[]) {
 		return new TransactRead(this, actions);
+	}
+
+	batchWrite(...items: BatchItem[]) {
+		return new BatchWrite(this, items);
 	}
 }

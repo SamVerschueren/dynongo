@@ -3,6 +3,7 @@ import { Query, Scan, InsertItem, UpdateItem, DeleteItem, DeleteTable, CreateTab
 import * as table from './utils/table';
 import { operators as updateOperators } from './utils/update';
 import { Map, Schema } from './types';
+import { PutRequest, DeleteRequest } from './methods/batch';
 
 export interface TableOptions {
 	raw?: boolean;
@@ -81,7 +82,7 @@ export class Table {
 	 * This method will insert a new item in the table.
 	 *
 	 * @param  key				The primary key of the record we want to insert.
-	 * @param  data			The data associated with the primary key.
+	 * @param  data				The data associated with the primary key.
 	 */
 	insert(key: Map<string | number>, data?: any) {
 		// Create an insert item object
@@ -89,6 +90,25 @@ export class Table {
 
 		// Initialize the insert item object
 		return put.initialize(key, {$set: data});
+	}
+
+	/**
+	 * This method will create a new put request item.
+	 *
+	 * @param  key				The primary key of the record we want to insert.
+	 * @param  data				The data associated with the primary key.
+	 */
+	createBatchPutItem(key: Map<string | number>, data: any) {
+		return new PutRequest(this.name, key, data);
+	}
+
+	/**
+	 * This method will create a new delete request item.
+	 *
+	 * @param  key				The primary key of the record we want to insert.
+	 */
+	createBatchDeleteItem(key: Map<string | number>) {
+		return new DeleteRequest(this.name, key);
 	}
 
 	/**

@@ -54,7 +54,7 @@ export class BatchWrite extends BatchMethod implements Executable {
 		}
 
 		if (this.items.length < 1) {
-			return Promise.reject(new Error('Items array can not be empty.'));
+			return Promise.reject(new Error('Items can not be empty.'));
 		}
 
 		if (this.items.length > 25) {

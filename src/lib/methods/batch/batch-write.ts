@@ -11,7 +11,7 @@ export class BatchWrite extends BatchMethod implements Executable {
 		dynamodb: DynamoDB,
 		private items: BatchItem[],
 		private retryCount = 5,
-		private randomize = true) {
+		private randomizeRetry = true) {
 		super(dynamodb);
 	}
 	/**
@@ -77,7 +77,7 @@ export class BatchWrite extends BatchMethod implements Executable {
 			},
 			{
 				retries: this.retryCount,
-				randomize: this.randomize
+				randomize: this.randomizeRetry
 			}
 		);
 	}

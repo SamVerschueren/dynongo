@@ -14,6 +14,7 @@ export class BatchWrite extends BatchMethod implements Executable {
 		private randomizeRetry = true) {
 		super(dynamodb);
 	}
+
 	/**
 	 * Initialize the `InsertItem` object.
 	 */
@@ -82,5 +83,4 @@ export class BatchWrite extends BatchMethod implements Executable {
 			}
 		);
 	}
-
 }

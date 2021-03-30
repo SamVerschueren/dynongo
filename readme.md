@@ -276,6 +276,35 @@ Employee
 
 More information can be found in the [AWS documentation](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadConsistency.html).
 
+### Batch Write
+
+The BatchWriteItem operation puts or deletes multiple items in one or more tables. A single call to BatchWrite can write up to 16 MB of data, which can comprise as many as 25 put or delete requests. Individual items to be written can be as large as 400 KB.
+
+
+You can create Put and Delete request by calling the method on Table with the correct parameters.
+```js
+const result = await db.batchWrite(
+	Table1.createBatchPutItem(
+		{partitionKey: 'PK', sortKey: 'SK'},
+		{name: 'Sander', lastname: 'Machado'}
+	),
+	Table1.createBatchPutItem(
+		{partitionKey: 'PK', sortKey: 'SK23'},
+		{name: 'Sander', lastname: 'Doe'}
+	),
+	Table2.createBatchDeleteItem(
+		{partitionKey: '123', sortKey: '456'}
+	),
+	Table2.createBatchDeleteItem(
+		{partitionKey: 'PK2', sortKey: 'SK3'}
+	),
+	Table2.createBatchPutItem(
+		{partitionKey: 'PK', sortKey: 'SK'},
+		{name: 'name', lastname: 'lastname'}
+	)
+).exec();
+```
+
 ### Transactions
 
 The library also supports transactions. Transactions simplify the developer experience of making coordinated, all-or-nothing changes to multiple items both within and across tables. You can only provide up to 10 transaction requests per transaction.

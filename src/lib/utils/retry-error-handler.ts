@@ -8,7 +8,8 @@ const whitelistedErrors = new Set([
 	'ProvisionedThroughputExceededException',
 	'RequestLimitExceeded',
 	'InternalServerError',
-	'ResourceInUseException'
+	'ResourceInUseException',
+	'UnprocessedItemsException'
 ]);
 
 export const retryErrorHandler = err => {

@@ -8,6 +8,7 @@ export {
 	TransactInsertItem,
 	TransactUpdateItem,
 	WriteItem,
+	BatchWrite,
 	TransactWrite,
 	TransactMethod,
 	BaseQuery,

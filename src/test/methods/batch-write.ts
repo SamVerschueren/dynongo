@@ -192,7 +192,7 @@ test.serial('program should use exponential backoff', async t => {
 			{partitionKey: 'PK', sortKey: 'SK'},
 			{name: 'name', lastname: 'lastname'}
 		)
-	).exec();
+	).retry(4).exec();
 
 	const afterCount = updateStub.callCount;
 

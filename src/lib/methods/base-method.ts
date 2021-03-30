@@ -27,7 +27,6 @@ export abstract class BaseMethod implements QueryBuilder {
 	retry(options: RetryOptions);
 	retry(retries: number | RetryOptions) {
 		this.retries = retries;
-
 		return this;
 	}
 

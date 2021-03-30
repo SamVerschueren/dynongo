@@ -1,4 +1,5 @@
 import { BatchItem } from './batch-item';
+import { BatchDeleteItem } from '../../types/interfaces';
 
 export class DeleteRequest extends BatchItem {
 
@@ -6,7 +7,7 @@ export class DeleteRequest extends BatchItem {
 		super(props, key);
 	}
 
-	get value() {
+	buildRawQuery(): BatchDeleteItem {
 		return {DeleteRequest: { Key: this.key}};
 	}
 }

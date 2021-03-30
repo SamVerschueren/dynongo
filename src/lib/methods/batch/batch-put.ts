@@ -1,4 +1,5 @@
 import { BatchItem } from './batch-item';
+import { BatchPutItem } from '../../types/interfaces';
 
 export class PutRequest extends BatchItem {
 
@@ -6,7 +7,7 @@ export class PutRequest extends BatchItem {
 		super(props, key);
 	}
 
-	get value() {
+	buildRawQuery(): BatchPutItem  {
 		return {PutRequest: {Item: {...this.key, ...this.body}}};
 	}
 }

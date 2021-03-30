@@ -1,24 +1,22 @@
+import { BatchWriteItemInput } from 'aws-sdk/clients/dynamodb';
 import { Executable } from '../executable';
 import { DynamoDB } from '../../dynamodb';
 import { BatchItem } from './batch-item';
 import { BatchMethod } from './batch-method';
-import { BatchWriteItemInput } from 'aws-sdk/clients/dynamodb';
-import pRetry from 'p-retry';
+import { UnprocessedItemsException } from '../../errors/UnprocessedItems';
 
 export class BatchWrite extends BatchMethod implements Executable {
 
 	constructor(
 		dynamodb: DynamoDB,
-		private items: BatchItem[],
-		private retryCount = 5,
-		private randomizeRetry = true) {
+		private items: BatchItem[]) {
 		super(dynamodb);
 	}
 
 	/**
-	 * Initialize the `InsertItem` object.
+	 * Builds and returns the raw DynamoDB query object.
 	 */
-	initialize(): BatchWrite {
+	buildRawQuery(): BatchWriteItemInput {
 		const request = {
 			RequestItems: {}
 		};
@@ -26,24 +24,13 @@ export class BatchWrite extends BatchMethod implements Executable {
 		for (const item of this.items) {
 			const table = request.RequestItems[item.table];
 			if (!table) {
-				request.RequestItems[item.table] = [item.value];
+				request.RequestItems[item.table] = [item.buildRawQuery()];
 			} else {
-				(request.RequestItems[item.table] as any[]).push(item.value);
+				(request.RequestItems[item.table] as any[]).push(item.buildRawQuery());
 			}
 		}
-
-		this.params = request;
-		return this;
+		return request;
 	}
-
-	/**
-	 * Builds and returns the raw DynamoDB query object.
-	 */
-	buildRawQuery() {
-		this.initialize();
-		return this.params;
-	}
-
 	/**
 	 * Execute the batch write request.
 	 */
@@ -66,21 +53,13 @@ export class BatchWrite extends BatchMethod implements Executable {
 			return Promise.reject(new Error('params object was undefined.'));
 		}
 
-		this.buildRawQuery();
-		let query = this.params as BatchWriteItemInput;
-		return pRetry(
-			async () => {
-				const {UnprocessedItems} = await db.batchWrite(query).promise();
-
-				if (UnprocessedItems && Object.keys(UnprocessedItems).length > 0) {
-					query = {RequestItems: UnprocessedItems};
-					throw new Error(`${Object.keys(UnprocessedItems).length} could not be processed`);
-				}
-			},
-			{
-				retries: this.retryCount,
-				randomize: this.randomizeRetry
+		let query = this.buildRawQuery();
+		return this.runQuery(async () => {
+			const {UnprocessedItems} = await db.batchWrite(query).promise();
+			if (UnprocessedItems && Object.keys(UnprocessedItems).length > 0) {
+				query = {RequestItems: UnprocessedItems};
+				throw new UnprocessedItemsException(`${Object.keys(UnprocessedItems).length} could not be processed`);
 			}
-		);
+		});
 	}
 }

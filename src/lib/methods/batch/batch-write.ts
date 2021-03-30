@@ -31,6 +31,7 @@ export class BatchWrite extends BaseMethod implements Executable {
 		}
 		return request;
 	}
+
 	/**
 	 * Execute the batch write request.
 	 */

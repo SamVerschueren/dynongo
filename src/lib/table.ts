@@ -95,7 +95,7 @@ export class Table {
 	/**
 	 * This method will create a new put request item.
 	 *
-	 * @param  key				The primary key of the record we want to insert.
+	 * @param  key			The primary key of the record we want to insert.
 	 * @param  data				The data associated with the primary key.
 	 */
 	createBatchPutItem(key: Map<string | number>, data: any) {

@@ -2,15 +2,15 @@ import { BatchWriteItemInput } from 'aws-sdk/clients/dynamodb';
 import { Executable } from '../executable';
 import { DynamoDB } from '../../dynamodb';
 import { BatchItem } from './batch-item';
-import { BatchMethod } from './batch-method';
 import { UnprocessedItemsException } from '../../errors/UnprocessedItems';
+import { BaseMethod } from '../base-method';
 
-export class BatchWrite extends BatchMethod implements Executable {
+export class BatchWrite extends BaseMethod implements Executable {
 
 	constructor(
 		dynamodb: DynamoDB,
 		private items: BatchItem[]) {
-		super(dynamodb);
+		super(null, dynamodb);
 	}
 
 	/**

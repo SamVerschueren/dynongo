@@ -36,6 +36,7 @@ const fixture = {
 		]
 	}
 };
+
 const throttleFixture = {
 	RequestItems: {
 		'insert-Table1': [
@@ -52,16 +53,19 @@ const throttleFixture = {
 		]
 	}
 };
+
 const response = {
 	ItemCollectionMetrics: null,
 	ConsumedCapacity: null,
 	UnprocessedItems: {}
 };
+
 // @ts-ignore
 const throttleData = {
 	ItemCollectionMetrics: null,
 	ConsumedCapacity: null,
-	UnprocessedItems: {'insert-Table1': [
+	UnprocessedItems: {
+		'insert-Table1': [
 			{
 				PutRequest: {
 					Item: {
@@ -75,6 +79,7 @@ const throttleData = {
 		]
 	}
 };
+
 const sandbox = sinon.createSandbox();
 let updateStub;
 
@@ -107,91 +112,86 @@ test.serial('throws error if more than 25 items are passed', async t => {
 
 test.serial('insert batch', async t => {
 	await db.batchWrite(
-			Table1.createBatchPutItem(
-				{partitionKey: 'PK', sortKey: 'SK'},
-				{name: 'name', lastname: 'lastname'}
-			),
-			Table1.createBatchPutItem(
-				{partitionKey: 'PK', sortKey: 'SK23'},
-				{name: 'name23', lastname: 'lastname23'}
-			),
-			Table2.createBatchDeleteItem(
-				{partitionKey: 'PK2', sortKey: 'SK2'}
-			),
-			Table2.createBatchDeleteItem(
-				{partitionKey: 'PK2', sortKey: 'SK3'}
-			),
-			Table2.createBatchPutItem(
-				{partitionKey: 'PK', sortKey: 'SK'},
-				{name: 'name', lastname: 'lastname'}
-			)
+		Table1.createBatchPutItem(
+			{partitionKey: 'PK', sortKey: 'SK'},
+			{name: 'name', lastname: 'lastname'}
+		),
+		Table1.createBatchPutItem(
+			{partitionKey: 'PK', sortKey: 'SK23'},
+			{name: 'name23', lastname: 'lastname23'}
+		),
+		Table2.createBatchDeleteItem(
+			{partitionKey: 'PK2', sortKey: 'SK2'}
+		),
+		Table2.createBatchDeleteItem(
+			{partitionKey: 'PK2', sortKey: 'SK3'}
+		),
+		Table2.createBatchPutItem(
+			{partitionKey: 'PK', sortKey: 'SK'},
+			{name: 'name', lastname: 'lastname'}
+		)
 	).exec();
 
 	t.deepEqual(updateStub.callCount, 1);
 
 	t.deepEqual(updateStub.lastCall.args[0], {
-			RequestItems: {
-				'insert-Table1': [
-					{
-						PutRequest: {
-							Item: {
-								partitionKey: 'PK',
-								sortKey: 'SK',
-								name: 'name',
-								lastname: 'lastname'
-							}
-						}
-					},
-					{
-						PutRequest: {
-							Item: {
-								partitionKey: 'PK',
-								sortKey: 'SK23',
-								name: 'name23',
-								lastname: 'lastname23'
-							}
-						}
-
-					}
-				],
-				'insert-Table2': [
-					{
-						DeleteRequest: {
-							Key:
-								{partitionKey: 'PK2', sortKey: 'SK2'}
-						}
-					},
-					{
-						DeleteRequest: {
-							Key:
-								{partitionKey: 'PK2', sortKey: 'SK3'}
-						}
-					},
-					{
-						PutRequest: {
-							Item: {
-								partitionKey: 'PK',
-								sortKey: 'SK',
-								name: 'name',
-								lastname: 'lastname'
-							}
+		RequestItems: {
+			'insert-Table1': [
+				{
+					PutRequest: {
+						Item: {
+							partitionKey: 'PK',
+							sortKey: 'SK',
+							name: 'name',
+							lastname: 'lastname'
 						}
 					}
-				]
-			}
+				},
+				{
+					PutRequest: {
+						Item: {
+							partitionKey: 'PK',
+							sortKey: 'SK23',
+							name: 'name23',
+							lastname: 'lastname23'
+						}
+					}
+				}
+			],
+			'insert-Table2': [
+				{
+					DeleteRequest: {
+						Key: {partitionKey: 'PK2', sortKey: 'SK2'}
+					}
+				},
+				{
+					DeleteRequest: {
+						Key: {partitionKey: 'PK2', sortKey: 'SK3'}
+					}
+				},
+				{
+					PutRequest: {
+						Item: {
+							partitionKey: 'PK',
+							sortKey: 'SK',
+							name: 'name',
+							lastname: 'lastname'
+						}
+					}
+				}
+			]
 		}
-	);
+	});
 });
 
 test.serial('program should use exponential backoff', async t => {
 	const beforeCount = updateStub.callCount;
 
 	await db.batchWrite(
-			Table1.createBatchPutItem(
-				{partitionKey: 'PK', sortKey: 'SK'},
-				{name: 'name', lastname: 'lastname'}
-			)
-
+		Table1.createBatchPutItem(
+			{partitionKey: 'PK', sortKey: 'SK'},
+			{name: 'name', lastname: 'lastname'}
+		)
 	).exec();
 
 	const afterCount = updateStub.callCount;

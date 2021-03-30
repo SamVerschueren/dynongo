@@ -70,9 +70,10 @@ export class BatchWrite extends BatchMethod implements Executable {
 		return pRetry(
 			async () => {
 				const {UnprocessedItems} = await db.batchWrite(query).promise();
+
 				if (UnprocessedItems && Object.keys(UnprocessedItems).length > 0) {
 					query = {RequestItems: UnprocessedItems};
-					throw new Error();
+					throw new Error(`${Object.keys(UnprocessedItems).length} could not be processed`);
 				}
 			},
 			{

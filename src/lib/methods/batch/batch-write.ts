@@ -2,8 +2,8 @@ import { BatchWriteItemInput } from 'aws-sdk/clients/dynamodb';
 import { Executable } from '../executable';
 import { DynamoDB } from '../../dynamodb';
 import { BatchItem } from './batch-item';
-import { UnprocessedItemsException } from '../../errors/UnprocessedItems';
 import { BaseMethod } from '../base-method';
+import { UnprocessedItemsException } from '../../errors/unprocessed-items-exception';
 
 export class BatchWrite extends BaseMethod implements Executable {
 

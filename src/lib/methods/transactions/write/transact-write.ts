@@ -11,15 +11,15 @@ import { TransactInsertItem } from './transact-insert-item';
 import { Query } from '../../query';
 import { generateConditionCheck } from '../utils/condition-check';
 
-export type WriteItem = InsertItem | UpdateItem | DeleteItem;
+export type WriteItem<K, D> = InsertItem<K, D> | UpdateItem<K, D> | DeleteItem<K, D>;
 
-export class TransactWrite extends Method  implements Executable {
+export class TransactWrite<K, D> extends Method  implements Executable {
 
-	private conditions: Query[] = [];
+	private conditions: Query<K, D>[] = [];
 
 	constructor(
 		dynamodb: DynamoDB,
-		private readonly actions: WriteItem[]
+		private readonly actions: WriteItem<K, D>[]
 	) {
 		super(null, dynamodb);
 	}
@@ -29,7 +29,7 @@ export class TransactWrite extends Method  implements Executable {
 	 *
 	 * @param	query	List of query conditions.
 	 */
-	withConditions(...query: Query[]): this {
+	withConditions(...query: Query<K, D>[]): this {
 		this.conditions = query;
 
 		return this;

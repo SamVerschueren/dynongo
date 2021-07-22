@@ -85,8 +85,8 @@ export class DynamoDB {
 	 * @param  name		The name of the table that is being interacted with.
 	 * @param  options	Options object.
 	 */
-	table(name: string, options?: TableOptions) {
-		return new Table(name, this, options);
+	table<K = any, D = any>(name: string, options?: TableOptions) {
+		return new Table<K, D>(name, this, options);
 	}
 
 	/**
@@ -94,8 +94,8 @@ export class DynamoDB {
 	 *
 	 * @param  name		The name of the table that is being interacted with.
 	 */
-	rawTable(name: string) {
-		return new Table(name, this, {raw: true});
+	rawTable<K = any, D = any>(name: string) {
+		return new Table<K, D>(name, this, {raw: true});
 	}
 
 	/**
@@ -123,7 +123,7 @@ export class DynamoDB {
 	 * @param	schema		The schema of the table that should be created.
 	 * @param	options		Options object.
 	 */
-	createTable(schema: Schema, options?: TableOptions): CreateTable {
+	createTable<K = any, D = any>(schema: Schema, options?: TableOptions): CreateTable {
 		if (typeof schema !== 'object') {
 			throw new TypeError(`Expected \`schema\` to be of type \`object\`, got \`${typeof schema}\``);
 		}
@@ -132,7 +132,7 @@ export class DynamoDB {
 			throw new Error('Schema is missing a `TableName`');
 		}
 
-		return this.table(schema.TableName, options).create(schema);
+		return this.table<K, D>(schema.TableName, options).create(schema);
 	}
 
 	/**
@@ -156,7 +156,7 @@ export class DynamoDB {
 	 *
 	 * @param	actions		List of transaction actions.
 	 */
-	transactWrite(...actions: WriteItem[]) {
+	transactWrite<K = any, D = any>(...actions: WriteItem<K, D>[]) {
 		return new TransactWrite(this, actions);
 	}
 
@@ -165,7 +165,7 @@ export class DynamoDB {
 	 *
 	 * @param	actions		List of transaction actions.
 	 */
-	transactRead(...actions: ReadItem[]) {
+	transactRead<K = any, D = any>(...actions: ReadItem<K, D>[]) {
 		return new TransactRead(this, actions);
 	}
 

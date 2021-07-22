@@ -4,7 +4,7 @@ import { Executable } from './executable';
 import { DynamoDB } from '../dynamodb';
 import { Table } from '../table';
 
-export class Scan extends BaseQuery implements Executable {
+export class Scan<K, D> extends BaseQuery<K, D> implements Executable {
 
 	constructor(table: Table, dynamodb: DynamoDB) {
 		super(table, dynamodb);

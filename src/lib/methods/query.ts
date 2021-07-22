@@ -4,7 +4,7 @@ import { Executable } from './executable';
 import { DynamoDB } from '../dynamodb';
 import { Table } from '../table';
 
-export class Query extends BaseQuery implements Executable {
+export class Query<K, D> extends BaseQuery<K, D> implements Executable {
 
 	private error: Error | null = null;
 

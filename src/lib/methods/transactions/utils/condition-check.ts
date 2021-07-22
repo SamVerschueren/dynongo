@@ -7,7 +7,7 @@ import { keyParser } from './key-parser';
  *
  * @param	query			Query to generate the check.
  */
-export const generateConditionCheck = (query: Query): ConditionCheck => {
+export const generateConditionCheck = <K, D>(query: Query<K, D>): ConditionCheck => {
 	const build: QueryInput = query.buildRawQuery();
 
 	if (!build.FilterExpression) {

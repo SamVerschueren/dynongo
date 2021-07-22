@@ -102,7 +102,7 @@ test.serial('throws error if no items are passed', async t => {
 });
 
 test.serial('throws error if more than 25 items are passed', async t => {
-	const batchItems: PutRequest[] = [];
+	const batchItems: PutRequest<number>[] = [];
 	for (let i = 0; i < 26; i++) {
 		batchItems.push(new PutRequest('test', i, i));
 	}

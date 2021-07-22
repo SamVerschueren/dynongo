@@ -21,6 +21,6 @@ export {
 	Scan,
 	UpdateItem
 } from './methods';
-export { UpdateQuery } from './types';
+export { UpdateQuery, WhereQuery } from './types';
 export { DynamoDBOptions, DynamoDB } from './dynamodb';
 export { TableOptions, Table } from './table';

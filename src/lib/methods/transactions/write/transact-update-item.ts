@@ -2,7 +2,7 @@ import { TransactWriteItem, Converter } from 'aws-sdk/clients/dynamodb';
 import { TransactMethod } from '../transact-method';
 import { UpdateItem } from '../../update-item';
 
-export class TransactUpdateItem<K, D> extends TransactMethod {
+export class TransactUpdateItem<K = any, D = any> extends TransactMethod {
 	constructor(
 		private readonly query: UpdateItem<K, D>
 	) {

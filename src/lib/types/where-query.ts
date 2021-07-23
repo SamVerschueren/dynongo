@@ -32,7 +32,7 @@ interface ElementQueryOperators {
 	$exists?: boolean;
 }
 
-export type WhereQuery<T> = {
+export type WhereQuery<T = any> = {
 		[Property in keyof T]?: T[Property] extends number
 		? NumberComparisonOperators | T[Property] : T[Property] extends string
 			? StringComparisonOperators | T[Property] : T[Property] extends (infer U)[]

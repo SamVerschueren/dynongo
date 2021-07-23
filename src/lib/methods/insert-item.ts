@@ -7,7 +7,7 @@ import { DynamoDB } from '../dynamodb';
 import { Table } from '../table';
 import { UpdateQuery } from '../types';
 
-export class InsertItem<K, D> extends Method implements Executable {
+export class InsertItem<K = any, D = any> extends Method implements Executable {
 
 	protected rawResult: boolean = false;
 

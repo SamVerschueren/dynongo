@@ -6,7 +6,7 @@ import { Table } from '../table';
 import * as queryUtil from '../utils/query';
 import { WhereQuery } from '../types';
 
-export class DeleteItem<K, D> extends Method implements Executable {
+export class DeleteItem<K = any, D = any> extends Method implements Executable {
 
 	private rawResult: boolean = false;
 

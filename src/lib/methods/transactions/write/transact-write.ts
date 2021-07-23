@@ -11,9 +11,9 @@ import { TransactInsertItem } from './transact-insert-item';
 import { Query } from '../../query';
 import { generateConditionCheck } from '../utils/condition-check';
 
-export type WriteItem<K, D> = InsertItem<K, D> | UpdateItem<K, D> | DeleteItem<K, D>;
+export type WriteItem<K = any, D = any> = InsertItem<K, D> | UpdateItem<K, D> | DeleteItem<K, D>;
 
-export class TransactWrite<K, D> extends Method  implements Executable {
+export class TransactWrite<K = any, D = any> extends Method  implements Executable {
 
 	private conditions: Query<K, D>[] = [];
 

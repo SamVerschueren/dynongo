@@ -6,7 +6,7 @@ import { Executable } from './executable';
 import { InsertItem } from './insert-item';
 import { WhereQuery } from '../types';
 
-export class UpdateItem<K, D> extends InsertItem<K, D> implements Executable {
+export class UpdateItem<K = any, D = any> extends InsertItem<K, D> implements Executable {
 
 	constructor(table: Table, dynamodb: DynamoDB) {
 		super(table, dynamodb);

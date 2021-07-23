@@ -4,7 +4,7 @@ import * as queryUtil from '../utils/query';
 import { Method } from './method';
 import { WhereQuery } from '../types';
 
-export abstract class BaseQuery<K, D> extends Method {
+export abstract class BaseQuery<K = any, D = any> extends Method {
 
 	protected rawResult: boolean = false;
 	protected consistentRead: boolean = false;

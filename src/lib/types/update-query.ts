@@ -1,4 +1,4 @@
-export interface UpdateQuery<T> {
+export interface UpdateQuery<T = any> {
 	/**
 	 * Sets property equal to given value
 	 */

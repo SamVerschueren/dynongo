@@ -1,30 +1,53 @@
+interface Each<T> {
+	/**
+	 * Use with the $addToSet operator to add multiple values to an array <field> if the values do not exist in the <field>.
+	 * @example { $addToSet: { <field>: { $each: [ <value1>, <value2> ... ] } } }
+	 * @see {@link https://docs.mongodb.com/manual/reference/operator/update/each }
+	 */
+	$each: T[];
+}
+
 export interface UpdateQuery<T = any> {
 	/**
-	 * Sets property equal to given value
+	 * Replaces the value of a field with the specified value.
+	 * @example { $set: { <field1>: <value1>, ... } }
+	 * @see {@link https://docs.mongodb.com/manual/reference/operator/update/set }
 	 */
 	$set?: { [Property in keyof T]?: { $ifNotExists: T[Property] } | T[Property] };
 	/**
-	 * Unsets specified property
+	 * Deletes a particular field.
+	 * @example { $unset: { <field1>: <boolean>, ... } }
+	 * @see {@link https://docs.mongodb.com/manual/reference/operator/update/unset }
 	 */
 	$unset?: { [Property in keyof T]?: boolean };
 	/**
-	 * Increments a number value
+	 * Increments a field by a specified value and has the following form.
+	 * @example { $inc: { <field1>: <amount1>, <field2>: <amount2>, ... } }
+	 * @see {@link https://docs.mongodb.com/manual/reference/operator/update/inc }
 	 */
 	$inc?: { [Property in keyof T]?: T[Property] extends number ? number : never };
 	/**
-	 * $addToSet Appends given value or value array as an array to end of the set
+	 * Appends a specified value to an array.
+	 * @example { $push: { <field1>: <value1>, ... } }
+	 * @see {@link https://docs.mongodb.com/manual/reference/operator/update/push }
 	 */
-	$push?: { [Property in keyof T]?: T[Property] extends (infer U)[] ? U | {$each: U[]}: never };
+	$push?: { [Property in keyof T]?: T[Property] extends (infer U)[] ? U | Each<U>: never };
 	/**
-	 * $addToSet Appends given value or value array as an array to beginning of the set
+	 * Prepends a specified value to an array.
+	 * @example { $unshift: { <field1>: <value1>, ... } }
 	 */
-	$unshift?: { [Property in keyof T]?: T[Property] extends (infer U)[] ? U|U[]|{$each: U[]} : never };
+	$unshift?: { [Property in keyof T]?: T[Property] extends (infer U)[] ? U|U[]|Each<U> : never };
 	/**
-	 * $addToSet Adds given value(s) to set
+	 * Adds a value to an array unless the value is already present, in which case $addToSet does nothing to that array.
+	 * @example { $addToSet: { <field1>: [<value1>, ...], ... } }
+	 * @example { $addToSet: { <field1>: <value1>, ... } }
+	 * @see {@link https://docs.mongodb.com/manual/reference/operator/update/addToSet }
 	 */
-	$addToSet?: { [Property in keyof T]?: T[Property] extends (infer U)[] ? U|U[]|{$each: U[]} : never };
+	$addToSet?: { [Property in keyof T]?: T[Property] extends (infer U)[] ? U|U[]|Each<U> : never };
 	/**
-	 * Removes given value(s) from set
+	 * Removes a value from an array.
+	 * @example { $addToSet: { <field1>: [<value1>, ...], ... } }
+	 * @example { $addToSet: { <field1>: <value1>, ... } }
 	 */
-	$removeFromSet?: { [Property in keyof T]?: T[Property] extends (infer U)[] ? U|U[]|{$each: U[]} : never };
+	$removeFromSet?: { [Property in keyof T]?: T[Property] extends (infer U)[] ? U|U[]|Each<U> : never };
 }

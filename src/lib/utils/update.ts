@@ -26,7 +26,7 @@ const fromArrayEach = (value, allowArrayInArray = true) => {
 	return Array.isArray(value) ? value : [value];
 };
 
-export function parse(query: UpdateQuery): ParseResult {
+export function parse<D>(query: UpdateQuery<D>): ParseResult {
 	const names = {};
 	const values = {};
 

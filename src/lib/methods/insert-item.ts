@@ -7,7 +7,7 @@ import { DynamoDB } from '../dynamodb';
 import { Table } from '../table';
 import { UpdateQuery } from '../types';
 
-export class InsertItem<K, _D> extends Method implements Executable {
+export class InsertItem<K, D> extends Method implements Executable {
 
 	protected rawResult: boolean = false;
 
@@ -23,7 +23,7 @@ export class InsertItem<K, _D> extends Method implements Executable {
 	 * @param	query			The key of the item to insert.
 	 * @param	data			The insert data object.
 	 */
-	initialize(query: K, data: UpdateQuery) {
+	initialize(query: K, data: UpdateQuery<D>) {
 		// Set the query as key
 		this.params.Key = query;
 

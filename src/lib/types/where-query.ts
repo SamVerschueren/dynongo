@@ -56,7 +56,7 @@ interface NumberComparisonOperators extends ComparisonQueryOperators<number>, El
 	 * @example { field: { $between: [ <value1>, <value2> ]} }
 	 * @see {@link https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Condition.html}
 	 */
-	$between: [number, number];
+	$between?: [number, number];
 }
 
 interface StringComparisonOperators extends ElementQueryOperators, ComparisonQueryOperators<string> {
@@ -65,7 +65,7 @@ interface StringComparisonOperators extends ElementQueryOperators, ComparisonQue
 	 * @example { field: { $beginsWith: value } }
 	 * @see {@link https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Condition.html}
 	 */
-	$beginsWith: string|number;
+	$beginsWith?: string|number;
 }
 
 interface ArrayComparisonOperators<T> extends ElementQueryOperators, BaseComparisonQueryOperators<T> {
@@ -74,7 +74,7 @@ interface ArrayComparisonOperators<T> extends ElementQueryOperators, BaseCompari
 	 * @example { field: { contains: value } }
 	 * @see {@link https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Condition.html}
 	 */
-	$contains: T;
+	$contains?: T;
 }
 
 interface LogicalQueryOperators<T> {

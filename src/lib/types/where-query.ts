@@ -26,7 +26,7 @@ interface ComparisonQueryOperators<T> extends BaseComparisonQueryOperators<T> {
 	$nin?: T[];
 }
 
-interface NumberComparisonOperators extends ComparisonQueryOperators<number> {
+interface NumberComparisonOperators extends ComparisonQueryOperators<number>, ElementQueryOperators {
 	/**
 	 * Selects those documents where the value of the field is greater than (i.e. >) the specified value.
 	 * @example {field: {$gt: value} }
@@ -59,7 +59,7 @@ interface NumberComparisonOperators extends ComparisonQueryOperators<number> {
 	$between: [number, number];
 }
 
-interface StringComparisonOperators {
+interface StringComparisonOperators extends ElementQueryOperators, ComparisonQueryOperators<string> {
 	/**
 	 * Checks for a prefix.
 	 * @example { field: { $beginsWith: value } }
@@ -68,7 +68,7 @@ interface StringComparisonOperators {
 	$beginsWith: string|number;
 }
 
-interface ArrayComparisonOperators<T> {
+interface ArrayComparisonOperators<T> extends ElementQueryOperators, BaseComparisonQueryOperators<T> {
 	/**
 	 * Checks for a subsequence, or value in a set.
 	 * @example { field: { contains: value } }
@@ -108,8 +108,8 @@ interface ElementQueryOperators {
 
 export type WhereQuery<T = any> = {
 		[Property in keyof T]?: T[Property] extends number
-		? NumberComparisonOperators | T[Property] : T[Property] extends string | DocumentClient.binaryType
+		? NumberComparisonOperators  | T[Property] : T[Property] extends string | DocumentClient.binaryType
 			? StringComparisonOperators | T[Property] : T[Property] extends (infer U)[]
-				? ArrayComparisonOperators<U> | BaseComparisonQueryOperators<T> | ElementQueryOperators | T[Property] : BaseComparisonQueryOperators<T[Property]> | ElementQueryOperators | T[Property]
+				? ArrayComparisonOperators<U> | T[Property] : BaseComparisonQueryOperators<T[Property]> | ElementQueryOperators | T[Property]
 	}
 	& LogicalQueryOperators<T>;

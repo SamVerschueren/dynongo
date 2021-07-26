@@ -13,7 +13,7 @@ export interface UpdateQuery<T = any> {
 	 * @example { $set: { <field1>: <value1>, ... } }
 	 * @see {@link https://docs.mongodb.com/manual/reference/operator/update/set }
 	 */
-	$set?: { [Property in keyof T]?: { $ifNotExists: T[Property] } | T[Property] };
+	$set?: { [Property in keyof T]?: { $ifNotExists: T[Property] } | T[Property] | null };
 	/**
 	 * Deletes a particular field.
 	 * @example { $unset: { <field1>: <boolean>, ... } }

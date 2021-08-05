@@ -2,7 +2,7 @@ import { DynamoDB } from './dynamodb';
 import { Query, Scan, InsertItem, UpdateItem, DeleteItem, DeleteTable, CreateTable } from './methods';
 import * as table from './utils/table';
 import { operators as updateOperators } from './utils/update';
-import { Schema } from './types';
+import { Schema, UpdateQuery } from './types';
 import { PutRequest, DeleteRequest } from './methods/batch';
 
 export interface TableOptions {
@@ -78,14 +78,14 @@ export class Table<K = any, D = any> {
 		return del.initialize(query, {result: true});
 	}
 
-	insert(key: K, data?: D): InsertItem<K, D>;
+	insert(key: K, data?: Partial<D>): InsertItem<K, D>;
 	/**
 	 * This method will insert a new item in the table.
 	 *
 	 * @param  key				The primary key of the record we want to insert.
 	 * @param  data				The data associated with the primary key.
 	 */
-	insert(key: K, data?: D) {
+	insert(key: K, data?: Partial<D>) {
 		// Create an insert item object
 		const put = new InsertItem<K, D>(this, this.dynamodb);
 
@@ -112,7 +112,7 @@ export class Table<K = any, D = any> {
 		return new DeleteRequest(this.name, key);
 	}
 
-	update(key: K, data: D, options?: {upsert: boolean}): UpdateItem<K, D>;
+	update(key: K, data: Partial<D>|UpdateQuery<D>, options?: {upsert: boolean}): UpdateItem<K, D>;
 	/**
 	 * Update an already existing item associated with the key provided.
 	 *
@@ -120,7 +120,7 @@ export class Table<K = any, D = any> {
 	 * @param	data			The data of the item to update the item with.
 	 * @param	options			The extra options object.
 	 */
-	update(key: K, data: D, options?: {upsert: boolean}) {
+	update(key: K, data: Partial<D>|UpdateQuery<D>, options?: {upsert: boolean}) {
 		// Use a default empty object if options is not provided
 		options = options || {upsert: false};
 
@@ -151,14 +151,14 @@ export class Table<K = any, D = any> {
 		return update.initialize(key, data).where(key);
 	}
 
-	upsert(key: K, data: D): UpdateItem<K, D>;
+	upsert(key: K, data: Partial<D>|UpdateQuery<D>): UpdateItem<K, D>;
 	/**
 	 * Update an already existing item or inserts a new item if the item does not yet exist.
 	 *
 	 * @param	key				The key of the item we wish to update.
 	 * @param	data			The data of the item to update the item with.
 	 */
-	upsert(key: K, data: D) {
+	upsert(key: K, data: Partial<D>|UpdateQuery<D>) {
 		// Use the update method but set `upsert` to true
 		return this.update(key, data, {upsert: true});
 	}

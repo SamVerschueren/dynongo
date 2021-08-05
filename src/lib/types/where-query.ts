@@ -1,5 +1,14 @@
 import { DocumentClient } from 'aws-sdk/lib/dynamodb/document_client';
 
+interface ElementQueryOperators {
+	/**
+	 * When <boolean> is true, $exists matches the documents that contain the field, including documents where the field value is null. If <boolean> is false, the query returns only the documents that do not contain the field.
+	 * @example { field: { $exists: <boolean> } }
+	 * @see {@link https://docs.mongodb.com/manual/reference/operator/query/exists}
+	 */
+	$exists?: boolean;
+}
+
 interface BaseComparisonQueryOperators<T> {
 	/**
 	 * Specifies equality condition. The $eq operator matches documents where the value of a field equals the specified value.
@@ -96,14 +105,6 @@ interface LogicalQueryOperators<T> {
 	 * @see {@link https://docs.mongodb.com/manual/reference/operator/query/or}
 	 */
 	$or?: WhereQuery<T>[];
-}
-interface ElementQueryOperators {
-	/**
-	 * When <boolean> is true, $exists matches the documents that contain the field, including documents where the field value is null. If <boolean> is false, the query returns only the documents that do not contain the field.
-	 * @example { field: { $exists: <boolean> } }
-	 * @see {@link https://docs.mongodb.com/manual/reference/operator/query/exists}
-	 */
-	$exists?: boolean;
 }
 
 export type WhereQuery<T = any> = {

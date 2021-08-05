@@ -4,7 +4,7 @@ import stubPromise from '../fixtures/stub-promise';
 import db from '../..';
 import { serviceUnavailableException, throttlingException, conditionalCheckFailedException } from '../fixtures/aws-error';
 
-const Table = db.table('Table');
+const Table = db.table<{id: string, email?: string}, {foo: string, bar: string, friends: string[], salary: number, email: string}>('Table');
 
 // Connect after defining the table
 db.connect({prefix: 'insert', prefixDelimiter: '-'});
@@ -42,7 +42,7 @@ test.after(() => {
 
 test('error if a duplicate key was inserted', async t => {
 	try {
-		await Table.insert({id: '10'}, {$set: {foo: 'bar'}}).raw().exec();
+		await Table.insert({id: '10'}, {$set: {foo: 'bar'}} as any).raw().exec();
 		t.fail();
 	} catch (err) {
 		t.is(err.message, 'Duplicate key! A record with key `{"id":"10"}` already exists.');
@@ -67,7 +67,7 @@ test.serial('should abort retry when non-retryable error', async t => {
 });
 
 test('error', async t => {
-	await t.throwsAsync(Table.insert({id: '20'}, {$set: {foo: 'bar'}}).raw().exec(), 'foo');
+	await t.throwsAsync(Table.insert({id: '20'}, {$set: {foo: 'bar'}} as any).raw().exec(), 'foo');
 });
 
 test.serial('insert key', async t => {
@@ -131,18 +131,18 @@ test.serial('insert empty object', async t => {
 });
 
 test.serial('result', async t => {
-	t.is(await Table.insert({id: '5'}, {$set: {foo: 'bar'}}).exec(), 'foo');
+	t.is(await Table.insert({id: '5'}, {$set: {foo: 'bar'}} as any).exec(), 'foo');
 });
 
 test.serial('raw result', async t => {
-	t.deepEqual(await Table.insert({id: '5'}, {$set: {foo: 'bar'}}).raw().exec(), {Attributes: 'foo'});
+	t.deepEqual(await Table.insert({id: '5'}, {$set: {foo: 'bar'}} as any).raw().exec(), {Attributes: 'foo'});
 });
 
 test.serial('error if not connected', async t => {
 	const original = db.dynamodb;
 	db.dynamodb = undefined as any;
 
-	await t.throwsAsync(Table.insert({id: '5'}, {$set: {foo: 'bar'}}).exec(), 'Call .connect() before executing queries.');
+	await t.throwsAsync(Table.insert({id: '5'}, {$set: {foo: 'bar'}} as any).exec(), 'Call .connect() before executing queries.');
 
 	db.dynamodb = original;
 });

@@ -5,7 +5,7 @@ import * as update from '../../lib/utils/update';
 const db = new AWS.DynamoDB.DocumentClient();
 
 test('$set', t => {
-	const result = update.parse({$set: {id: 5, description: 'foo'}});
+	const result = update.parse<{id: number, description: string}>({$set: {id: 5, description: 'foo'}});
 
 	t.is(result.UpdateExpression, 'SET #k_id=:v_id, #k_description=:v_description');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_id': 'id', '#k_description': 'description'});
@@ -13,7 +13,7 @@ test('$set', t => {
 });
 
 test('$set $ifNotExists', t => {
-	const result = update.parse({$set: {id: 5, description: {$ifNotExists: 'foo'}}});
+	const result = update.parse<{id: number, description: string}>({$set: {id: 5, description: {$ifNotExists: 'foo'}}});
 
 	t.is(result.UpdateExpression, 'SET #k_id=:v_id, #k_description=if_not_exists(#k_description, :v_description)');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_id': 'id', '#k_description': 'description'});
@@ -21,7 +21,7 @@ test('$set $ifNotExists', t => {
 });
 
 test('$unset', t => {
-	const result = update.parse({$unset: {description: true}});
+	const result = update.parse<{description: string}>({$unset: {description: true}});
 
 	t.is(result.UpdateExpression, 'REMOVE #k_description');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_description': 'description'});
@@ -29,7 +29,7 @@ test('$unset', t => {
 });
 
 test('$inc', t => {
-	const result = update.parse({$inc: {value: 5}});
+	const result = update.parse<{value: number}>({$inc: {value: 5}});
 
 	t.is(result.UpdateExpression, 'ADD #k_value :v_value');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_value': 'value'});
@@ -37,7 +37,7 @@ test('$inc', t => {
 });
 
 test('$push', t => {
-	const result = update.parse({$push: {scores: 85}});
+	const result = update.parse<{scores: number[]}>({$push: {scores: 85}});
 
 	t.is(result.UpdateExpression, 'SET #k_scores=list_append(if_not_exists(#k_scores, :_v_empty_list), :v_scores)');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_scores': 'scores'});
@@ -45,7 +45,7 @@ test('$push', t => {
 });
 
 test('$addToSet', t => {
-	const result = update.parse({$addToSet: {friends: 'mario'}});
+	const result = update.parse<{friends: string[]}>({$addToSet: {friends: 'mario'}});
 
 	t.is(result.UpdateExpression, 'ADD #k_friends :v_friends');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends'});
@@ -53,7 +53,7 @@ test('$addToSet', t => {
 });
 
 test('$removeFromSet', t => {
-	const result = update.parse({$removeFromSet: {friends: 'mario'}});
+	const result = update.parse<{friends: string[]}>({$removeFromSet: {friends: 'mario'}});
 
 	t.is(result.UpdateExpression, 'DELETE #k_friends :v_friends');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends'});
@@ -61,7 +61,7 @@ test('$removeFromSet', t => {
 });
 
 test('$unshift', t => {
-	const result = update.parse({$unshift: {scores: 85}});
+	const result = update.parse<{scores: number[]}>({$unshift: {scores: 85}});
 
 	t.is(result.UpdateExpression, 'SET #k_scores=list_append(:v_scores, if_not_exists(#k_scores, :_v_empty_list))');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_scores': 'scores'});
@@ -69,7 +69,7 @@ test('$unshift', t => {
 });
 
 test('$push array', t => {
-	const result = update.parse({$push: {scores: [85, 94]}});
+	const result = update.parse<{scores: unknown[]}>({$push: {scores: [85, 94]}});
 
 	t.is(result.UpdateExpression, 'SET #k_scores=list_append(if_not_exists(#k_scores, :_v_empty_list), :v_scores)');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_scores': 'scores'});
@@ -77,7 +77,7 @@ test('$push array', t => {
 });
 
 test('$addToSet array', t => {
-	const result = update.parse({$addToSet: {friends: ['mario', 'luigi']}});
+	const result = update.parse<{friends: string[]}>({$addToSet: {friends: ['mario', 'luigi']}});
 
 	t.is(result.UpdateExpression, 'ADD #k_friends :v_friends');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends'});
@@ -85,7 +85,7 @@ test('$addToSet array', t => {
 });
 
 test('$removeFromSet array', t => {
-	const result = update.parse({$removeFromSet: {friends: ['mario', 'luigi']}});
+	const result = update.parse<{friends: string[]}>({$removeFromSet: {friends: ['mario', 'luigi']}});
 
 	t.is(result.UpdateExpression, 'DELETE #k_friends :v_friends');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends'});
@@ -93,7 +93,7 @@ test('$removeFromSet array', t => {
 });
 
 test('$unshift array', t => {
-	const result = update.parse({$unshift: {scores: [85, 94]}});
+	const result = update.parse<{scores: number[]}>({$unshift: {scores: [85, 94]}});
 
 	t.is(result.UpdateExpression, 'SET #k_scores=list_append(:v_scores, if_not_exists(#k_scores, :_v_empty_list))');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_scores': 'scores'});
@@ -101,7 +101,7 @@ test('$unshift array', t => {
 });
 
 test('$push $each in array', t => {
-	const result = update.parse({$push: {scores: {$each: [85, 94]}}});
+	const result = update.parse<{scores: number[]}>({$push: {scores: {$each: [85, 94]}}});
 
 	t.is(result.UpdateExpression, 'SET #k_scores=list_append(if_not_exists(#k_scores, :_v_empty_list), :v_scores)');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_scores': 'scores'});
@@ -109,7 +109,7 @@ test('$push $each in array', t => {
 });
 
 test('$addToSet and $inc', t => {
-	const result = update.parse({$addToSet: {friends: 'mario'}, $inc: {number: 1}});
+	const result = update.parse<{friends: string[], number: number}>({$addToSet: {friends: 'mario'}, $inc: {number: 1}});
 
 	t.is(result.UpdateExpression, 'ADD #k_number :v_number, #k_friends :v_friends');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_number': 'number', '#k_friends': 'friends'});
@@ -117,7 +117,7 @@ test('$addToSet and $inc', t => {
 });
 
 test('$addToSet $each in array', t => {
-	const result = update.parse({$addToSet: {friends: {$each: ['mario', 'luigi']}}});
+	const result = update.parse<{friends: string[]}>({$addToSet: {friends: {$each: ['mario', 'luigi']}}});
 
 	t.is(result.UpdateExpression, 'ADD #k_friends :v_friends');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends'});
@@ -125,7 +125,7 @@ test('$addToSet $each in array', t => {
 });
 
 test('$addToSet (double)', t => {
-	const result = update.parse({$addToSet: {friends: {$each: ['mario', 'luigi']}, enemies: 'bowser'}});
+	const result = update.parse<{friends: string[], enemies: string[]}>({$addToSet: {friends: {$each: ['mario', 'luigi']}, enemies: 'bowser'}});
 
 	t.is(result.UpdateExpression, 'ADD #k_friends :v_friends, #k_enemies :v_enemies');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends', '#k_enemies': 'enemies'});
@@ -136,7 +136,7 @@ test('$addToSet (double)', t => {
 });
 
 test('$removeFromSet $each in array', t => {
-	const result = update.parse({$removeFromSet: {friends: {$each: ['mario', 'luigi']}}});
+	const result = update.parse<{friends: string[]}>({$removeFromSet: {friends: {$each: ['mario', 'luigi']}}});
 
 	t.is(result.UpdateExpression, 'DELETE #k_friends :v_friends');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends'});
@@ -144,7 +144,7 @@ test('$removeFromSet $each in array', t => {
 });
 
 test('$removeFromSet (double)', t => {
-	const result = update.parse({$removeFromSet: {friends: {$each: ['mario', 'luigi']}, enemies: 'bowser'}});
+	const result = update.parse<{friends: string[], enemies: string[]}>({$removeFromSet: {friends: {$each: ['mario', 'luigi']}, enemies: 'bowser'}});
 
 	t.is(result.UpdateExpression, 'DELETE #k_friends :v_friends, #k_enemies :v_enemies');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_friends': 'friends', '#k_enemies': 'enemies'});
@@ -155,7 +155,7 @@ test('$removeFromSet (double)', t => {
 });
 
 test('$unshift $each in array', t => {
-	const result = update.parse({$unshift: {scores: {$each: [85, 94]}}});
+	const result = update.parse<{scores: number[]}>({$unshift: {scores: {$each: [85, 94]}}});
 
 	t.is(result.UpdateExpression, 'SET #k_scores=list_append(:v_scores, if_not_exists(#k_scores, :_v_empty_list))');
 	t.deepEqual(result.ExpressionAttributeNames, {'#k_scores': 'scores'});

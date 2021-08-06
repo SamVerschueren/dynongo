@@ -5,13 +5,13 @@ import { DynamoDB } from '../../../dynamodb';
 import { Query } from '../../query';
 import { TransactQuery } from './transact-query';
 
-export type ReadItem = Query;
+export type ReadItem<K = any, D = any> = Query<K, D>;
 
-export class TransactRead extends Method  implements Executable {
+export class TransactRead<K = any, D = any> extends Method  implements Executable {
 
 	constructor(
 		dynamodb: DynamoDB,
-		private readonly actions: ReadItem[]
+		private readonly actions: ReadItem<K, D>[]
 	) {
 		super(null, dynamodb);
 	}

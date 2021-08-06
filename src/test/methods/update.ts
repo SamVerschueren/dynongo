@@ -10,7 +10,7 @@ import stubPromise from '../fixtures/stub-promise';
 
 db.connect();
 
-const Table = db.table('Table');
+const Table = db.table<{id: string, email?: string}, {foo: string, bar: string, friends: string[], salary: number, email: string}>('Table');
 
 const fixtureWithRetry = {
 	TableName: 'Table',

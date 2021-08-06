@@ -2,10 +2,10 @@ import { TransactWriteItem, Converter } from 'aws-sdk/clients/dynamodb';
 import { TransactMethod } from '../transact-method';
 import { DeleteItem } from '../../delete-item';
 
-export class TransactDeleteItem extends TransactMethod {
+export class TransactDeleteItem<K = any, D = any> extends TransactMethod {
 
 	constructor(
-		private readonly query: DeleteItem
+		private readonly query: DeleteItem<K, D>
 	) {
 		super();
 	}

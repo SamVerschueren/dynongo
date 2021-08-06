@@ -4,8 +4,9 @@ import { Executable } from './executable';
 import { DynamoDB } from '../dynamodb';
 import { Table } from '../table';
 import * as queryUtil from '../utils/query';
+import { WhereQuery } from '../types';
 
-export class DeleteItem extends Method implements Executable {
+export class DeleteItem<K = any, D = any> extends Method implements Executable {
 
 	private rawResult: boolean = false;
 
@@ -19,7 +20,7 @@ export class DeleteItem extends Method implements Executable {
 	 * @param	query			The query for the index to filter on.
 	 * @param	opts			Additional param options.
 	 */
-	initialize(query: any, opts?: {result: boolean}) {
+	initialize(query: K, opts?: {result: boolean}) {
 		// Set the query as key
 		this.params.Key = query;
 
@@ -37,7 +38,7 @@ export class DeleteItem extends Method implements Executable {
 	 *
 	 * @param	condition		A condition that must be satisfied in order for a conditional DeleteItem to succeed.
 	 */
-	where(condition: any) {
+	where(condition?: WhereQuery<D>) {
 		if (!condition) {
 			return this;
 		}

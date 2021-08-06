@@ -1,9 +1,9 @@
 import { BatchItem } from './batch-item';
 import { BatchPutItem } from '../../types/interfaces';
 
-export class PutRequest extends BatchItem {
+export class PutRequest<K> extends BatchItem {
 
-	constructor(props, key: any, private body: any) {
+	constructor(props, key: K, private body: any) {
 		super(props, key);
 	}
 

@@ -2,8 +2,9 @@ import { DynamoDB } from '../dynamodb';
 import { Table } from '../table';
 import * as queryUtil from '../utils/query';
 import { Method } from './method';
+import { WhereQuery } from '../types';
 
-export abstract class BaseQuery extends Method {
+export abstract class BaseQuery<K = any, D = any> extends Method {
 
 	protected rawResult: boolean = false;
 	protected consistentRead: boolean = false;
@@ -18,7 +19,7 @@ export abstract class BaseQuery extends Method {
 	 * @param	query			The query for the index to filter on.
 	 * @param	indexName		The name of the global secondary index.
 	 */
-	initialize(query: any, indexName?: string) {
+	initialize(query: Partial<K>, indexName?: string) {
 		// Parse the query
 		const parsedQuery = queryUtil.parse(query, this.params.ExpressionAttributeValues);
 
@@ -41,7 +42,7 @@ export abstract class BaseQuery extends Method {
 	 *
 	 * @param	query			The query to filter the records on.
 	 */
-	where(query: any) {
+	where(query?: WhereQuery<D>) {
 		if (!query) {
 			return this;
 		}

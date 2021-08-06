@@ -3,10 +3,10 @@ import { TransactMethod } from '../transact-method';
 import { Query } from '../../query';
 import { keyParser } from '../utils/key-parser';
 
-export class TransactQuery extends TransactMethod {
+export class TransactQuery<K = any, D = any> extends TransactMethod {
 
 	constructor(
-		private readonly query: Query
+		private readonly query: Query<K, D>
 	) {
 		super();
 	}

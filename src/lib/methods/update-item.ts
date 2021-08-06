@@ -4,8 +4,9 @@ import { Table } from '../table';
 import * as queryUtil from '../utils/query';
 import { Executable } from './executable';
 import { InsertItem } from './insert-item';
+import { WhereQuery } from '../types';
 
-export class UpdateItem extends InsertItem implements Executable {
+export class UpdateItem<K = any, D = any> extends InsertItem<K, D> implements Executable {
 
 	constructor(table: Table, dynamodb: DynamoDB) {
 		super(table, dynamodb);
@@ -17,7 +18,7 @@ export class UpdateItem extends InsertItem implements Executable {
 	 *
 	 * @param	condition           A condition that must be satisfied in order for a conditional UpdateItem to succeed.
 	 */
-	where(condition: any) {
+	where(condition?: WhereQuery<D>) {
 		if (!condition) {
 			return this;
 		}

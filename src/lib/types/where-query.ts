@@ -68,16 +68,16 @@ interface NumberComparisonOperators extends ComparisonQueryOperators<number>, El
 	$between?: [number, number];
 }
 
-interface StringComparisonOperators extends ElementQueryOperators, ComparisonQueryOperators<string> {
+interface StringComparisonOperators<T> extends ElementQueryOperators, ComparisonQueryOperators<T> {
 	/**
 	 * Checks for a prefix.
 	 * @example { field: { $beginsWith: value } }
 	 * @see {@link https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Condition.html}
 	 */
-	$beginsWith?: string|number;
+	$beginsWith?: string extends T ? T : string|number;
 }
 
-interface ArrayComparisonOperators<T> extends ElementQueryOperators, BaseComparisonQueryOperators<T> {
+interface ArrayComparisonOperators<T> extends ElementQueryOperators, BaseComparisonQueryOperators<T[]> {
 	/**
 	 * Checks for a subsequence, or value in a set.
 	 * @example { field: { contains: value } }
@@ -109,8 +109,9 @@ interface LogicalQueryOperators<T> {
 
 export type WhereQuery<T = any> = {
 		[Property in keyof T]?: T[Property] extends number
-		? NumberComparisonOperators  | T[Property] : T[Property] extends string | DocumentClient.binaryType
-			? StringComparisonOperators | T[Property] : T[Property] extends (infer U)[]
-				? ArrayComparisonOperators<U> | T[Property] : BaseComparisonQueryOperators<T[Property]> | ElementQueryOperators | T[Property]
+			? NumberComparisonOperators  | T[Property] : T[Property] extends string
+				? StringComparisonOperators<T[Property]> | T[Property] : T[Property] extends DocumentClient.binaryType
+					? StringComparisonOperators<T[Property]> | T[Property] : T[Property] extends (infer U)[]
+						? ArrayComparisonOperators<U> | T[Property] : BaseComparisonQueryOperators<T[Property]> | ElementQueryOperators | T[Property]
 	}
 	& LogicalQueryOperators<T>;

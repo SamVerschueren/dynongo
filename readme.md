@@ -72,6 +72,19 @@ db.connect({
 })
 ```
 
+As an alternative, the internal retry behaviour of the AWS SDK can also be used by setting [`maxRetries`](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Config.html#maxRetries-property) and [`retryDelayOptions`](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Config.html#retryDelayOptions-property).
+
+```js
+db.connect({
+	maxRetries: 3,
+	retryDelayOptions: { base: 300 }
+})
+```
+
+As this setting is global, it cannot be overridden at the method level.
+
+Note that it may not advisable to use both `dynongo`'s retry logic and enable the AWS SDK retry behaviour at the same time. If both are enabled, the AWS SDK retry behaviour will trigger first and if the failure persists, the built-in logic inside `dynongo` will keep retrying the failing method.
+
 #### DynamoDB Local
 
 It is possible to connect to a [local DynamoDB](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.DynamoDBLocal.html) database

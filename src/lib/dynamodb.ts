@@ -27,6 +27,11 @@ export interface DynamoDBOptions {
 	sessionToken?: string;
 	retries?: number | RetryOptions;
 	httpOptions?: AWS.HTTPOptions;
+	maxRetries?: number;
+	retryDelayOptions?: {
+		base?: number,
+		customBackoff?(retryCount: number, err: Error): number
+	};
 }
 
 export class DynamoDB {
@@ -47,7 +52,14 @@ export class DynamoDB {
 
 		this._retries = configureRetryOptions(this.options.retries);
 
-		AWS.config.update(pick(this.options, ['region', 'accessKeyId', 'secretAccessKey', 'sessionToken']));
+		AWS.config.update(pick(this.options, [
+			'region',
+			'accessKeyId',
+			'secretAccessKey',
+			'sessionToken',
+			'maxRetries',
+			'retryDelayOptions'
+		]));
 
 		if (this.options.local) {
 			// Starts dynamodb in local mode

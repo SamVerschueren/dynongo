@@ -34,6 +34,13 @@ test('connect options', t => {
 	});
 });
 
+test('connect with native retry options', t => {
+	db.connect({maxRetries: 5, retryDelayOptions: {base: 500}});
+
+	t.is(db.raw?.config.maxRetries, 5);
+	t.deepEqual(db.raw?.config.retryDelayOptions, {base: 500});
+});
+
 test('connect locally', t => {
 	db.connect({local: true});
 	t.is((db.raw!).endpoint.href, 'http://localhost:8000/');
